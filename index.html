@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -20,10 +19,7 @@ body{
   color:#172033;
 }
 
-button,
-input,
-select,
-textarea{
+button,input,select,textarea{
   font:inherit;
 }
 
@@ -31,11 +27,6 @@ button{
   cursor:pointer;
   border:0;
 }
-
-
-/* =====================================================
-   LOGIN
-===================================================== */
 
 #loginScreen{
   position:fixed;
@@ -46,11 +37,7 @@ button{
   align-items:center;
   justify-content:center;
   padding:20px;
-  background:linear-gradient(
-    135deg,
-    #eef6ff,
-    #f8fbff
-  );
+  background:linear-gradient(135deg,#eef6ff,#f8fbff);
 }
 
 .loginCard{
@@ -89,7 +76,8 @@ button{
   margin-bottom:14px;
 }
 
-.loginField label{
+.loginField label,
+.field label{
   display:block;
   margin-bottom:6px;
   color:#58667a;
@@ -97,13 +85,24 @@ button{
   font-weight:800;
 }
 
-.loginField input{
+.loginField input,
+.field input,
+.field select,
+.field textarea{
   width:100%;
   padding:13px;
   border:1px solid #d5dce7;
   border-radius:11px;
   background:#fff;
   outline:none;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+.searchBox input:focus{
+  border-color:#1769e0;
+  box-shadow:0 0 0 3px rgba(23,105,224,.08);
 }
 
 .loginButton{
@@ -132,11 +131,6 @@ button{
 .loginError.show{
   display:block;
 }
-
-
-/* =====================================================
-   PANEL
-===================================================== */
 
 #panelScreen{
   display:none;
@@ -251,31 +245,6 @@ h1{
   gap:11px;
 }
 
-.field label{
-  display:block;
-  margin-bottom:5px;
-  color:#58667a;
-  font-size:12px;
-  font-weight:800;
-}
-
-.field input,
-.field select,
-.field textarea{
-  width:100%;
-  padding:12px;
-  border:1px solid #d5dce7;
-  border-radius:11px;
-  background:#fff;
-  outline:none;
-}
-
-.field input:focus,
-.field select:focus,
-.field textarea:focus{
-  border-color:#1769e0;
-}
-
 .full{
   grid-column:1/-1;
 }
@@ -343,10 +312,6 @@ h1{
 .stat:hover{
   transform:translateY(-2px);
   box-shadow:0 6px 18px rgba(20,40,70,.10);
-}
-
-.stat:active{
-  transform:scale(.98);
 }
 
 .stat b{
@@ -426,7 +391,9 @@ h1{
   color:#087443;
 }
 
-.blocked{
+.blocked,
+.rejected,
+.deleted{
   background:#ffe8ed;
   color:#b4233d;
 }
@@ -434,11 +401,6 @@ h1{
 .pending{
   background:#fff3d6;
   color:#9a6500;
-}
-
-.rejected{
-  background:#ffe8ed;
-  color:#b4233d;
 }
 
 .open{
@@ -459,11 +421,6 @@ h1{
 .completed{
   background:#ecebff;
   color:#4438a8;
-}
-
-.deleted{
-  background:#ffe8ed;
-  color:#b4233d;
 }
 
 .typeBadge{
@@ -493,6 +450,14 @@ h1{
   border:1px solid #d5e7fb;
 }
 
+.rentalBox{
+  margin-top:10px;
+  padding:11px;
+  border-radius:12px;
+  background:#eefaf5;
+  border:1px solid #c8ebdb;
+}
+
 .searchBox{
   margin-bottom:12px;
 }
@@ -503,11 +468,6 @@ h1{
   border:1px solid #cfd8e5;
   border-radius:12px;
   outline:none;
-}
-
-.searchBox input:focus{
-  border-color:#1769e0;
-  box-shadow:0 0 0 3px rgba(23,105,224,.08);
 }
 
 .notice{
@@ -530,11 +490,6 @@ h1{
   padding:30px;
   color:#66758a;
 }
-
-
-/* =====================================================
-   MODAL
-===================================================== */
 
 .modalBack{
   position:fixed;
@@ -582,11 +537,6 @@ h1{
   flex:1;
 }
 
-
-/* =====================================================
-   TOAST
-===================================================== */
-
 .toast{
   position:fixed;
   left:50%;
@@ -614,7 +564,6 @@ h1{
   background:#b4233d;
 }
 
-
 @media(max-width:650px){
 
   .grid{
@@ -641,10 +590,6 @@ h1{
     min-width:100px;
   }
 
-  .headerRight{
-    gap:5px;
-  }
-
   .status{
     display:none;
   }
@@ -654,13 +599,9 @@ h1{
 </style>
 </head>
 
-
 <body>
 
-
-<!-- =====================================================
-     LOGIN
-===================================================== -->
+<!-- LOGIN -->
 
 <div id="loginScreen">
 
@@ -724,9 +665,7 @@ h1{
 </div>
 
 
-<!-- =====================================================
-     ADMIN PANEL
-===================================================== -->
+<!-- PANEL -->
 
 <div id="panelScreen">
 
@@ -861,23 +800,16 @@ h1{
   class="toast">
 </div>
 
-
 </div>
 
 
 <script type="module">
-
-
-/* =====================================================
-   FIREBASE
-===================================================== */
 
 import {
   initializeApp
 }
 from
 "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-
 
 import {
   getFirestore,
@@ -892,6 +824,10 @@ import {
 from
 "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
+
+/* =====================================================
+FIREBASE
+===================================================== */
 
 const firebaseConfig = {
 
@@ -918,26 +854,29 @@ const firebaseConfig = {
 
 };
 
-
-const app =
+const firebaseApp =
   initializeApp(firebaseConfig);
 
 const db =
-  getFirestore(app);
+  getFirestore(firebaseApp);
 
 
 /* =====================================================
-   LOGIN
+LOGIN
 ===================================================== */
 
 const ADMIN_USER_ID =
-  "7708988625";
+"7708988625";
 
 const ADMIN_PASSWORD =
-  "VIJAY8978";
+"VIJAY8978";
 
 let listenersStarted =
-  false;
+false;
+
+
+const $ =
+id => document.getElementById(id);
 
 
 window.adminLogin =
@@ -945,12 +884,12 @@ function(){
 
   const userId =
     $("adminUserId")
-      .value
-      .trim();
+    .value
+    .trim();
 
   const password =
     $("adminPassword")
-      .value;
+    .value;
 
   if(
     userId === ADMIN_USER_ID &&
@@ -958,19 +897,17 @@ function(){
   ){
 
     $("loginError")
-      .classList
-      .remove("show");
+    .classList
+    .remove("show");
 
     $("adminPassword")
-      .value = "";
+    .value = "";
 
     $("loginScreen")
-      .style.display =
-      "none";
+    .style.display = "none";
 
     $("panelScreen")
-      .style.display =
-      "block";
+    .style.display = "block";
 
     if(!listenersStarted){
 
@@ -982,12 +919,11 @@ function(){
 
     render();
 
-  }
-  else{
+  }else{
 
     $("loginError")
-      .classList
-      .add("show");
+    .classList
+    .add("show");
 
   }
 
@@ -998,52 +934,53 @@ window.adminLogout =
 function(){
 
   $("panelScreen")
-    .style.display =
-    "none";
+  .style.display = "none";
 
   $("loginScreen")
-    .style.display =
-    "flex";
+  .style.display = "flex";
 
   $("adminUserId")
-    .value = "";
+  .value = "";
 
   $("adminPassword")
-    .value = "";
+  .value = "";
 
   $("loginError")
-    .classList
-    .remove("show");
+  .classList
+  .remove("show");
 
 };
 
 
 /* =====================================================
-   STATE
+STATE
 ===================================================== */
 
-let page = "duty";
+let page =
+"duty";
 
-let drivers = [];
+let drivers =
+[];
 
-let duties = [];
+let duties =
+[];
 
-let history = [];
+let history =
+[];
 
-let trips = [];
+let trips =
+[];
 
-let driverFilter = "ALL";
+let driverFilter =
+"ALL";
 
-let driverSearch = "";
+let driverSearch =
+"";
 
 
 /* =====================================================
-   HELPERS
+HELPERS
 ===================================================== */
-
-const $ =
-  id => document.getElementById(id);
-
 
 function esc(value){
 
@@ -1097,8 +1034,8 @@ function normalizeDate(value){
 
   let s =
     String(value || "")
-      .replace(/\D/g,"")
-      .slice(0,8);
+    .replace(/\D/g,"")
+    .slice(0,8);
 
   if(s.length === 8){
 
@@ -1122,8 +1059,8 @@ function(input){
 
   let raw =
     input.value
-      .replace(/\D/g,"")
-      .slice(0,8);
+    .replace(/\D/g,"")
+    .slice(0,8);
 
   if(raw.length <= 2){
 
@@ -1152,18 +1089,14 @@ function(input){
 };
 
 
-/* =====================================================
-   TIME
-===================================================== */
-
 window.formatTime =
 function(input){
 
   let raw =
     input.value
-      .toUpperCase()
-      .replace(/[^0-9APM: ]/g,"")
-      .slice(0,8);
+    .toUpperCase()
+    .replace(/[^0-9APM: ]/g,"")
+    .slice(0,8);
 
   input.value =
     raw;
@@ -1182,7 +1115,7 @@ function normalizeTime(value){
 
 
 /* =====================================================
-   DRIVER SEARCH
+DRIVER SEARCH FIX
 ===================================================== */
 
 window.searchDrivers =
@@ -1190,7 +1123,45 @@ function(value){
 
   driverSearch =
     String(value || "")
-      .replace(/\D/g,"");
+    .replace(/\D/g,"");
+
+  render();
+
+  requestAnimationFrame(() => {
+
+    const input =
+      document.querySelector(
+        '.searchBox input[type="tel"]'
+      );
+
+    if(!input)
+      return;
+
+    input.focus();
+
+    const pos =
+      input.value.length;
+
+    try{
+
+      input.setSelectionRange(
+        pos,
+        pos
+      );
+
+    }catch(e){}
+
+  });
+
+};
+
+
+window.clearDriverSearch =
+function(){
+
+  driverSearch = "";
+
+  driverFilter = "ALL";
 
   render();
 
@@ -1198,7 +1169,47 @@ function(value){
 
 
 /* =====================================================
-   TOAST
+LOCAL RENTAL UI
+===================================================== */
+
+window.updateRentalFields =
+function(){
+
+  const type =
+    $("dutyType")?.value;
+
+  const rental =
+    type === "LOCAL RENTAL";
+
+  const hours =
+    $("rentalHoursField");
+
+  const persons =
+    $("personsField");
+
+  if(hours){
+
+    hours.style.display =
+      rental
+      ? "block"
+      : "none";
+
+  }
+
+  if(persons){
+
+    persons.style.display =
+      rental
+      ? "block"
+      : "none";
+
+  }
+
+};
+
+
+/* =====================================================
+TOAST
 ===================================================== */
 
 function toast(
@@ -1234,7 +1245,7 @@ function toast(
 
 
 /* =====================================================
-   CONFIRM
+CONFIRM
 ===================================================== */
 
 function confirmBox(
@@ -1262,8 +1273,7 @@ function confirmBox(
       okText;
 
     $("modalOK")
-      .style
-      .background =
+      .style.background =
       danger
       ? "#d92d4a"
       : "#1769e0";
@@ -1294,8 +1304,37 @@ function confirmBox(
 
 
 /* =====================================================
-   DRIVER FILTER
+NAV
 ===================================================== */
+
+window.showPage =
+function(p){
+
+  page = p;
+
+  if(p === "duty")
+    driverFilter = "ALL";
+
+  [
+    "duty",
+    "open",
+    "accepted",
+    "history"
+  ].forEach(x => {
+
+    $("nav-"+x)
+      .classList
+      .toggle(
+        "active",
+        x === p
+      );
+
+  });
+
+  render();
+
+};
+
 
 window.showDriverFilter =
 function(filter){
@@ -1312,8 +1351,7 @@ function(filter){
     "open",
     "accepted",
     "history"
-  ]
-  .forEach(x => {
+  ].forEach(x => {
 
     $("nav-"+x)
       .classList
@@ -1332,8 +1370,7 @@ function(filter){
 window.showOpenDuties =
 function(){
 
-  driverFilter =
-    "ALL";
+  driverFilter = "ALL";
 
   showPage("open");
 
@@ -1341,45 +1378,7 @@ function(){
 
 
 /* =====================================================
-   NAV
-===================================================== */
-
-window.showPage =
-function(p){
-
-  page = p;
-
-  if(p === "duty"){
-
-    driverFilter =
-      "ALL";
-
-  }
-
-  [
-    "duty",
-    "open",
-    "accepted",
-    "history"
-  ]
-  .forEach(x => {
-
-    $("nav-"+x)
-      .classList
-      .toggle(
-        "active",
-        x === p
-      );
-
-  });
-
-  render();
-
-};
-
-
-/* =====================================================
-   CONNECTION
+CONNECTION
 ===================================================== */
 
 function setConnected(ok){
@@ -1391,15 +1390,13 @@ function setConnected(ok){
     : "FIREBASE ERROR";
 
   $("connection")
-    .style
-    .background =
+    .style.background =
     ok
     ? "#e9f8ef"
     : "#ffe8ed";
 
   $("connection")
-    .style
-    .color =
+    .style.color =
     ok
     ? "#087443"
     : "#b4233d";
@@ -1408,7 +1405,7 @@ function setConnected(ok){
 
 
 /* =====================================================
-   DRIVER FINDER
+DRIVER FINDER
 ===================================================== */
 
 function driverForDuty(d){
@@ -1449,6 +1446,7 @@ function driverForDuty(d){
         String(
           x.mobile ||
           x.phone ||
+          x.driverMobile ||
           ""
         ) === String(value)
 
@@ -1465,7 +1463,7 @@ function driverForDuty(d){
 
 
 /* =====================================================
-   RENDER
+RENDER
 ===================================================== */
 
 function render(){
@@ -1486,7 +1484,7 @@ function render(){
 
 
 /* =====================================================
-   DUTY PAGE
+DUTY PAGE
 ===================================================== */
 
 function renderDuty(){
@@ -1551,7 +1549,8 @@ function renderDuty(){
             d.phone ||
             d.driverMobile ||
             ""
-          ).replace(/\D/g,"");
+          )
+          .replace(/\D/g,"");
 
         return mobile.includes(
           driverSearch
@@ -1565,14 +1564,9 @@ function renderDuty(){
   let filterTitle =
     "ALL DRIVERS";
 
-
-  if(driverFilter !== "ALL"){
-
+  if(driverFilter !== "ALL")
     filterTitle =
-      driverFilter +
-      " DRIVERS";
-
-  }
+      driverFilter + " DRIVERS";
 
 
   $("app").innerHTML = `
@@ -1593,7 +1587,6 @@ function renderDuty(){
         onclick="showDriverFilter('APPROVED')">
 
         <b>${approved}</b>
-
         <span>APPROVED</span>
 
       </div>
@@ -1604,7 +1597,6 @@ function renderDuty(){
         onclick="showDriverFilter('PENDING')">
 
         <b>${pending}</b>
-
         <span>PENDING</span>
 
       </div>
@@ -1615,7 +1607,6 @@ function renderDuty(){
         onclick="showDriverFilter('BLOCKED')">
 
         <b>${blocked}</b>
-
         <span>BLOCKED</span>
 
       </div>
@@ -1626,7 +1617,6 @@ function renderDuty(){
         onclick="showOpenDuties()">
 
         <b>${open}</b>
-
         <span>OPEN DUTIES</span>
 
       </div>
@@ -1640,6 +1630,7 @@ function renderDuty(){
         ➕ CREATE DUTY
       </h2>
 
+
       <div class="grid">
 
 
@@ -1649,7 +1640,9 @@ function renderDuty(){
             DUTY TYPE
           </label>
 
-          <select id="dutyType">
+          <select
+            id="dutyType"
+            onchange="updateRentalFields()">
 
             <option value="ONE WAY">
               ONE WAY
@@ -1657,6 +1650,10 @@ function renderDuty(){
 
             <option value="ROUND TRIP">
               ROUND TRIP
+            </option>
+
+            <option value="LOCAL RENTAL">
+              LOCAL RENTAL
             </option>
 
           </select>
@@ -1672,13 +1669,99 @@ function renderDuty(){
 
           <select id="vehicle">
 
-            <option>SEDAN</option>
-
-            <option>SUV</option>
-
             <option>MINI</option>
+            <option>SEDAN</option>
+            <option>SUV</option>
+            <option>INNOVA CRYSTA</option>
 
           </select>
+
+        </div>
+
+
+        <div
+          class="field"
+          id="rentalHoursField"
+          style="display:none">
+
+          <label>
+            LOCAL RENTAL HOURS
+          </label>
+
+          <select id="rentalHours">
+
+            <option value="">
+              SELECT HOURS
+            </option>
+
+            <option value="1">
+              1 HOUR
+            </option>
+
+            <option value="2">
+              2 HOURS
+            </option>
+
+            <option value="3">
+              3 HOURS
+            </option>
+
+            <option value="4">
+              4 HOURS
+            </option>
+
+            <option value="5">
+              5 HOURS
+            </option>
+
+            <option value="6">
+              6 HOURS
+            </option>
+
+            <option value="7">
+              7 HOURS
+            </option>
+
+            <option value="8">
+              8 HOURS
+            </option>
+
+            <option value="9">
+              9 HOURS
+            </option>
+
+            <option value="10">
+              10 HOURS
+            </option>
+
+            <option value="11">
+              11 HOURS
+            </option>
+
+            <option value="12">
+              12 HOURS
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div
+          class="field"
+          id="personsField"
+          style="display:none">
+
+          <label>
+            NUMBER OF PERSONS
+          </label>
+
+          <input
+            id="persons"
+            type="number"
+            min="1"
+            step="1"
+            placeholder="Enter number of persons">
 
         </div>
 
@@ -1836,12 +1919,12 @@ function renderDuty(){
         🔎 DRIVER SEARCH
       </h2>
 
-
       <div class="searchBox">
 
         <input
           type="tel"
           inputmode="numeric"
+          autocomplete="off"
           placeholder="Enter driver mobile number"
           value="${esc(driverSearch)}"
           oninput="searchDrivers(this.value)">
@@ -1907,14 +1990,12 @@ function renderDuty(){
         filteredDrivers.length
         ?
         filteredDrivers
-          .map(driverCard)
-          .join("")
+        .map(driverCard)
+        .join("")
         :
         `
         <div class="empty">
-
           No matching drivers found.
-
         </div>
         `
       }
@@ -1926,20 +2007,8 @@ function renderDuty(){
 }
 
 
-window.clearDriverSearch =
-function(){
-
-  driverSearch = "";
-
-  driverFilter = "ALL";
-
-  render();
-
-};
-
-
 /* =====================================================
-   DRIVER CARD
+DRIVER CARD
 ===================================================== */
 
 function driverCard(d){
@@ -1962,6 +2031,7 @@ function driverCard(d){
   const mobile =
     d.mobile ||
     d.phone ||
+    d.driverMobile ||
     "-";
 
   const payment =
@@ -1980,31 +2050,24 @@ function driverCard(d){
       <div>
 
         <div class="name">
-
           👨‍✈️ ${esc(name)}
-
         </div>
 
         <div class="muted">
 
           📱 ${esc(mobile)}
-
           <br>
 
           🪪 ${esc(
-            d.licenseNumber ||
-            "-"
+            d.licenseNumber || "-"
           )}
 
           <br>
 
           🚕 ${esc(
-            d.vehicleNumber ||
-            "-"
+            d.vehicleNumber || "-"
           )}
-
           -
-
           ${esc(
             d.vehicleModel ||
             d.vehicle ||
@@ -2014,6 +2077,7 @@ function driverCard(d){
         </div>
 
       </div>
+
 
       <span class="badge ${
         s === "APPROVED"
@@ -2144,10 +2208,9 @@ function driverCard(d){
       </div>
 
       <div class="muted">
-
         Admin controlled wallet
-
       </div>
+
 
       <div
         class="grid"
@@ -2167,6 +2230,7 @@ function driverCard(d){
         </div>
 
       </div>
+
 
       <div class="actions">
 
@@ -2198,7 +2262,52 @@ function driverCard(d){
 
 
 /* =====================================================
-   OPEN DUTIES
+RENTAL DISPLAY
+===================================================== */
+
+function rentalInfo(d){
+
+  if(
+    String(d.dutyType || "")
+    .toUpperCase()
+    !== "LOCAL RENTAL"
+  ){
+
+    return "";
+
+  }
+
+  const hours =
+    Number(d.rentalHours || 0);
+
+  const persons =
+    Number(d.persons || 0);
+
+  return `
+
+    <div class="rentalBox">
+
+      🏠 <b>LOCAL RENTAL</b>
+
+      <br>
+
+      ⏱️ Hours:
+      <b>${hours || "-"}</b>
+
+      &nbsp; | &nbsp;
+
+      👥 Persons:
+      <b>${persons || "-"}</b>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+OPEN DUTIES
 ===================================================== */
 
 function renderOpen(){
@@ -2229,6 +2338,7 @@ function renderOpen(){
 
     </div>
 
+
     <div class="card">
 
       <h2>
@@ -2239,8 +2349,8 @@ function renderOpen(){
         list.length
         ?
         list
-          .map(openDutyCard)
-          .join("")
+        .map(openDutyCard)
+        .join("")
         :
         `
         <div class="empty">
@@ -2257,7 +2367,7 @@ function renderOpen(){
 
 
 /* =====================================================
-   OPEN DUTY CARD
+OPEN DUTY CARD
 ===================================================== */
 
 function openDutyCard(d){
@@ -2287,6 +2397,9 @@ function openDutyCard(d){
       )}
 
     </div>
+
+
+    ${rentalInfo(d)}
 
 
     <div class="route">
@@ -2410,7 +2523,7 @@ function openDutyCard(d){
 
 
 /* =====================================================
-   ACCEPTED
+ACCEPTED
 ===================================================== */
 
 function renderAccepted(){
@@ -2433,6 +2546,7 @@ function renderAccepted(){
       Driver who accepted the duty
     </div>
 
+
     <div class="card">
 
       <h2>
@@ -2443,8 +2557,8 @@ function renderAccepted(){
         list.length
         ?
         list
-          .map(acceptedCard)
-          .join("")
+        .map(acceptedCard)
+        .join("")
         :
         `
         <div class="empty">
@@ -2461,14 +2575,13 @@ function renderAccepted(){
 
 
 /* =====================================================
-   ACCEPTED CARD
+ACCEPTED CARD
 ===================================================== */
 
 function acceptedCard(d){
 
   const dr =
     driverForDuty(d);
-
 
   const name =
     d.driverName ||
@@ -2477,19 +2590,16 @@ function acceptedCard(d){
     dr?.driverName ||
     "Unknown Driver";
 
-
   const mobile =
     d.driverMobile ||
     dr?.mobile ||
     dr?.phone ||
     "-";
 
-
   const vehicleNo =
     dr?.vehicleNumber ||
     d.vehicleNumber ||
     "-";
-
 
   const vehicleModel =
     dr?.vehicleModel ||
@@ -2525,6 +2635,9 @@ function acceptedCard(d){
       )}
 
     </div>
+
+
+    ${rentalInfo(d)}
 
 
     <div class="route">
@@ -2674,7 +2787,7 @@ function acceptedCard(d){
 
 
 /* =====================================================
-   HISTORY
+HISTORY
 ===================================================== */
 
 function renderHistory(){
@@ -2691,7 +2804,7 @@ function renderHistory(){
         t.type ||
         (
           String(t.status || "")
-            .toUpperCase() === "COMPLETED"
+          .toUpperCase() === "COMPLETED"
           ?
           "TRIP_COMPLETED"
           :
@@ -2709,7 +2822,8 @@ function renderHistory(){
 
   const unique = [];
 
-  const seen = new Set();
+  const seen =
+    new Set();
 
 
   combined.forEach(item => {
@@ -2721,25 +2835,17 @@ function renderHistory(){
         ""
       ).toUpperCase();
 
-
     const dutyId =
       item.dutyId ||
       item.id ||
       "";
-
 
     const key =
       dutyId
       ?
       `${dutyId}_${type.includes("COMPLETE") ? "COMPLETED" : type}`
       :
-      (
-        item.id
-        ?
-        `id_${item.id}`
-        :
-        `raw_${JSON.stringify(item)}`
-      );
+      `id_${item.id || JSON.stringify(item)}`;
 
 
     if(!seen.has(key)){
@@ -2755,17 +2861,18 @@ function renderHistory(){
 
   const rows =
     [...unique]
-      .sort(
-        (a,b) =>
-          stampMillis(
-            b.createdAt ||
-            b.completedAt
-          ) -
-          stampMillis(
-            a.createdAt ||
-            a.completedAt
-          )
-      );
+    .sort(
+      (a,b) =>
+        stampMillis(
+          b.createdAt ||
+          b.completedAt
+        )
+        -
+        stampMillis(
+          a.createdAt ||
+          a.completedAt
+        )
+    );
 
 
   $("app").innerHTML = `
@@ -2778,6 +2885,7 @@ function renderHistory(){
       All driver and duty activity
     </div>
 
+
     <div class="card">
 
       <h2>
@@ -2788,8 +2896,8 @@ function renderHistory(){
         rows.length
         ?
         rows
-          .map(historyCard)
-          .join("")
+        .map(historyCard)
+        .join("")
         :
         `
         <div class="empty">
@@ -2806,7 +2914,7 @@ function renderHistory(){
 
 
 /* =====================================================
-   HISTORY CARD
+HISTORY CARD
 ===================================================== */
 
 function historyCard(h){
@@ -2818,10 +2926,8 @@ function historyCard(h){
       ""
     ).toUpperCase();
 
-
   let cls =
     "pending";
-
 
   if(type.includes("COMPLETE"))
     cls = "completed";
@@ -2879,6 +2985,9 @@ function historyCard(h){
       :
       ""
     }
+
+
+    ${rentalInfo(h)}
 
 
     ${
@@ -3028,12 +3137,10 @@ function historyCard(h){
 
     <div class="muted">
 
-      ${
-        formatStamp(
-          h.completedAt ||
-          h.createdAt
-        )
-      }
+      ${formatStamp(
+        h.completedAt ||
+        h.createdAt
+      )}
 
     </div>
 
@@ -3045,7 +3152,7 @@ function historyCard(h){
 
 
 /* =====================================================
-   CREATE DUTY
+CREATE DUTY
 ===================================================== */
 
 async function createDuty(){
@@ -3053,78 +3160,114 @@ async function createDuty(){
   try{
 
     const dutyType =
-      $("dutyType")
-        .value;
-
+      $("dutyType").value;
 
     const pickup =
       $("pickup")
-        .value
-        .trim();
-
+      .value
+      .trim();
 
     const drop =
       $("drop")
-        .value
-        .trim();
-
+      .value
+      .trim();
 
     const date =
       normalizeDate(
         $("date")
-          .value
-          .trim()
+        .value
+        .trim()
       );
-
 
     const time =
       normalizeTime(
-        $("time")
-          .value
+        $("time").value
       );
 
-
     const vehicle =
-      $("vehicle")
-        .value;
-
+      $("vehicle").value;
 
     const km =
       Number(
-        $("km")
-          .value
+        $("km").value
       );
-
 
     const amount =
       Number(
-        $("amount")
-          .value
+        $("amount").value
       );
-
 
     const specialService =
       $("specialService")
-        .value
-        .trim();
-
+      .value
+      .trim();
 
     const particular =
       $("particular")
-        .value
-        .trim();
-
+      .value
+      .trim();
 
     const note =
       $("note")
-        .value
-        .trim();
+      .value
+      .trim();
+
+
+    let rentalHours =
+      0;
+
+    let persons =
+      0;
+
+
+    if(dutyType === "LOCAL RENTAL"){
+
+      rentalHours =
+        Number(
+          $("rentalHours").value
+        );
+
+      persons =
+        Number(
+          $("persons").value
+        );
+
+      if(
+        !rentalHours ||
+        rentalHours < 1 ||
+        rentalHours > 12
+      ){
+
+        toast(
+          "LOCAL RENTALக்கு 1 முதல் 12 HOURS select pannunga.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      if(
+        !persons ||
+        persons < 1
+      ){
+
+        toast(
+          "Number of persons enter pannunga.",
+          true
+        );
+
+        return;
+
+      }
+
+    }
 
 
     const timeValid =
-      /^(0[1-9]|1[0-2]):[0-5]\d\s?(AM|PM)$/i.test(
-        time
-      );
+      /^(0[1-9]|1[0-2]):[0-5]\d\s?(AM|PM)$/i
+      .test(time);
 
 
     if(
@@ -3154,6 +3297,10 @@ async function createDuty(){
       {
 
         dutyType,
+
+        rentalHours,
+
+        persons,
 
         pickup,
 
@@ -3237,7 +3384,7 @@ async function createDuty(){
 
 
 /* =====================================================
-   APPROVE DRIVER
+APPROVE DRIVER
 ===================================================== */
 
 async function approveDriver(id){
@@ -3248,7 +3395,6 @@ async function approveDriver(id){
       drivers.find(
         x => x.id === id
       );
-
 
     if(!d)
       throw new Error(
@@ -3293,7 +3439,6 @@ async function approveDriver(id){
       "Driver APPROVED."
     );
 
-
   }catch(e){
 
     console.error(e);
@@ -3310,7 +3455,7 @@ async function approveDriver(id){
 
 
 /* =====================================================
-   REJECT DRIVER
+REJECT DRIVER
 ===================================================== */
 
 async function rejectDriver(id){
@@ -3319,7 +3464,6 @@ async function rejectDriver(id){
     drivers.find(
       x => x.id === id
     );
-
 
   if(!d)
     return;
@@ -3383,7 +3527,6 @@ async function rejectDriver(id){
       "Driver REJECTED."
     );
 
-
   }catch(e){
 
     console.error(e);
@@ -3400,7 +3543,7 @@ async function rejectDriver(id){
 
 
 /* =====================================================
-   BLOCK DRIVER
+BLOCK DRIVER
 ===================================================== */
 
 async function blockDriver(id){
@@ -3409,7 +3552,6 @@ async function blockDriver(id){
     drivers.find(
       x => x.id === id
     );
-
 
   if(!d)
     return;
@@ -3475,7 +3617,6 @@ async function blockDriver(id){
       "Driver BLOCKED. Driver App access stopped."
     );
 
-
   }catch(e){
 
     console.error(e);
@@ -3492,7 +3633,7 @@ async function blockDriver(id){
 
 
 /* =====================================================
-   UNBLOCK
+UNBLOCK
 ===================================================== */
 
 async function unblockDriver(id){
@@ -3501,7 +3642,6 @@ async function unblockDriver(id){
     drivers.find(
       x => x.id === id
     );
-
 
   if(!d)
     return;
@@ -3544,7 +3684,6 @@ async function unblockDriver(id){
       "Driver UNBLOCKED."
     );
 
-
   }catch(e){
 
     console.error(e);
@@ -3561,7 +3700,7 @@ async function unblockDriver(id){
 
 
 /* =====================================================
-   DRIVER ACCESS
+DRIVER ACCESS
 ===================================================== */
 
 function accessKey(d){
@@ -3588,10 +3727,10 @@ function accessKey(d){
   return (
     mobile ||
     String(driverId)
-      .replace(
-        /[^a-zA-Z0-9_-]/g,
-        "_"
-      )
+    .replace(
+      /[^a-zA-Z0-9_-]/g,
+      "_"
+    )
   );
 
 }
@@ -3604,7 +3743,6 @@ async function updateDriverAccess(
 
   const key =
     accessKey(d);
-
 
   if(!key)
     return;
@@ -3674,7 +3812,7 @@ async function updateDriverAccess(
 
 
 /* =====================================================
-   DRIVER HISTORY
+DRIVER HISTORY
 ===================================================== */
 
 async function addDriverHistory(
@@ -3706,6 +3844,7 @@ async function addDriverHistory(
       driverMobile:
         d.mobile ||
         d.phone ||
+        d.driverMobile ||
         "",
 
       createdAt:
@@ -3718,7 +3857,7 @@ async function addDriverHistory(
 
 
 /* =====================================================
-   DELETE DRIVER
+DELETE DRIVER
 ===================================================== */
 
 async function deleteDriver(id){
@@ -3727,7 +3866,6 @@ async function deleteDriver(id){
     drivers.find(
       x => x.id === id
     );
-
 
   if(!d)
     return;
@@ -3744,9 +3882,7 @@ async function deleteDriver(id){
       "DELETE DRIVER ACCOUNT",
       "Driver:\n" +
       name +
-      "\n\n" +
-      "இந்த Driver record Firestore-லிருந்து உண்மையாக DELETE ஆகும்.\n\n" +
-      "Driver App access status DELETED ஆக save செய்யப்படும்.",
+      "\n\nஇந்த Driver record Firestore-லிருந்து உண்மையாக DELETE ஆகும்.\n\nDriver App access status DELETED ஆக save செய்யப்படும்.",
       "DELETE DRIVER",
       true
     );
@@ -3917,7 +4053,6 @@ async function deleteDriver(id){
       "Driver account permanently deleted."
     );
 
-
   }catch(e){
 
     console.error(e);
@@ -3934,14 +4069,13 @@ async function deleteDriver(id){
 
 
 /* =====================================================
-   WALLET ADD
+WALLET ADD
 ===================================================== */
 
 async function addWallet(id){
 
   const input =
     $("wallet-"+id);
-
 
   const amount =
     Number(
@@ -3982,13 +4116,10 @@ async function addWallet(id){
           await tx.get(ref);
 
 
-        if(!snap.exists()){
-
+        if(!snap.exists())
           throw new Error(
             "Driver not found"
           );
-
-        }
 
 
         const data =
@@ -4043,7 +4174,6 @@ async function addWallet(id){
       "Wallet added."
     );
 
-
   }catch(e){
 
     console.error(e);
@@ -4060,14 +4190,13 @@ async function addWallet(id){
 
 
 /* =====================================================
-   WALLET DEDUCT
+WALLET DEDUCT
 ===================================================== */
 
 async function deductWallet(id){
 
   const input =
     $("wallet-"+id);
-
 
   const amount =
     Number(
@@ -4123,13 +4252,10 @@ async function deductWallet(id){
           await tx.get(ref);
 
 
-        if(!snap.exists()){
-
+        if(!snap.exists())
           throw new Error(
             "Driver not found"
           );
-
-        }
 
 
         const data =
@@ -4184,7 +4310,6 @@ async function deductWallet(id){
       "Wallet deducted."
     );
 
-
   }catch(e){
 
     console.error(e);
@@ -4201,7 +4326,7 @@ async function deductWallet(id){
 
 
 /* =====================================================
-   DELETE OPEN DUTY
+DELETE OPEN DUTY
 ===================================================== */
 
 async function deleteDuty(id){
@@ -4210,7 +4335,6 @@ async function deleteDuty(id){
     duties.find(
       x => x.id === id
     );
-
 
   if(!d)
     return;
@@ -4233,8 +4357,7 @@ async function deleteDuty(id){
   const ok =
     await confirmBox(
       "DELETE DUTY",
-      "இந்த duty permanently DELETE ஆகும்.\n\n" +
-      "Delete செய்தவுடன் OPEN DUTIES-ல் இருக்காது.",
+      "இந்த duty permanently DELETE ஆகும்.\n\nDelete செய்தவுடன் OPEN DUTIES-ல் இருக்காது.",
       "DELETE DUTY",
       true
     );
@@ -4264,31 +4387,14 @@ async function deleteDuty(id){
           );
 
 
-        if(!snap.exists()){
-
+        if(!snap.exists())
           throw new Error(
             "Duty already deleted."
           );
 
-        }
-
 
         const data =
           snap.data();
-
-
-        if(
-          String(
-            data.status || "OPEN"
-          ).toUpperCase()
-          !== "OPEN"
-        ){
-
-          throw new Error(
-            "Duty is no longer OPEN."
-          );
-
-        }
 
 
         const historyRef =
@@ -4343,7 +4449,6 @@ async function deleteDuty(id){
       "Duty deleted successfully."
     );
 
-
   }catch(e){
 
     console.error(e);
@@ -4360,7 +4465,7 @@ async function deleteDuty(id){
 
 
 /* =====================================================
-   CANCEL OPEN DUTY
+CANCEL OPEN DUTY
 ===================================================== */
 
 async function cancelDuty(id){
@@ -4369,7 +4474,6 @@ async function cancelDuty(id){
     duties.find(
       x => x.id === id
     );
-
 
   if(!d)
     return;
@@ -4392,8 +4496,7 @@ async function cancelDuty(id){
   const ok =
     await confirmBox(
       "CANCEL DUTY",
-      "இந்த duty CANCEL ஆகும்.\n\n" +
-      "Cancel செய்தவுடன் OPEN DUTIES-ல் இருக்காது.",
+      "இந்த duty CANCEL ஆகும்.\n\nCancel செய்தவுடன் OPEN DUTIES-ல் இருக்காது.",
       "CANCEL DUTY",
       true
     );
@@ -4423,13 +4526,10 @@ async function cancelDuty(id){
           );
 
 
-        if(!snap.exists()){
-
+        if(!snap.exists())
           throw new Error(
             "Duty already removed."
           );
-
-        }
 
 
         const data =
@@ -4488,7 +4588,6 @@ async function cancelDuty(id){
       "Duty cancelled and removed."
     );
 
-
   }catch(e){
 
     console.error(e);
@@ -4505,7 +4604,7 @@ async function cancelDuty(id){
 
 
 /* =====================================================
-   CANCEL ACCEPTED DUTY
+CANCEL ACCEPTED DUTY
 ===================================================== */
 
 async function cancelAcceptedDuty(id){
@@ -4515,7 +4614,6 @@ async function cancelAcceptedDuty(id){
       x => x.id === id
     );
 
-
   if(!d)
     return;
 
@@ -4523,18 +4621,14 @@ async function cancelAcceptedDuty(id){
   const dr =
     driverForDuty(d);
 
-
   const driverDocId =
-    dr?.id ||
-    "";
+    dr?.id || "";
 
 
   const ok =
     await confirmBox(
       "CANCEL ACCEPTED DUTY",
-      "இந்த accepted duty CANCEL ஆகும்.\n\n" +
-      "Driver wallet-ல் ₹150 deduct ஆகும்.\n" +
-      "Wallet negative ஆகலாம்.",
+      "இந்த accepted duty CANCEL ஆகும்.\n\nDriver wallet-ல் ₹150 deduct ஆகும்.\nWallet negative ஆகலாம்.",
       "CANCEL + ₹150",
       true
     );
@@ -4564,27 +4658,19 @@ async function cancelAcceptedDuty(id){
           );
 
 
-        if(!dutySnap.exists()){
-
+        if(!dutySnap.exists())
           throw new Error(
             "Duty no longer exists."
           );
-
-        }
 
 
         const data =
           dutySnap.data();
 
 
-        let driverRef = null;
-
-        let driverSnap = null;
-
-
         if(driverDocId){
 
-          driverRef =
+          const driverRef =
             doc(
               db,
               "drivers",
@@ -4592,59 +4678,56 @@ async function cancelAcceptedDuty(id){
             );
 
 
-          driverSnap =
+          const driverSnap =
             await tx.get(
               driverRef
             );
 
-        }
+
+          if(driverSnap.exists()){
+
+            const driverData =
+              driverSnap.data();
 
 
-        if(
-          driverSnap &&
-          driverSnap.exists()
-        ){
+            const old =
+              Number(
+                driverData.walletBalance ??
+                driverData.wallet ??
+                0
+              );
 
-          const driverData =
-            driverSnap.data();
+
+            const next =
+              old - 150;
 
 
-          const old =
-            Number(
-              driverData.walletBalance ??
-              driverData.wallet ??
-              0
+            tx.update(
+              driverRef,
+              {
+
+                walletBalance:
+                  next,
+
+                wallet:
+                  next,
+
+                lastWalletAction:
+                  "DUTY_CANCEL_DEDUCTION",
+
+                lastWalletAmount:
+                  150,
+
+                walletUpdatedAt:
+                  serverTimestamp(),
+
+                updatedAt:
+                  serverTimestamp()
+
+              }
             );
 
-
-          const next =
-            old - 150;
-
-
-          tx.update(
-            driverRef,
-            {
-
-              walletBalance:
-                next,
-
-              wallet:
-                next,
-
-              lastWalletAction:
-                "DUTY_CANCEL_DEDUCTION",
-
-              lastWalletAmount:
-                150,
-
-              walletUpdatedAt:
-                serverTimestamp(),
-
-              updatedAt:
-                serverTimestamp()
-
-            }
-          );
+          }
 
         }
 
@@ -4703,7 +4786,6 @@ async function cancelAcceptedDuty(id){
       "Accepted duty cancelled. ₹150 deducted."
     );
 
-
   }catch(e){
 
     console.error(e);
@@ -4720,7 +4802,7 @@ async function cancelAcceptedDuty(id){
 
 
 /* =====================================================
-   COMPLETE DUTY
+COMPLETE DUTY
 ===================================================== */
 
 async function completeDuty(id){
@@ -4730,7 +4812,6 @@ async function completeDuty(id){
       x => x.id === id
     );
 
-
   if(!d)
     return;
 
@@ -4738,8 +4819,7 @@ async function completeDuty(id){
   const ok =
     await confirmBox(
       "COMPLETE DUTY",
-      "இந்த duty COMPLETED ஆக mark செய்யப்படும்.\n\n" +
-      "Active / Accepted list-ல் இருந்து remove ஆகும்.",
+      "இந்த duty COMPLETED ஆக mark செய்யப்படும்.\n\nActive / Accepted list-ல் இருந்து remove ஆகும்.",
       "COMPLETE",
       false
     );
@@ -4769,13 +4849,10 @@ async function completeDuty(id){
           );
 
 
-        if(!snap.exists()){
-
+        if(!snap.exists())
           throw new Error(
             "Duty no longer exists."
           );
-
-        }
 
 
         const data =
@@ -4865,7 +4942,6 @@ async function completeDuty(id){
       "Duty completed and removed."
     );
 
-
   }catch(e){
 
     console.error(e);
@@ -4882,7 +4958,7 @@ async function completeDuty(id){
 
 
 /* =====================================================
-   HISTORY SAFE
+HISTORY SAFE
 ===================================================== */
 
 function historySafe(d){
@@ -4897,6 +4973,16 @@ function historySafe(d){
     dutyType:
       d.dutyType ||
       "ONE WAY",
+
+    rentalHours:
+      Number(
+        d.rentalHours || 0
+      ),
+
+    persons:
+      Number(
+        d.persons || 0
+      ),
 
     pickup:
       d.pickup ||
@@ -4985,7 +5071,7 @@ function historySafe(d){
 
 
 /* =====================================================
-   TIMESTAMP
+TIMESTAMP
 ===================================================== */
 
 function stampMillis(v){
@@ -5029,11 +5115,10 @@ function formatStamp(v){
   const n =
     stampMillis(v);
 
-
   return n
     ?
     new Date(n)
-      .toLocaleString("en-IN")
+    .toLocaleString("en-IN")
     :
     "";
 
@@ -5041,7 +5126,7 @@ function formatStamp(v){
 
 
 /* =====================================================
-   REALTIME LISTENERS
+REALTIME LISTENERS
 ===================================================== */
 
 function startListeners(){
@@ -5084,6 +5169,7 @@ function startListeners(){
       );
 
     }
+
   );
 
 
@@ -5125,6 +5211,7 @@ function startListeners(){
       );
 
     }
+
   );
 
 
@@ -5156,6 +5243,7 @@ function startListeners(){
       );
 
     }
+
   );
 
 
@@ -5168,7 +5256,8 @@ function startListeners(){
     snap => {
 
       trips =
-        snap.docs.map(
+        snap.docs
+        .map(
           x => ({
             id:x.id,
             ...x.data()
@@ -5178,14 +5267,16 @@ function startListeners(){
           x =>
             String(
               x.status || ""
-            ).toUpperCase()
+            )
+            .toUpperCase()
             === "COMPLETED"
 
             ||
 
             String(
               x.type || ""
-            ).toUpperCase()
+            )
+            .toUpperCase()
             .includes("COMPLETE")
         );
 
@@ -5202,55 +5293,67 @@ function startListeners(){
       );
 
     }
+
   );
 
 }
 
 
 /* =====================================================
-   GLOBAL FUNCTIONS
+GLOBAL FUNCTIONS
 ===================================================== */
 
 window.createDuty =
-  createDuty;
+createDuty;
 
 window.approveDriver =
-  approveDriver;
+approveDriver;
 
 window.rejectDriver =
-  rejectDriver;
+rejectDriver;
 
 window.blockDriver =
-  blockDriver;
+blockDriver;
 
 window.unblockDriver =
-  unblockDriver;
+unblockDriver;
 
 window.deleteDriver =
-  deleteDriver;
+deleteDriver;
 
 window.addWallet =
-  addWallet;
+addWallet;
 
 window.deductWallet =
-  deductWallet;
+deductWallet;
 
 window.deleteDuty =
-  deleteDuty;
+deleteDuty;
 
 window.cancelDuty =
-  cancelDuty;
+cancelDuty;
 
 window.cancelAcceptedDuty =
-  cancelAcceptedDuty;
+cancelAcceptedDuty;
 
 window.completeDuty =
-  completeDuty;
+completeDuty;
 
 
 /* =====================================================
-   LOGIN FIRST
+ENTER KEY LOGIN
 ===================================================== */
+
+$("adminPassword")
+?.addEventListener(
+  "keydown",
+  e => {
+
+    if(e.key === "Enter")
+      adminLogin();
+
+  }
+);
 
 </script>
 
