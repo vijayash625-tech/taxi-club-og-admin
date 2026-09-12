@@ -1,723 +1,5103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>TAXI CLUB OG - Admin Panel</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#172033}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer;border:0}
-.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid #e5e9f0;padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
-.brand{font-size:20px;font-weight:800}.brand small{display:block;font-size:11px;color:#64748b;margin-top:3px}
-.status{font-size:12px;padding:7px 10px;border-radius:20px;background:#e9f8ef;color:#087443;font-weight:700}
-nav{position:sticky;top:71px;z-index:19;background:#fff;border-bottom:1px solid #e5e9f0;display:grid;grid-template-columns:repeat(4,1fr)}
-nav button{padding:13px 4px;background:#fff;color:#526074;font-weight:700;font-size:12px}
-nav button.active{color:#1769e0;border-bottom:3px solid #1769e0;background:#f5f9ff}
-main{max-width:900px;margin:auto;padding:16px 14px 70px}
-h1{margin:6px 0 4px;font-size:28px}.sub{color:#68758a;margin-bottom:18px}
-.card{background:#fff;border:1px solid #e3e8f0;border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 3px 14px #1b31500d}
-.card h2{font-size:18px;margin:0 0 14px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
-.field label{display:block;font-size:12px;font-weight:700;color:#56647a;margin-bottom:5px}
-.field input,.field select,.field textarea{width:100%;padding:12px;border:1px solid #d7dee9;border-radius:11px;background:#fff;outline:none}
-.field textarea{min-height:80px;resize:vertical}
-.full{grid-column:1/-1}
-.btn{padding:11px 14px;border-radius:11px;font-weight:800}
-.primary{background:#1769e0;color:#fff}.green{background:#0b9b62;color:#fff}.red{background:#d92d4a;color:#fff}.orange{background:#e88a00;color:#fff}.gray{background:#edf1f6;color:#25344b}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.actions .btn{flex:1;min-width:110px}
-.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.stat{padding:14px;border-radius:15px;background:#f7f9fc;border:1px solid #e5e9f0}
-.stat b{display:block;font-size:24px}.stat span{font-size:11px;color:#68758a}
-.driver,.duty{border:1px solid #e1e7ef;border-radius:16px;padding:14px;margin:10px 0;background:#fff}
-.row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.name{font-size:19px;font-weight:800}.muted{color:#66758b;font-size:13px;line-height:1.55}
-.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800}
-.approved{background:#e7f8ef;color:#087443}.blocked{background:#ffe8ed;color:#b4233d}.pending{background:#fff3d6;color:#9a6500}.rejected{background:#ffe8ed;color:#b4233d}
-.open{background:#e9f3ff;color:#1769e0}.accepted{background:#eaf8ef;color:#087443}.cancelled{background:#fff0df;color:#a45b00}.completed{background:#e9eafc;color:#4438a8}
-.route{font-size:16px;font-weight:700;margin:10px 0}.route div{padding:4px 0}
-.money{font-size:21px;font-weight:900}.wallet{font-size:24px;font-weight:900}.negative{color:#d92d4a}
-.empty{text-align:center;padding:25px;color:#738097}
-.notice{padding:12px;border-radius:12px;background:#eef6ff;color:#15559b;font-weight:700;margin:10px 0}
-.loading{text-align:center;padding:25px;color:#64748b}
-.hidden{display:none!important}
-@media(max-width:650px){.grid{grid-template-columns:1fr}.statgrid{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}.top{padding:12px}.brand{font-size:18px}}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f7fb;
+  color:#172033;
+}
+
+button,
+input,
+select,
+textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+  border:0;
+}
+
+
+/* =====================================================
+   LOGIN SCREEN
+===================================================== */
+
+#loginScreen{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(
+    135deg,
+    #eef6ff,
+    #f8fbff
+  );
+}
+
+.loginCard{
+  width:100%;
+  max-width:400px;
+  background:#ffffff;
+  border:1px solid #dfe7f1;
+  border-radius:22px;
+  padding:28px 22px;
+  box-shadow:
+    0 15px 50px rgba(20,40,70,.12);
+}
+
+.loginLogo{
+  text-align:center;
+  font-size:25px;
+  font-weight:900;
+  color:#1769e0;
+  margin-bottom:5px;
+}
+
+.loginSub{
+  text-align:center;
+  color:#68758a;
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:26px;
+}
+
+.loginTitle{
+  font-size:20px;
+  font-weight:900;
+  margin-bottom:18px;
+  color:#172033;
+}
+
+.loginField{
+  margin-bottom:14px;
+}
+
+.loginField label{
+  display:block;
+  margin-bottom:6px;
+  color:#58667a;
+  font-size:12px;
+  font-weight:800;
+}
+
+.loginField input{
+  width:100%;
+  padding:13px;
+  border:1px solid #d5dce7;
+  border-radius:11px;
+  background:#fff;
+  outline:none;
+}
+
+.loginField input:focus{
+  border-color:#1769e0;
+  box-shadow:
+    0 0 0 3px rgba(23,105,224,.08);
+}
+
+.loginButton{
+  width:100%;
+  padding:14px;
+  margin-top:5px;
+  border-radius:11px;
+  background:#1769e0;
+  color:#fff;
+  font-weight:900;
+  font-size:15px;
+}
+
+.loginButton:active{
+  transform:scale(.98);
+}
+
+.loginError{
+  display:none;
+  margin-top:12px;
+  padding:11px;
+  border-radius:10px;
+  background:#ffe8ed;
+  color:#b4233d;
+  font-size:12px;
+  font-weight:800;
+  text-align:center;
+}
+
+.loginError.show{
+  display:block;
+}
+
+
+/* =====================================================
+   ADMIN PANEL
+===================================================== */
+
+#panelScreen{
+  display:none;
+}
+
+
+.top{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:#fff;
+  border-bottom:1px solid #e4e8ef;
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.brand{
+  font-size:20px;
+  font-weight:900;
+}
+
+.brand small{
+  display:block;
+  margin-top:3px;
+  color:#68758a;
+  font-size:11px;
+  font-weight:700;
+}
+
+.headerRight{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.status{
+  padding:7px 11px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:800;
+  background:#e9f8ef;
+  color:#087443;
+}
+
+.logoutBtn{
+  padding:8px 11px;
+  border-radius:9px;
+  background:#edf1f6;
+  color:#26364e;
+  font-size:11px;
+  font-weight:900;
+}
+
+nav{
+  position:sticky;
+  top:69px;
+  z-index:49;
+  background:#fff;
+  border-bottom:1px solid #e4e8ef;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+}
+
+nav button{
+  padding:14px 3px;
+  background:#fff;
+  color:#59677b;
+  font-size:12px;
+  font-weight:800;
+}
+
+nav button.active{
+  color:#1769e0;
+  background:#f5f9ff;
+  border-bottom:3px solid #1769e0;
+}
+
+main{
+  max-width:900px;
+  margin:auto;
+  padding:16px 14px 80px;
+}
+
+h1{
+  margin:5px 0 4px;
+  font-size:27px;
+}
+
+.sub{
+  color:#6a778b;
+  margin-bottom:16px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid #e1e7ef;
+  border-radius:18px;
+  padding:16px;
+  margin:12px 0;
+  box-shadow:0 3px 15px rgba(20,40,70,.05);
+}
+
+.card h2{
+  margin:0 0 14px;
+  font-size:18px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:11px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:5px;
+  color:#58667a;
+  font-size:12px;
+  font-weight:800;
+}
+
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #d5dce7;
+  border-radius:11px;
+  background:#fff;
+  outline:none;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:#1769e0;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+
+.btn{
+  padding:11px 14px;
+  border-radius:11px;
+  font-weight:800;
+  min-width:105px;
+}
+
+.primary{
+  background:#1769e0;
+  color:#fff;
+}
+
+.green{
+  background:#0a9b62;
+  color:#fff;
+}
+
+.red{
+  background:#d92d4a;
+  color:#fff;
+}
+
+.orange{
+  background:#e58a00;
+  color:#fff;
+}
+
+.gray{
+  background:#edf1f6;
+  color:#26364e;
+}
+
+.blue{
+  background:#eaf3ff;
+  color:#1769e0;
+}
+
+.statgrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.stat{
+  background:#fff;
+  border:1px solid #e1e7ef;
+  border-radius:15px;
+  padding:14px;
+  cursor:pointer;
+  transition:.18s;
+  user-select:none;
+}
+
+.stat:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 18px rgba(20,40,70,.10);
+}
+
+.stat:active{
+  transform:scale(.98);
+}
+
+.stat b{
+  display:block;
+  font-size:24px;
+}
+
+.stat span{
+  color:#6a778b;
+  font-size:10px;
+  font-weight:700;
+}
+
+.driver,
+.duty{
+  background:#fff;
+  border:1px solid #e0e6ef;
+  border-radius:16px;
+  padding:14px;
+  margin:10px 0;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.name{
+  font-size:19px;
+  font-weight:900;
+}
+
+.muted{
+  color:#66758a;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.route{
+  margin:10px 0;
+  font-size:16px;
+  font-weight:700;
+}
+
+.route div{
+  padding:4px 0;
+}
+
+.money{
+  font-size:21px;
+  font-weight:900;
+  margin-top:8px;
+}
+
+.wallet{
+  font-size:25px;
+  font-weight:900;
+}
+
+.negative{
+  color:#d92d4a;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.approved{
+  background:#e7f8ef;
+  color:#087443;
+}
+
+.blocked{
+  background:#ffe8ed;
+  color:#b4233d;
+}
+
+.pending{
+  background:#fff3d6;
+  color:#9a6500;
+}
+
+.rejected{
+  background:#ffe8ed;
+  color:#b4233d;
+}
+
+.open{
+  background:#e9f3ff;
+  color:#1769e0;
+}
+
+.accepted{
+  background:#eaf8ef;
+  color:#087443;
+}
+
+.cancelled{
+  background:#fff0df;
+  color:#a45b00;
+}
+
+.completed{
+  background:#ecebff;
+  color:#4438a8;
+}
+
+.deleted{
+  background:#ffe8ed;
+  color:#b4233d;
+}
+
+.notice{
+  padding:12px;
+  border-radius:12px;
+  background:#eef6ff;
+  color:#15559b;
+  font-weight:700;
+  margin:10px 0;
+}
+
+.empty{
+  text-align:center;
+  padding:25px;
+  color:#738097;
+}
+
+.loading{
+  text-align:center;
+  padding:30px;
+  color:#66758a;
+}
+
+
+/* =====================================================
+   CUSTOM MODAL
+===================================================== */
+
+.modalBack{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(0,0,0,.48);
+}
+
+.modalBack.show{
+  display:flex;
+}
+
+.modal{
+  width:100%;
+  max-width:430px;
+  background:#fff;
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.modalTitle{
+  font-size:19px;
+  font-weight:900;
+  margin-bottom:9px;
+}
+
+.modalText{
+  color:#5f6d81;
+  line-height:1.55;
+  white-space:pre-line;
+}
+
+.modalActions{
+  display:flex;
+  gap:9px;
+  margin-top:18px;
+}
+
+.modalActions button{
+  flex:1;
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:25px;
+  transform:translateX(-50%) translateY(100px);
+  z-index:10000;
+  background:#172033;
+  color:#fff;
+  padding:13px 17px;
+  border-radius:12px;
+  font-weight:700;
+  font-size:13px;
+  opacity:0;
+  transition:.25s;
+  max-width:90%;
+  text-align:center;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+.toast.error{
+  background:#b4233d;
+}
+
+
+@media(max-width:650px){
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .statgrid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  h1{
+    font-size:24px;
+  }
+
+  .brand{
+    font-size:18px;
+  }
+
+  .top{
+    padding:12px;
+  }
+
+  .btn{
+    min-width:100px;
+  }
+
+  .headerRight{
+    gap:5px;
+  }
+
+  .status{
+    display:none;
+  }
+
+}
+
 </style>
 </head>
+
+
 <body>
 
+
+<!-- =====================================================
+     LOGIN SCREEN
+===================================================== -->
+
+<div id="loginScreen">
+
+  <div class="loginCard">
+
+    <div class="loginLogo">
+      🚕 TAXI CLUB OG
+    </div>
+
+    <div class="loginSub">
+      ADMIN PANEL
+    </div>
+
+    <div class="loginTitle">
+      ADMIN LOGIN
+    </div>
+
+
+    <div class="loginField">
+
+      <label>
+        USER ID
+      </label>
+
+      <input
+        id="adminUserId"
+        type="text"
+        inputmode="numeric"
+        autocomplete="username"
+        placeholder="Enter User ID">
+
+    </div>
+
+
+    <div class="loginField">
+
+      <label>
+        PASSWORD
+      </label>
+
+      <input
+        id="adminPassword"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Enter Password">
+
+    </div>
+
+
+    <button
+      class="loginButton"
+      onclick="adminLogin()">
+
+      LOGIN
+
+    </button>
+
+
+    <div
+      id="loginError"
+      class="loginError">
+
+      Invalid User ID or Password.
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     ADMIN PANEL
+===================================================== -->
+
+<div id="panelScreen">
+
+
 <header class="top">
-  <div class="brand">🚕 TAXI CLUB OG<small>ADMIN PANEL</small></div>
-  <div id="connection" class="status">CONNECTING...</div>
+
+  <div class="brand">
+
+    🚕 TAXI CLUB OG
+
+    <small>
+      ADMIN PANEL
+    </small>
+
+  </div>
+
+
+  <div class="headerRight">
+
+    <div
+      id="connection"
+      class="status">
+
+      CONNECTING...
+
+    </div>
+
+
+    <button
+      class="logoutBtn"
+      onclick="adminLogout()">
+
+      LOGOUT
+
+    </button>
+
+  </div>
+
 </header>
 
+
 <nav>
-  <button id="nav-duty" class="active" onclick="showPage('duty')">🚕 DUTY</button>
-  <button id="nav-open" onclick="showPage('open')">🟢 OPEN</button>
-  <button id="nav-accepted" onclick="showPage('accepted')">✅ ACCEPTED</button>
-  <button id="nav-history" onclick="showPage('history')">📋 HISTORY</button>
+
+  <button
+    id="nav-duty"
+    class="active"
+    onclick="showPage('duty')">
+
+    🚕 DUTY
+
+  </button>
+
+
+  <button
+    id="nav-open"
+    onclick="showPage('open')">
+
+    🟢 OPEN
+
+  </button>
+
+
+  <button
+    id="nav-accepted"
+    onclick="showPage('accepted')">
+
+    ✅ ACCEPTED
+
+  </button>
+
+
+  <button
+    id="nav-history"
+    onclick="showPage('history')">
+
+    📋 HISTORY
+
+  </button>
+
 </nav>
 
-<main id="app"><div class="loading">Loading...</div></main>
+
+<main id="app">
+
+  <div class="loading">
+    Loading...
+  </div>
+
+</main>
+
+
+<div
+  id="modalBack"
+  class="modalBack">
+
+  <div class="modal">
+
+    <div
+      id="modalTitle"
+      class="modalTitle">
+
+      Confirm
+
+    </div>
+
+
+    <div
+      id="modalText"
+      class="modalText">
+    </div>
+
+
+    <div class="modalActions">
+
+      <button
+        id="modalCancel"
+        class="btn gray">
+
+        CANCEL
+
+      </button>
+
+
+      <button
+        id="modalOK"
+        class="btn red">
+
+        CONFIRM
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div
+  id="toast"
+  class="toast">
+</div>
+
+
+</div>
+
 
 <script type="module">
-import {initializeApp}
-from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+
+/* =====================================================
+   FIREBASE
+===================================================== */
+
+import {
+  initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
 
 import {
   getFirestore,
   collection,
   addDoc,
-  getDocs,
   doc,
   updateDoc,
-  deleteDoc,
   onSnapshot,
   serverTimestamp,
   runTransaction
 }
-from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+from
+"https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
-const firebaseConfig={
-  apiKey:"AIzaSyCXOKF-5BEE_qqZWuO08A_Dks4F0b-3q8",
-  authDomain:"taxi-club-og-driver.firebaseapp.com",
-  projectId:"taxi-club-og-driver",
-  storageBucket:"taxi-club-og-driver.firebasestorage.app",
-  messagingSenderId:"319131350971",
-  appId:"1:319131350971:web:922a1bb441b4f63823769e",
-  measurementId:"G-FY2SEGK4WG"
+
+const firebaseConfig = {
+
+  apiKey:
+  "AIzaSyCXOKF-5BEE_qqZWuO08A_Dks4F0b-3q8",
+
+  authDomain:
+  "taxi-club-og-driver.firebaseapp.com",
+
+  projectId:
+  "taxi-club-og-driver",
+
+  storageBucket:
+  "taxi-club-og-driver.firebasestorage.app",
+
+  messagingSenderId:
+  "319131350971",
+
+  appId:
+  "1:319131350971:web:922a1bb441b4f63823769e",
+
+  measurementId:
+  "G-FY2SEGK4WG"
+
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
 
-let page="duty";
-let drivers=[];
-let duties=[];
-let history=[];
-let unDrivers=null;
-let unDuties=null;
+const app =
+  initializeApp(firebaseConfig);
 
-const $=id=>document.getElementById(id);
-const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+const db =
+  getFirestore(app);
 
-window.showPage=function(p){
-  page=p;
-  ["duty","open","accepted","history"].forEach(x=>{
-    $("nav-"+x).classList.toggle("active",x===p);
-  });
-  render();
-};
 
-function setConnected(ok){
-  $("connection").textContent=ok?"FIREBASE CONNECTED":"FIREBASE ERROR";
-  $("connection").style.background=ok?"#e9f8ef":"#ffe8ed";
-  $("connection").style.color=ok?"#087443":"#b4233d";
-}
+/* =====================================================
+   ADMIN LOGIN
+===================================================== */
 
-function normalizeDate(v){
-  let s=String(v||"").replace(/\D/g,"").slice(0,8);
-  if(s.length===8)return s.slice(0,2)+"/"+s.slice(2,4)+"/"+s.slice(4,8);
-  return v||"";
-}
+const ADMIN_USER_ID =
+  "7708988625";
 
-window.formatDate=function(input){
-  input.value=normalizeDate(input.value);
-};
+const ADMIN_PASSWORD =
+  "VIJAY8978";
 
-function statusOf(d){return String(d.status||"OPEN").toUpperCase();}
+let listenersStarted =
+  false;
 
-function driverForDuty(d){
-  const keys=[
-    ["acceptedByUid",d.acceptedByUid],
-    ["acceptedDriverId",d.acceptedDriverId],
-    ["driverId",d.driverId],
-    ["mobile",d.driverMobile]
-  ];
-  for(const [,value] of keys){
-    if(!value)continue;
-    const found=drivers.find(x=>
-      String(x.uid||"")===String(value) ||
-      String(x.driverId||x.id||"")===String(value) ||
-      String(x.mobile||x.phone||"")===String(value)
-    );
-    if(found)return found;
+
+window.adminLogin =
+function(){
+
+  const userId =
+    $("adminUserId")
+      .value
+      .trim();
+
+
+  const password =
+    $("adminPassword")
+      .value;
+
+
+  if(
+    userId === ADMIN_USER_ID &&
+    password === ADMIN_PASSWORD
+  ){
+
+    $("loginError")
+      .classList
+      .remove("show");
+
+
+    $("adminPassword")
+      .value = "";
+
+
+    $("loginScreen")
+      .style.display =
+      "none";
+
+
+    $("panelScreen")
+      .style.display =
+      "block";
+
+
+    if(!listenersStarted){
+
+      listenersStarted = true;
+
+      startListeners();
+
+    }
+
+
+    render();
+
   }
-  return null;
+  else{
+
+    $("loginError")
+      .classList
+      .add("show");
+
+  }
+
+};
+
+
+window.adminLogout =
+function(){
+
+  $("panelScreen")
+    .style.display =
+    "none";
+
+
+  $("loginScreen")
+    .style.display =
+    "flex";
+
+
+  $("adminUserId")
+    .value = "";
+
+
+  $("adminPassword")
+    .value = "";
+
+
+  $("loginError")
+    .classList
+    .remove("show");
+
+};
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let page = "duty";
+
+let drivers = [];
+
+let duties = [];
+
+let history = [];
+
+let trips = [];
+
+let driverFilter = "ALL";
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+const $ =
+  id => document.getElementById(id);
+
+
+function esc(value){
+
+  return String(value ?? "")
+    .replace(
+      /[&<>"']/g,
+      m => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      }[m])
+    );
+
 }
+
+
+function statusOf(d){
+
+  return String(
+    d.status || "OPEN"
+  ).toUpperCase();
+
+}
+
 
 function driverStatus(d){
-  const s=String(d.status||"PENDING").toUpperCase();
-  if(d.approved===true||s==="APPROVED"||s==="ACTIVE")return "APPROVED";
+
+  const s =
+    String(
+      d.status || "PENDING"
+    ).toUpperCase();
+
+
+  if(
+    d.approved === true ||
+    s === "APPROVED" ||
+    s === "ACTIVE"
+  ){
+
+    return "APPROVED";
+
+  }
+
+
   return s;
+
 }
+
+
+function normalizeDate(value){
+
+  let s =
+    String(value || "")
+      .replace(/\D/g,"")
+      .slice(0,8);
+
+
+  if(s.length === 8){
+
+    return (
+      s.slice(0,2) +
+      "/" +
+      s.slice(2,4) +
+      "/" +
+      s.slice(4,8)
+    );
+
+  }
+
+
+  return value || "";
+
+}
+
+
+window.formatDate =
+function(input){
+
+  let raw =
+    input.value
+      .replace(/\D/g,"")
+      .slice(0,8);
+
+
+  if(raw.length <= 2){
+
+    input.value = raw;
+
+  }
+  else if(raw.length <= 4){
+
+    input.value =
+      raw.slice(0,2) +
+      "/" +
+      raw.slice(2);
+
+  }
+  else{
+
+    input.value =
+      raw.slice(0,2) +
+      "/" +
+      raw.slice(2,4) +
+      "/" +
+      raw.slice(4);
+
+  }
+
+};
+
+
+/* =====================================================
+   TIME FORMAT - AM / PM
+===================================================== */
+
+window.formatTime =
+function(input){
+
+  let raw =
+    input.value
+      .toUpperCase()
+      .replace(/[^0-9APM: ]/g,"")
+      .slice(0,8);
+
+
+  input.value =
+    raw;
+
+};
+
+
+/* =====================================================
+   TIME VALIDATION
+===================================================== */
+
+function normalizeTime(value){
+
+  let s =
+    String(value || "")
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g," ");
+
+  return s;
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function toast(
+  message,
+  error=false
+){
+
+  const t =
+    $("toast");
+
+
+  t.textContent =
+    message;
+
+
+  t.classList.toggle(
+    "error",
+    error
+  );
+
+
+  t.classList.add("show");
+
+
+  clearTimeout(
+    window.__toastTimer
+  );
+
+
+  window.__toastTimer =
+    setTimeout(
+      () =>
+        t.classList.remove("show"),
+      3000
+    );
+
+}
+
+
+/* =====================================================
+   CUSTOM CONFIRM
+===================================================== */
+
+function confirmBox(
+  title,
+  text,
+  okText="CONFIRM",
+  danger=true
+){
+
+  return new Promise(resolve => {
+
+    const back =
+      $("modalBack");
+
+
+    $("modalTitle")
+      .textContent =
+      title;
+
+
+    $("modalText")
+      .textContent =
+      text;
+
+
+    $("modalOK")
+      .textContent =
+      okText;
+
+
+    $("modalOK")
+      .style
+      .background =
+      danger
+      ? "#d92d4a"
+      : "#1769e0";
+
+
+    $("modalCancel").onclick =
+      () => {
+
+        back
+          .classList
+          .remove("show");
+
+        resolve(false);
+
+      };
+
+
+    $("modalOK").onclick =
+      () => {
+
+        back
+          .classList
+          .remove("show");
+
+        resolve(true);
+
+      };
+
+
+    back
+      .classList
+      .add("show");
+
+  });
+
+}
+
+
+/* =====================================================
+   DASHBOARD BOX FILTERS
+===================================================== */
+
+window.showDriverFilter =
+function(filter){
+
+  driverFilter =
+    String(
+      filter || "ALL"
+    ).toUpperCase();
+
+
+  page = "duty";
+
+
+  [
+    "duty",
+    "open",
+    "accepted",
+    "history"
+  ]
+  .forEach(x => {
+
+    $("nav-"+x)
+      .classList
+      .toggle(
+        "active",
+        x === "duty"
+      );
+
+  });
+
+
+  render();
+
+};
+
+
+window.showOpenDuties =
+function(){
+
+  driverFilter =
+    "ALL";
+
+
+  showPage("open");
+
+};
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+window.showPage =
+function(p){
+
+  page = p;
+
+
+  if(p === "duty"){
+
+    driverFilter =
+      "ALL";
+
+  }
+
+
+  [
+    "duty",
+    "open",
+    "accepted",
+    "history"
+  ]
+  .forEach(x => {
+
+    $("nav-"+x)
+      .classList
+      .toggle(
+        "active",
+        x === p
+      );
+
+  });
+
+
+  render();
+
+};
+
+
+/* =====================================================
+   CONNECTION
+===================================================== */
+
+function setConnected(ok){
+
+  $("connection")
+    .textContent =
+    ok
+    ? "FIREBASE CONNECTED"
+    : "FIREBASE ERROR";
+
+
+  $("connection")
+    .style
+    .background =
+    ok
+    ? "#e9f8ef"
+    : "#ffe8ed";
+
+
+  $("connection")
+    .style
+    .color =
+    ok
+    ? "#087443"
+    : "#b4233d";
+
+}
+
+
+/* =====================================================
+   DRIVER FINDER
+===================================================== */
+
+function driverForDuty(d){
+
+  const values = [
+
+    d.acceptedByUid,
+
+    d.acceptedDriverId,
+
+    d.driverId,
+
+    d.driverMobile
+
+  ];
+
+
+  for(
+    const value of values
+  ){
+
+    if(!value)
+      continue;
+
+
+    const found =
+      drivers.find(x =>
+
+        String(
+          x.uid || ""
+        ) === String(value)
+
+        ||
+
+        String(
+          x.driverId ||
+          x.id ||
+          ""
+        ) === String(value)
+
+        ||
+
+        String(
+          x.mobile ||
+          x.phone ||
+          ""
+        ) === String(value)
+
+      );
+
+
+    if(found)
+      return found;
+
+  }
+
+
+  return null;
+
+}
+
+
+/* =====================================================
+   RENDER
+===================================================== */
 
 function render(){
-  if(page==="duty")renderDuty();
-  if(page==="open")renderOpen();
-  if(page==="accepted")renderAccepted();
-  if(page==="history")renderHistory();
+
+  if(page === "duty")
+    renderDuty();
+
+  else if(page === "open")
+    renderOpen();
+
+  else if(page === "accepted")
+    renderAccepted();
+
+  else if(page === "history")
+    renderHistory();
+
 }
+
+
+/* =====================================================
+   DUTY PAGE
+===================================================== */
 
 function renderDuty(){
-  const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;
-  const pending=drivers.filter(d=>driverStatus(d)==="PENDING").length;
-  const open=duties.filter(d=>statusOf(d)==="OPEN").length;
-  const accepted=duties.filter(d=>statusOf(d)==="ACCEPTED"||statusOf(d)==="STARTED").length;
 
-  $("app").innerHTML=`
-    <h1>🚕 Duty Management</h1>
-    <div class="sub">Create duty + driver approval/payment control</div>
+  const approved =
+    drivers.filter(
+      d =>
+        driverStatus(d)
+        === "APPROVED"
+    ).length;
+
+
+  const pending =
+    drivers.filter(
+      d =>
+        driverStatus(d)
+        === "PENDING"
+    ).length;
+
+
+  const blocked =
+    drivers.filter(
+      d =>
+        driverStatus(d)
+        === "BLOCKED"
+    ).length;
+
+
+  const open =
+    duties.filter(
+      d =>
+        statusOf(d)
+        === "OPEN"
+    ).length;
+
+
+  let filteredDrivers =
+    drivers;
+
+
+  if(
+    driverFilter === "APPROVED"
+    ||
+    driverFilter === "PENDING"
+    ||
+    driverFilter === "BLOCKED"
+  ){
+
+    filteredDrivers =
+      drivers.filter(
+        d =>
+          driverStatus(d)
+          === driverFilter
+      );
+
+  }
+
+
+  let filterTitle =
+    "ALL DRIVERS";
+
+
+  if(driverFilter !== "ALL"){
+
+    filterTitle =
+      driverFilter +
+      " DRIVERS";
+
+  }
+
+
+  $("app").innerHTML = `
+
+    <h1>
+      🚕 Duty Management
+    </h1>
+
+    <div class="sub">
+      Duty creation + ₹400 registration approval
+    </div>
+
 
     <div class="statgrid">
-      <div class="stat"><b>${approved}</b><span>APPROVED DRIVERS</span></div>
-      <div class="stat"><b>${pending}</b><span>PENDING DRIVERS</span></div>
-      <div class="stat"><b>${open}</b><span>OPEN DUTIES</span></div>
-      <div class="stat"><b>${accepted}</b><span>ACCEPTED</span></div>
+
+
+      <div
+        class="stat"
+        onclick="showDriverFilter('APPROVED')"
+        title="Show Approved Drivers">
+
+        <b>${approved}</b>
+
+        <span>
+          APPROVED
+        </span>
+
+      </div>
+
+
+      <div
+        class="stat"
+        onclick="showDriverFilter('PENDING')"
+        title="Show Pending Drivers">
+
+        <b>${pending}</b>
+
+        <span>
+          PENDING
+        </span>
+
+      </div>
+
+
+      <div
+        class="stat"
+        onclick="showDriverFilter('BLOCKED')"
+        title="Show Blocked Drivers">
+
+        <b>${blocked}</b>
+
+        <span>
+          BLOCKED
+        </span>
+
+      </div>
+
+
+      <div
+        class="stat"
+        onclick="showOpenDuties()"
+        title="Show Open Duties">
+
+        <b>${open}</b>
+
+        <span>
+          OPEN DUTIES
+        </span>
+
+      </div>
+
+
     </div>
 
+
     <div class="card">
-      <h2>➕ CREATE DUTY</h2>
+
+      <h2>
+        ➕ CREATE DUTY
+      </h2>
+
       <div class="grid">
-        <div class="field"><label>PICKUP</label><input id="pickup" placeholder="Pickup location"></div>
-        <div class="field"><label>DROP</label><input id="drop" placeholder="Drop location"></div>
-        <div class="field"><label>DATE</label><input id="date" type="text" inputmode="numeric" maxlength="10" placeholder="DD/MM/YYYY" oninput="formatDate(this)"></div>
-        <div class="field"><label>TIME</label><input id="time" type="time"></div>
-        <div class="field"><label>VEHICLE</label>
-          <select id="vehicle"><option>SEDAN</option><option>SUV</option><option>MINI</option></select>
+
+
+        <div class="field">
+
+          <label>
+            PICKUP
+          </label>
+
+          <input
+            id="pickup"
+            placeholder="Pickup location">
+
         </div>
-        <div class="field"><label>KM</label><input id="km" type="number" min="0" placeholder="KM"></div>
-        <div class="field"><label>AMOUNT ₹</label><input id="amount" type="number" min="0" placeholder="Amount"></div>
-        <div class="field"><label>NOTE</label><input id="note" placeholder="Toll / parking / extra note"></div>
+
+
+        <div class="field">
+
+          <label>
+            DROP
+          </label>
+
+          <input
+            id="drop"
+            placeholder="Drop location">
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            DATE
+          </label>
+
+          <input
+            id="date"
+            type="text"
+            inputmode="numeric"
+            maxlength="10"
+            placeholder="DD/MM/YYYY"
+            oninput="formatDate(this)">
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            TIME
+          </label>
+
+          <input
+            id="time"
+            type="text"
+            maxlength="8"
+            placeholder="05:15 AM"
+            autocomplete="off"
+            oninput="formatTime(this)">
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            VEHICLE
+          </label>
+
+          <select id="vehicle">
+
+            <option>
+              SEDAN
+            </option>
+
+            <option>
+              SUV
+            </option>
+
+            <option>
+              MINI
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            KM
+          </label>
+
+          <input
+            id="km"
+            type="number"
+            min="0"
+            placeholder="KM">
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            AMOUNT ₹
+          </label>
+
+          <input
+            id="amount"
+            type="number"
+            min="0"
+            placeholder="Amount">
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            NOTE
+          </label>
+
+          <input
+            id="note"
+            placeholder="Toll / parking / extra">
+
+        </div>
+
       </div>
+
+
       <div class="actions">
-        <button class="btn primary" onclick="createDuty()">CREATE DUTY</button>
+
+        <button
+          class="btn primary"
+          onclick="createDuty()">
+
+          CREATE DUTY
+
+        </button>
+
       </div>
+
     </div>
 
+
     <div class="card">
-      <h2>👨‍✈️ DRIVER APPROVAL</h2>
-      <div class="notice">Driver registers → ₹400 payment → Admin approves. Only APPROVED drivers can use the Driver App.</div>
-      ${drivers.length?drivers.map(driverCard).join(""):`<div class="empty">No drivers found.</div>`}
+
+      <div class="row">
+
+        <h2 style="margin-bottom:0">
+
+          👨‍✈️ ${filterTitle}
+
+        </h2>
+
+
+        ${
+          driverFilter !== "ALL"
+          ?
+          `
+          <button
+            class="btn blue"
+            onclick="showDriverFilter('ALL')">
+
+            SHOW ALL
+
+          </button>
+          `
+          :
+          ""
+        }
+
+      </div>
+
+
+      <div class="notice">
+
+        Driver Register →
+        ₹400 Payment →
+        Admin APPROVE →
+        Driver App Access
+
+      </div>
+
+
+      ${
+        filteredDrivers.length
+        ?
+        filteredDrivers
+          .map(driverCard)
+          .join("")
+        :
+        `
+        <div class="empty">
+
+          ${
+            driverFilter === "ALL"
+            ?
+            "No drivers found."
+            :
+            "No " +
+            driverFilter.toLowerCase() +
+            " drivers found."
+          }
+
+        </div>
+        `
+      }
+
     </div>
+
   `;
+
 }
+
+
+/* =====================================================
+   DRIVER CARD
+===================================================== */
 
 function driverCard(d){
-  const s=driverStatus(d);
-  const wallet=Number(d.walletBalance??d.wallet??0);
+
+  const s =
+    driverStatus(d);
+
+
+  const wallet =
+    Number(
+      d.walletBalance ??
+      d.wallet ??
+      0
+    );
+
+
+  const name =
+    d.name ||
+    d.driverName ||
+    "Driver";
+
+
+  const mobile =
+    d.mobile ||
+    d.phone ||
+    "-";
+
+
+  const payment =
+    String(
+      d.paymentStatus ||
+      "PENDING"
+    ).toUpperCase();
+
+
   return `
+
   <div class="driver">
+
+
     <div class="row">
+
       <div>
-        <div class="name">👨‍✈️ ${esc(d.name||d.driverName||"Driver")}</div>
-        <div class="muted">📱 ${esc(d.mobile||d.phone||"")}<br>
-        🪪 ${esc(d.licenseNumber||"-")}<br>
-        🚕 ${esc(d.vehicleNumber||"-")} - ${esc(d.vehicleModel||d.vehicle||"-")}</div>
+
+        <div class="name">
+
+          👨‍✈️ ${esc(name)}
+
+        </div>
+
+
+        <div class="muted">
+
+          📱 ${esc(mobile)}
+
+          <br>
+
+          🪪 ${esc(
+            d.licenseNumber ||
+            "-"
+          )}
+
+          <br>
+
+          🚕 ${esc(
+            d.vehicleNumber ||
+            "-"
+          )}
+
+          -
+
+          ${esc(
+            d.vehicleModel ||
+            d.vehicle ||
+            "-"
+          )}
+
+        </div>
+
       </div>
-      <span class="badge ${s==="APPROVED"?"approved":s==="BLOCKED"?"blocked":s==="REJECTED"?"rejected":"pending"}">${esc(s)}</span>
+
+
+      <span class="badge ${
+        s === "APPROVED"
+        ? "approved"
+        : s === "BLOCKED"
+        ? "blocked"
+        : s === "REJECTED"
+        ? "rejected"
+        : "pending"
+      }">
+
+        ${esc(s)}
+
+      </span>
+
     </div>
 
-    <div class="muted" style="margin-top:8px">
-      Payment: <b>${esc(String(d.paymentStatus||"PENDING").toUpperCase())}</b>
-      &nbsp; | &nbsp; Registration: <b>₹${Number(d.registrationFee||400)}</b>
+
+    <div
+      class="muted"
+      style="margin-top:8px">
+
+      💳 Payment:
+      <b>${esc(payment)}</b>
+
+      &nbsp; | &nbsp;
+
+      Registration:
+      <b>₹400</b>
+
     </div>
+
 
     <div class="actions">
-      ${s!=="APPROVED"?`<button class="btn green" onclick="approveDriver('${esc(d.id)}')">✓ APPROVE</button>`:""}
-      ${s!=="REJECTED"?`<button class="btn orange" onclick="rejectDriver('${esc(d.id)}')">✕ REJECT</button>`:""}
-      ${s!=="BLOCKED"?`<button class="btn red" onclick="blockDriver('${esc(d.id)}')">⛔ BLOCK</button>`:
-      `<button class="btn green" onclick="unblockDriver('${esc(d.id)}')">UNBLOCK</button>`}
-      <button class="btn gray" onclick="deleteDriver('${esc(d.id)}')">🗑 DELETE</button>
+
+
+      ${
+        s !== "APPROVED"
+        ?
+        `
+        <button
+          class="btn green"
+          onclick="approveDriver('${esc(d.id)}')">
+
+          ✓ APPROVE
+
+        </button>
+        `
+        :
+        ""
+      }
+
+
+      ${
+        s !== "REJECTED"
+        ?
+        `
+        <button
+          class="btn orange"
+          onclick="rejectDriver('${esc(d.id)}')">
+
+          ✕ REJECT
+
+        </button>
+        `
+        :
+        ""
+      }
+
+
+      ${
+        s !== "BLOCKED"
+        ?
+        `
+        <button
+          class="btn red"
+          onclick="blockDriver('${esc(d.id)}')">
+
+          ⛔ BLOCK
+
+        </button>
+        `
+        :
+        `
+        <button
+          class="btn green"
+          onclick="unblockDriver('${esc(d.id)}')">
+
+          ✓ UNBLOCK
+
+        </button>
+        `
+      }
+
+
+      <button
+        class="btn gray"
+        onclick="deleteDriver('${esc(d.id)}')">
+
+        🗑 DELETE
+
+      </button>
+
     </div>
 
-    <div class="card" style="margin:10px 0 0;padding:12px;background:#f8fbff">
-      <div class="wallet">💰 ₹<span class="${wallet<0?"negative":""}">${wallet}</span></div>
-      <div class="muted">Driver wallet — admin only</div>
-      <div class="grid" style="margin-top:8px">
-        <div class="field"><label>AMOUNT</label><input id="wallet-${esc(d.id)}" type="number" placeholder="Amount"></div>
+
+    <div
+      class="card"
+      style="
+        margin:10px 0 0;
+        padding:12px;
+        background:#f8fbff
+      ">
+
+
+      <div class="wallet">
+
+        💰 ₹
+
+        <span class="${
+          wallet < 0
+          ? "negative"
+          : ""
+        }">
+
+          ${wallet}
+
+        </span>
+
       </div>
+
+
+      <div class="muted">
+
+        Admin controlled wallet
+
+      </div>
+
+
+      <div
+        class="grid"
+        style="margin-top:8px">
+
+        <div class="field">
+
+          <label>
+            AMOUNT
+          </label>
+
+          <input
+            id="wallet-${esc(d.id)}"
+            type="number"
+            placeholder="Amount">
+
+        </div>
+
+      </div>
+
+
       <div class="actions">
-        <button class="btn green" onclick="addWallet('${esc(d.id)}')">＋ ADD</button>
-        <button class="btn red" onclick="deductWallet('${esc(d.id)}')">− DEDUCT</button>
+
+
+        <button
+          class="btn green"
+          onclick="addWallet('${esc(d.id)}')">
+
+          ＋ ADD
+
+        </button>
+
+
+        <button
+          class="btn red"
+          onclick="deductWallet('${esc(d.id)}')">
+
+          − DEDUCT
+
+        </button>
+
       </div>
+
     </div>
-  </div>`;
+
+  </div>
+
+  `;
+
 }
+
+
+/* =====================================================
+   OPEN DUTIES
+===================================================== */
 
 function renderOpen(){
-  const list=duties.filter(d=>statusOf(d)==="OPEN");
-  $("app").innerHTML=`
-    <h1>🟢 Open Duties</h1>
-    <div class="sub">Only duties waiting for a driver</div>
-    <div class="notice">Accepted / Cancelled / Completed / Deleted duties will NOT appear here.</div>
+
+  const list =
+    duties.filter(
+      d =>
+        statusOf(d)
+        === "OPEN"
+    );
+
+
+  $("app").innerHTML = `
+
+    <h1>
+      🟢 Open Duties
+    </h1>
+
+
+    <div class="sub">
+      Only duties waiting for drivers
+    </div>
+
+
+    <div class="notice">
+
+      Accepted / Cancelled /
+      Completed / Deleted duties
+      will NOT appear here.
+
+    </div>
+
+
     <div class="card">
-      <h2>🚕 OPEN DUTIES (${list.length})</h2>
-      ${list.length?list.map(openDutyCard).join(""):`<div class="empty">No open duties.</div>`}
-    </div>`;
+
+      <h2>
+        🚕 OPEN DUTIES (${list.length})
+      </h2>
+
+
+      ${
+        list.length
+        ?
+        list
+          .map(openDutyCard)
+          .join("")
+        :
+        `
+        <div class="empty">
+          No open duties.
+        </div>
+        `
+      }
+
+    </div>
+
+  `;
+
 }
+
+
+/* =====================================================
+   OPEN DUTY CARD
+===================================================== */
 
 function openDutyCard(d){
-  return `<div class="duty">
-    <div class="row"><b>DUTY</b><span class="badge open">OPEN</span></div>
-    <div class="route"><div>📍 ${esc(d.pickup)}</div><div>🏁 ${esc(d.drop)}</div></div>
-    <div class="muted">📅 ${esc(d.date||"-")} &nbsp; ⏰ ${esc(d.time||"-")}<br>
-    🚕 ${esc(d.vehicle||"-")} &nbsp; 📏 ${Number(d.km||0)} KM</div>
-    <div class="money">₹${Number(d.amount||0)}</div>
-    ${d.note?`<div class="notice">📝 ${esc(d.note)}</div>`:""}
-    <div class="actions">
-      <button class="btn orange" onclick="cancelDuty('${esc(d.id)}')">✕ CANCEL</button>
-      <button class="btn red" onclick="deleteDuty('${esc(d.id)}')">🗑 DELETE</button>
+
+  return `
+
+  <div class="duty">
+
+
+    <div class="row">
+
+      <b>
+        DUTY
+      </b>
+
+
+      <span class="badge open">
+        OPEN
+      </span>
+
     </div>
-  </div>`;
+
+
+    <div class="route">
+
+      <div>
+        📍 ${esc(d.pickup)}
+      </div>
+
+      <div>
+        🏁 ${esc(d.drop)}
+      </div>
+
+    </div>
+
+
+    <div class="muted">
+
+      📅 ${esc(d.date || "-")}
+
+      &nbsp;
+
+      ⏰ ${esc(d.time || "-")}
+
+      <br>
+
+      🚕 ${esc(d.vehicle || "-")}
+
+      &nbsp;
+
+      📏 ${Number(d.km || 0)} KM
+
+    </div>
+
+
+    <div class="money">
+
+      ₹${Number(d.amount || 0)}
+
+    </div>
+
+
+    ${
+      d.note
+      ?
+      `
+      <div class="notice">
+
+        📝 ${esc(d.note)}
+
+      </div>
+      `
+      :
+      ""
+    }
+
+
+    <div class="actions">
+
+
+      <button
+        class="btn orange"
+        onclick="cancelDuty('${esc(d.id)}')">
+
+        ✕ CANCEL
+
+      </button>
+
+
+      <button
+        class="btn red"
+        onclick="deleteDuty('${esc(d.id)}')">
+
+        🗑 DELETE
+
+      </button>
+
+    </div>
+
+  </div>
+
+  `;
+
 }
+
+
+/* =====================================================
+   ACCEPTED PAGE
+===================================================== */
 
 function renderAccepted(){
-  const list=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d)));
-  $("app").innerHTML=`
-    <h1>✅ Accepted Duties</h1>
-    <div class="sub">Driver who accepted each duty</div>
+
+  const list =
+    duties.filter(
+      d =>
+        statusOf(d) === "ACCEPTED" ||
+        statusOf(d) === "STARTED"
+    );
+
+
+  $("app").innerHTML = `
+
+    <h1>
+      ✅ Accepted Duties
+    </h1>
+
+
+    <div class="sub">
+      Driver who accepted the duty
+    </div>
+
+
     <div class="card">
-      <h2>ACCEPTED DUTIES (${list.length})</h2>
-      ${list.length?list.map(acceptedCard).join(""):`<div class="empty">No accepted duties.</div>`}
-    </div>`;
+
+      <h2>
+        ACCEPTED DUTIES (${list.length})
+      </h2>
+
+
+      ${
+        list.length
+        ?
+        list
+          .map(acceptedCard)
+          .join("")
+        :
+        `
+        <div class="empty">
+          No accepted duties.
+        </div>
+        `
+      }
+
+    </div>
+
+  `;
+
 }
+
+
+/* =====================================================
+   ACCEPTED CARD
+===================================================== */
 
 function acceptedCard(d){
-  const dr=driverForDuty(d);
-  const name=d.driverName||d.acceptedBy||dr?.name||dr?.driverName||"Unknown Driver";
-  const mobile=d.driverMobile||dr?.mobile||dr?.phone||"-";
-  const vid=dr?.vehicleNumber||d.vehicleNumber||"-";
-  const vm=dr?.vehicleModel||"-";
-  return `<div class="duty">
-    <div class="row"><b>${esc(name)}</b><span class="badge accepted">${esc(statusOf(d))}</span></div>
-    <div class="route"><div>📍 ${esc(d.pickup)}</div><div>🏁 ${esc(d.drop)}</div></div>
-    <div class="muted">📅 ${esc(d.date||"-")} &nbsp; ⏰ ${esc(d.time||"-")}<br>
-    📱 ${esc(mobile)}<br>
-    🚘 Vehicle: ${esc(vid)} - ${esc(vm)}<br>
-    🆔 Driver ID: ${esc(d.acceptedDriverId||d.driverId||dr?.driverId||"-")}<br>
-    🔐 UID: ${esc(d.acceptedByUid||dr?.uid||"-")}</div>
-    <div class="money">₹${Number(d.amount||0)} · ${Number(d.km||0)} KM</div>
-    ${d.acceptedAt?`<div class="muted">Accepted: ${formatStamp(d.acceptedAt)}</div>`:""}
-    <div class="actions">
-      <button class="btn orange" onclick="cancelAcceptedDuty('${esc(d.id)}')">✕ CANCEL</button>
-      <button class="btn green" onclick="completeDuty('${esc(d.id)}')">✓ COMPLETE</button>
+
+  const dr =
+    driverForDuty(d);
+
+
+  const name =
+    d.driverName ||
+    d.acceptedBy ||
+    dr?.name ||
+    dr?.driverName ||
+    "Unknown Driver";
+
+
+  const mobile =
+    d.driverMobile ||
+    dr?.mobile ||
+    dr?.phone ||
+    "-";
+
+
+  const vehicleNo =
+    dr?.vehicleNumber ||
+    d.vehicleNumber ||
+    "-";
+
+
+  const vehicleModel =
+    dr?.vehicleModel ||
+    d.vehicleModel ||
+    d.vehicle ||
+    "-";
+
+
+  return `
+
+  <div class="duty">
+
+
+    <div class="row">
+
+      <b>
+
+        👨‍✈️ ${esc(name)}
+
+      </b>
+
+
+      <span class="badge accepted">
+
+        ${esc(statusOf(d))}
+
+      </span>
+
     </div>
-  </div>`;
+
+
+    <div class="route">
+
+      <div>
+        📍 ${esc(d.pickup)}
+      </div>
+
+      <div>
+        🏁 ${esc(d.drop)}
+      </div>
+
+    </div>
+
+
+    <div class="muted">
+
+      📅 ${esc(d.date || "-")}
+
+      &nbsp;
+
+      ⏰ ${esc(d.time || "-")}
+
+      <br>
+
+      📱 ${esc(mobile)}
+
+      <br>
+
+      🚘 ${esc(vehicleNo)}
+      -
+      ${esc(vehicleModel)}
+
+      <br>
+
+      🆔 Driver ID:
+      ${esc(
+        d.acceptedDriverId ||
+        d.driverId ||
+        dr?.driverId ||
+        "-"
+      )}
+
+      <br>
+
+      🔐 UID:
+      ${esc(
+        d.acceptedByUid ||
+        dr?.uid ||
+        "-"
+      )}
+
+    </div>
+
+
+    <div class="money">
+
+      ₹${Number(d.amount || 0)}
+
+      ·
+
+      ${Number(d.km || 0)} KM
+
+    </div>
+
+
+    ${
+      d.acceptedAt
+      ?
+      `
+      <div class="muted">
+
+        Accepted:
+        ${formatStamp(d.acceptedAt)}
+
+      </div>
+      `
+      :
+      ""
+    }
+
+
+    <div class="actions">
+
+
+      <button
+        class="btn orange"
+        onclick="cancelAcceptedDuty('${esc(d.id)}')">
+
+        ✕ CANCEL
+
+      </button>
+
+
+      <button
+        class="btn green"
+        onclick="completeDuty('${esc(d.id)}')">
+
+        ✓ COMPLETE
+
+      </button>
+
+    </div>
+
+  </div>
+
+  `;
+
 }
+
+
+/* =====================================================
+   HISTORY
+   duty_history + trips
+===================================================== */
 
 function renderHistory(){
-  const rows=[...history].sort((a,b)=>stampMillis(b.createdAt)-stampMillis(a.createdAt));
-  $("app").innerHTML=`
-    <h1>📋 Trip History</h1>
-    <div class="sub">Completed / Cancelled / Rejected / Deleted — all drivers</div>
+
+  const combined = [
+
+    ...history,
+
+    ...trips.map(t => ({
+
+      ...t,
+
+      type:
+        t.type ||
+        (
+          String(t.status || "")
+            .toUpperCase() === "COMPLETED"
+          ?
+          "TRIP_COMPLETED"
+          :
+          t.status || ""
+        ),
+
+      status:
+        t.status ||
+        "COMPLETED"
+
+    }))
+
+  ];
+
+
+  const unique = [];
+
+  const seen = new Set();
+
+
+  combined.forEach(item => {
+
+    const type =
+      String(
+        item.type ||
+        item.status ||
+        ""
+      ).toUpperCase();
+
+
+    const dutyId =
+      item.dutyId ||
+      item.id ||
+      "";
+
+
+    const key =
+      dutyId
+      ?
+      `${dutyId}_${type.includes("COMPLETE") ? "COMPLETED" : type}`
+      :
+      (
+        item.id
+        ?
+        `id_${item.id}`
+        :
+        `raw_${JSON.stringify(item)}`
+      );
+
+
+    if(!seen.has(key)){
+
+      seen.add(key);
+
+      unique.push(item);
+
+    }
+
+  });
+
+
+  const rows =
+    [...unique]
+      .sort(
+        (a,b) =>
+          stampMillis(
+            b.createdAt ||
+            b.completedAt
+          ) -
+          stampMillis(
+            a.createdAt ||
+            a.completedAt
+          )
+      );
+
+
+  $("app").innerHTML = `
+
+    <h1>
+      📋 History
+    </h1>
+
+
+    <div class="sub">
+      All driver and duty activity
+    </div>
+
+
     <div class="card">
-      <h2>ALL ACTIVITY (${rows.length})</h2>
-      ${rows.length?rows.map(historyCard).join(""):`<div class="empty">No history yet.</div>`}
-    </div>`;
+
+      <h2>
+        ALL ACTIVITY (${rows.length})
+      </h2>
+
+
+      ${
+        rows.length
+        ?
+        rows
+          .map(historyCard)
+          .join("")
+        :
+        `
+        <div class="empty">
+          No history yet.
+        </div>
+        `
+      }
+
+    </div>
+
+  `;
+
 }
+
+
+/* =====================================================
+   HISTORY CARD
+===================================================== */
 
 function historyCard(h){
-  const type=String(h.type||h.status||"").toUpperCase();
-  const cls=type.includes("COMPLETE")?"completed":type.includes("CANCEL")?"cancelled":type.includes("REJECT")?"rejected":"pending";
-  return `<div class="duty">
+
+  const type =
+    String(
+      h.type ||
+      h.status ||
+      ""
+    ).toUpperCase();
+
+
+  let cls =
+    "pending";
+
+
+  if(type.includes("COMPLETE"))
+    cls = "completed";
+
+  else if(type.includes("CANCEL"))
+    cls = "cancelled";
+
+  else if(type.includes("DELETE"))
+    cls = "deleted";
+
+  else if(type.includes("REJECT"))
+    cls = "rejected";
+
+  else if(type.includes("BLOCK"))
+    cls = "blocked";
+
+
+  return `
+
+  <div class="duty">
+
+
     <div class="row">
-      <b>${esc(h.driverName||h.acceptedBy||"Driver")}</b>
-      <span class="badge ${cls}">${esc(type)}</span>
+
+      <b>
+
+        👨‍✈️
+        ${esc(
+          h.driverName ||
+          h.acceptedBy ||
+          "Driver"
+        )}
+
+      </b>
+
+
+      <span class="badge ${cls}">
+
+        ${esc(type)}
+
+      </span>
+
     </div>
-    <div class="route"><div>📍 ${esc(h.pickup||"-")}</div><div>🏁 ${esc(h.drop||"-")}</div></div>
-    <div class="muted">📱 ${esc(h.driverMobile||h.mobile||"-")}<br>
-    📅 ${esc(h.date||"-")} &nbsp; ⏰ ${esc(h.time||"-")}<br>
-    📏 ${Number(h.km||0)} KM</div>
-    <div class="money">₹${Number(h.amount||0)}</div>
-    ${h.cancellationDeduction?`<div class="notice">Wallet deduction: ₹${Number(h.cancellationDeduction)}</div>`:""}
-    <div class="muted">${formatStamp(h.createdAt)}</div>
-  </div>`;
+
+
+    ${
+      h.pickup || h.drop
+      ?
+      `
+      <div class="route">
+
+        <div>
+          📍 ${esc(h.pickup || "-")}
+        </div>
+
+        <div>
+          🏁 ${esc(h.drop || "-")}
+        </div>
+
+      </div>
+      `
+      :
+      ""
+    }
+
+
+    <div class="muted">
+
+
+      ${
+        h.driverMobile
+        ?
+        `📱 ${esc(h.driverMobile)}<br>`
+        :
+        ""
+      }
+
+
+      ${
+        h.date
+        ?
+        `📅 ${esc(h.date)}`
+        :
+        ""
+      }
+
+
+      ${
+        h.time
+        ?
+        ` &nbsp; ⏰ ${esc(h.time)}`
+        :
+        ""
+      }
+
+
+      ${
+        h.km !== undefined
+        ?
+        `<br>📏 ${Number(h.km || 0)} KM`
+        :
+        ""
+      }
+
+
+    </div>
+
+
+    ${
+      h.amount !== undefined
+      ?
+      `
+      <div class="money">
+
+        ₹${Number(h.amount || 0)}
+
+      </div>
+      `
+      :
+      ""
+    }
+
+
+    ${
+      h.cancellationDeduction
+      ?
+      `
+      <div class="notice">
+
+        Wallet deduction:
+        ₹${Number(h.cancellationDeduction)}
+
+      </div>
+      `
+      :
+      ""
+    }
+
+
+    ${
+      h.reason
+      ?
+      `
+      <div class="notice">
+
+        ${esc(h.reason)}
+
+      </div>
+      `
+      :
+      ""
+    }
+
+
+    <div class="muted">
+
+      ${
+        formatStamp(
+          h.completedAt ||
+          h.createdAt
+        )
+      }
+
+    </div>
+
+  </div>
+
+  `;
+
 }
+
+
+/* =====================================================
+   CREATE DUTY
+===================================================== */
 
 async function createDuty(){
-  try{
-    const pickup=$("pickup").value.trim();
-    const drop=$("drop").value.trim();
-    const date=normalizeDate($("date").value.trim());
-    const time=$("time").value;
-    const vehicle=$("vehicle").value;
-    const km=Number($("km").value);
-    const amount=Number($("amount").value);
-    const note=$("note").value.trim();
 
-    if(!pickup||!drop||!date||!time||!km||amount<0){
-      alert("Pickup, Drop, Date, Time, KM and Amount enter pannunga.");
+  try{
+
+    const pickup =
+      $("pickup")
+        .value
+        .trim();
+
+
+    const drop =
+      $("drop")
+        .value
+        .trim();
+
+
+    const date =
+      normalizeDate(
+        $("date")
+          .value
+          .trim()
+      );
+
+
+    const time =
+      normalizeTime(
+        $("time")
+          .value
+      );
+
+
+    const vehicle =
+      $("vehicle")
+        .value;
+
+
+    const km =
+      Number(
+        $("km")
+          .value
+      );
+
+
+    const amount =
+      Number(
+        $("amount")
+          .value
+      );
+
+
+    const note =
+      $("note")
+        .value
+        .trim();
+
+
+    /* AM / PM TIME VALIDATION */
+
+    const timeValid =
+      /^(0[1-9]|1[0-2]):[0-5]\d\s?(AM|PM)$/i.test(
+        time
+      );
+
+
+    if(
+      !pickup ||
+      !drop ||
+      !date ||
+      !timeValid ||
+      km <= 0 ||
+      amount < 0
+    ){
+
+      toast(
+        "Pickup, Drop, Date, correct Time (HH:MM AM/PM), KM and Amount enter pannunga.",
+        true
+      );
+
       return;
+
     }
-    await addDoc(collection(db,"duties"),{
-      pickup,drop,date,time,vehicle,km,amount,note,
-      status:"OPEN",
-      acceptedBy:"",
-      acceptedDriverId:"",
-      acceptedByUid:"",
-      driverId:"",
-      driverName:"",
-      driverMobile:"",
-      rejectedBy:"",
-      rejectedByUid:"",
-      rejectedDriverId:"",
-      cancelledBy:"",
-      cancelledByUid:"",
-      cancelledDriverId:"",
-      cancellationDeduction:0,
-      createdAt:serverTimestamp(),
-      updatedAt:serverTimestamp()
-    });
-    alert("Duty created successfully.");
+
+
+    await addDoc(
+      collection(
+        db,
+        "duties"
+      ),
+      {
+
+        pickup,
+
+        drop,
+
+        date,
+
+        time,
+
+        vehicle,
+
+        km,
+
+        amount,
+
+        note,
+
+        status:"OPEN",
+
+        acceptedBy:"",
+
+        acceptedDriverId:"",
+
+        acceptedByUid:"",
+
+        driverId:"",
+
+        driverName:"",
+
+        driverMobile:"",
+
+        rejectedBy:"",
+
+        rejectedByUid:"",
+
+        rejectedDriverId:"",
+
+        cancelledBy:"",
+
+        cancelledByUid:"",
+
+        cancelledDriverId:"",
+
+        cancellationDeduction:0,
+
+        createdAt:
+          serverTimestamp(),
+
+        updatedAt:
+          serverTimestamp()
+
+      }
+    );
+
+
+    toast(
+      "Duty created successfully."
+    );
+
+
     showPage("open");
+
+
   }catch(e){
+
     console.error(e);
-    alert("Duty create failed: "+e.message);
+
+
+    toast(
+      "Duty create failed: " +
+      e.message,
+      true
+    );
+
   }
+
 }
+
+
+/* =====================================================
+   APPROVE DRIVER
+===================================================== */
 
 async function approveDriver(id){
+
   try{
-    await updateDoc(doc(db,"drivers",id),{
-      status:"APPROVED",
-      approved:true,
-      paymentStatus:"APPROVED",
-      paymentVerified:true,
-      registrationFee:400,
-      updatedAt:serverTimestamp()
-    });
-    alert("Driver APPROVED.");
-  }catch(e){console.error(e);alert("Approve failed: "+e.message);}
+
+    const d =
+      drivers.find(
+        x => x.id === id
+      );
+
+
+    if(!d)
+      throw new Error(
+        "Driver not found"
+      );
+
+
+    await updateDoc(
+      doc(
+        db,
+        "drivers",
+        id
+      ),
+      {
+
+        status:"APPROVED",
+
+        approved:true,
+
+        blocked:false,
+
+        paymentStatus:"APPROVED",
+
+        paymentVerified:true,
+
+        registrationFee:400,
+
+        updatedAt:
+          serverTimestamp()
+
+      }
+    );
+
+
+    await updateDriverAccess(
+      d,
+      "APPROVED"
+    );
+
+
+    toast(
+      "Driver APPROVED."
+    );
+
+
+  }catch(e){
+
+    console.error(e);
+
+
+    toast(
+      "APPROVE failed: " +
+      e.message,
+      true
+    );
+
+  }
+
 }
+
+
+/* =====================================================
+   REJECT DRIVER
+===================================================== */
 
 async function rejectDriver(id){
-  if(!confirm("Reject this driver?"))return;
+
+  const d =
+    drivers.find(
+      x => x.id === id
+    );
+
+
+  if(!d)
+    return;
+
+
+  const ok =
+    await confirmBox(
+      "Reject Driver",
+      "Driver:\n" +
+      (
+        d.name ||
+        d.driverName ||
+        "Driver"
+      ) +
+      "\n\nDriver App access will be rejected.",
+      "REJECT",
+      true
+    );
+
+
+  if(!ok)
+    return;
+
+
   try{
-    await updateDoc(doc(db,"drivers",id),{
-      status:"REJECTED",
-      approved:false,
-      updatedAt:serverTimestamp()
-    });
-    alert("Driver REJECTED.");
-  }catch(e){console.error(e);alert("Reject failed: "+e.message);}
+
+    await updateDoc(
+      doc(
+        db,
+        "drivers",
+        id
+      ),
+      {
+
+        status:"REJECTED",
+
+        approved:false,
+
+        blocked:false,
+
+        updatedAt:
+          serverTimestamp()
+
+      }
+    );
+
+
+    await updateDriverAccess(
+      d,
+      "REJECTED"
+    );
+
+
+    await addDriverHistory(
+      d,
+      "DRIVER_REJECTED"
+    );
+
+
+    toast(
+      "Driver REJECTED."
+    );
+
+
+  }catch(e){
+
+    console.error(e);
+
+
+    toast(
+      "REJECT failed: " +
+      e.message,
+      true
+    );
+
+  }
+
 }
+
+
+/* =====================================================
+   BLOCK DRIVER
+===================================================== */
 
 async function blockDriver(id){
-  if(!confirm("Block this driver?"))return;
+
+  const d =
+    drivers.find(
+      x => x.id === id
+    );
+
+
+  if(!d)
+    return;
+
+
+  const name =
+    d.name ||
+    d.driverName ||
+    "Driver";
+
+
+  const ok =
+    await confirmBox(
+      "Block Driver",
+      "Driver:\n" +
+      name +
+      "\n\nBLOCK செய்தவுடன் Driver App access நிறுத்தப்படும்.",
+      "BLOCK DRIVER",
+      true
+    );
+
+
+  if(!ok)
+    return;
+
+
   try{
-    await updateDoc(doc(db,"drivers",id),{
-      status:"BLOCKED",
-      approved:false,
-      blocked:true,
-      updatedAt:serverTimestamp()
-    });
-    alert("Driver BLOCKED. Driver App will not allow this driver.");
-  }catch(e){console.error(e);alert("BLOCK failed: "+e.message);}
+
+    await updateDoc(
+      doc(
+        db,
+        "drivers",
+        id
+      ),
+      {
+
+        status:"BLOCKED",
+
+        approved:false,
+
+        blocked:true,
+
+        updatedAt:
+          serverTimestamp()
+
+      }
+    );
+
+
+    await updateDriverAccess(
+      d,
+      "BLOCKED"
+    );
+
+
+    await addDriverHistory(
+      d,
+      "DRIVER_BLOCKED"
+    );
+
+
+    toast(
+      "Driver BLOCKED. Driver App access stopped."
+    );
+
+
+  }catch(e){
+
+    console.error(e);
+
+
+    toast(
+      "BLOCK failed: " +
+      e.message,
+      true
+    );
+
+  }
+
 }
+
+
+/* =====================================================
+   UNBLOCK DRIVER
+===================================================== */
 
 async function unblockDriver(id){
+
+  const d =
+    drivers.find(
+      x => x.id === id
+    );
+
+
+  if(!d)
+    return;
+
+
   try{
-    await updateDoc(doc(db,"drivers",id),{
-      status:"APPROVED",
-      approved:true,
-      blocked:false,
-      updatedAt:serverTimestamp()
-    });
-    alert("Driver UNBLOCKED.");
-  }catch(e){console.error(e);alert("Unblock failed: "+e.message);}
+
+    await updateDoc(
+      doc(
+        db,
+        "drivers",
+        id
+      ),
+      {
+
+        status:"APPROVED",
+
+        approved:true,
+
+        blocked:false,
+
+        paymentStatus:"APPROVED",
+
+        paymentVerified:true,
+
+        updatedAt:
+          serverTimestamp()
+
+      }
+    );
+
+
+    await updateDriverAccess(
+      d,
+      "APPROVED"
+    );
+
+
+    toast(
+      "Driver UNBLOCKED."
+    );
+
+
+  }catch(e){
+
+    console.error(e);
+
+
+    toast(
+      "UNBLOCK failed: " +
+      e.message,
+      true
+    );
+
+  }
+
 }
+
+
+/* =====================================================
+   DRIVER ACCESS
+===================================================== */
+
+function accessKey(d){
+
+  const mobile =
+    String(
+      d.mobile ||
+      d.phone ||
+      d.driverMobile ||
+      ""
+    )
+    .replace(
+      /\D/g,
+      ""
+    );
+
+
+  const driverId =
+    d.driverId ||
+    d.id ||
+    "";
+
+
+  return (
+    mobile ||
+    String(driverId)
+      .replace(
+        /[^a-zA-Z0-9_-]/g,
+        "_"
+      )
+  );
+
+}
+
+
+async function updateDriverAccess(
+  d,
+  status
+){
+
+  const key =
+    accessKey(d);
+
+
+  if(!key)
+    return;
+
+
+  const ref =
+    doc(
+      db,
+      "driver_access",
+      key
+    );
+
+
+  await runTransaction(
+    db,
+    async tx => {
+
+      tx.set(
+        ref,
+        {
+
+          mobile:
+            d.mobile ||
+            d.phone ||
+            d.driverMobile ||
+            "",
+
+          driverId:
+            d.driverId ||
+            d.id ||
+            "",
+
+          uid:
+            d.uid ||
+            "",
+
+          driverName:
+            d.name ||
+            d.driverName ||
+            "",
+
+          status,
+
+          blocked:
+            status === "BLOCKED" ||
+            status === "DELETED",
+
+          deleted:
+            status === "DELETED",
+
+          approved:
+            status === "APPROVED",
+
+          updatedAt:
+            serverTimestamp()
+
+        },
+        {
+          merge:true
+        }
+      );
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   DRIVER HISTORY
+===================================================== */
+
+async function addDriverHistory(
+  d,
+  type
+){
+
+  await addDoc(
+    collection(
+      db,
+      "duty_history"
+    ),
+    {
+
+      type,
+
+      status:type,
+
+      driverId:
+        d.driverId ||
+        d.id ||
+        "",
+
+      driverName:
+        d.name ||
+        d.driverName ||
+        "",
+
+      driverMobile:
+        d.mobile ||
+        d.phone ||
+        "",
+
+      createdAt:
+        serverTimestamp()
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   DELETE DRIVER
+===================================================== */
 
 async function deleteDriver(id){
-  const d=drivers.find(x=>x.id===id);
-  if(!d)return;
-  const name=d.name||d.driverName||"Driver";
-  if(!confirm("DELETE DRIVER ACCOUNT?\n"+name+"\n\nFirestore driver record will be permanently deleted."))return;
+
+  const d =
+    drivers.find(
+      x => x.id === id
+    );
+
+
+  if(!d)
+    return;
+
+
+  const name =
+    d.name ||
+    d.driverName ||
+    "Driver";
+
+
+  const ok =
+    await confirmBox(
+      "DELETE DRIVER ACCOUNT",
+      "Driver:\n" +
+      name +
+      "\n\n" +
+      "இந்த Driver record Firestore-லிருந்து உண்மையாக DELETE ஆகும்.\n\n" +
+      "Driver App access status DELETED ஆக save செய்யப்படும்.",
+      "DELETE DRIVER",
+      true
+    );
+
+
+  if(!ok)
+    return;
+
+
   try{
-    await deleteDoc(doc(db,"drivers",id));
-    drivers=drivers.filter(x=>x.id!==id);
+
+    await runTransaction(
+      db,
+      async tx => {
+
+        const driverRef =
+          doc(
+            db,
+            "drivers",
+            id
+          );
+
+
+        const snap =
+          await tx.get(
+            driverRef
+          );
+
+
+        if(!snap.exists()){
+
+          throw new Error(
+            "Driver record already deleted."
+          );
+
+        }
+
+
+        const data =
+          snap.data();
+
+
+        const key =
+          accessKey({
+            ...data,
+            id
+          });
+
+
+        if(!key){
+
+          throw new Error(
+            "Driver mobile/ID missing."
+          );
+
+        }
+
+
+        const accessRef =
+          doc(
+            db,
+            "driver_access",
+            key
+          );
+
+
+        const historyRef =
+          doc(
+            collection(
+              db,
+              "duty_history"
+            )
+          );
+
+
+        tx.set(
+          accessRef,
+          {
+
+            mobile:
+              data.mobile ||
+              data.phone ||
+              data.driverMobile ||
+              "",
+
+            driverId:
+              data.driverId ||
+              id,
+
+            uid:
+              data.uid ||
+              "",
+
+            driverName:
+              data.name ||
+              data.driverName ||
+              name,
+
+            status:"DELETED",
+
+            blocked:true,
+
+            deleted:true,
+
+            approved:false,
+
+            deletedAt:
+              serverTimestamp(),
+
+            updatedAt:
+              serverTimestamp()
+
+          },
+          {
+            merge:true
+          }
+        );
+
+
+        tx.set(
+          historyRef,
+          {
+
+            type:"DRIVER_DELETED",
+
+            status:"DELETED",
+
+            driverId:
+              data.driverId ||
+              id,
+
+            driverName:
+              data.name ||
+              data.driverName ||
+              name,
+
+            driverMobile:
+              data.mobile ||
+              data.phone ||
+              data.driverMobile ||
+              "",
+
+            createdAt:
+              serverTimestamp()
+
+          }
+        );
+
+
+        tx.delete(
+          driverRef
+        );
+
+      }
+    );
+
+
+    drivers =
+      drivers.filter(
+        x => x.id !== id
+      );
+
+
     render();
-    alert("Driver account record deleted.");
+
+
+    toast(
+      "Driver account permanently deleted."
+    );
+
+
   }catch(e){
+
     console.error(e);
-    alert("DELETE DRIVER FAILED:\n"+e.message);
+
+
+    toast(
+      "DELETE DRIVER failed: " +
+      e.message,
+      true
+    );
+
   }
+
 }
+
+
+/* =====================================================
+   WALLET ADD
+===================================================== */
 
 async function addWallet(id){
-  const input=$("wallet-"+id);
-  const amount=Number(input?.value);
-  if(!amount||amount<=0){alert("Valid amount enter pannunga.");return;}
+
+  const input =
+    $("wallet-"+id);
+
+
+  const amount =
+    Number(
+      input?.value
+    );
+
+
+  if(
+    !amount ||
+    amount <= 0
+  ){
+
+    toast(
+      "Valid amount enter pannunga.",
+      true
+    );
+
+    return;
+
+  }
+
+
   try{
-    await runTransaction(db,async tx=>{
-      const ref=doc(db,"drivers",id);
-      const snap=await tx.get(ref);
-      if(!snap.exists())throw new Error("Driver not found");
-      const old=Number(snap.data().walletBalance??snap.data().wallet??0);
-      tx.update(ref,{
-        walletBalance:old+amount,
-        wallet:old+amount,
-        lastWalletAction:"ADD",
-        lastWalletAmount:amount,
-        walletUpdatedAt:serverTimestamp(),
-        updatedAt:serverTimestamp()
-      });
-    });
-    input.value="";
-    alert("Wallet added.");
-  }catch(e){console.error(e);alert("Wallet ADD failed: "+e.message);}
+
+    await runTransaction(
+      db,
+      async tx => {
+
+        const ref =
+          doc(
+            db,
+            "drivers",
+            id
+          );
+
+
+        const snap =
+          await tx.get(ref);
+
+
+        if(!snap.exists()){
+
+          throw new Error(
+            "Driver not found"
+          );
+
+        }
+
+
+        const data =
+          snap.data();
+
+
+        const old =
+          Number(
+            data.walletBalance ??
+            data.wallet ??
+            0
+          );
+
+
+        const next =
+          old + amount;
+
+
+        tx.update(
+          ref,
+          {
+
+            walletBalance:
+              next,
+
+            wallet:
+              next,
+
+            lastWalletAction:
+              "ADD",
+
+            lastWalletAmount:
+              amount,
+
+            walletUpdatedAt:
+              serverTimestamp(),
+
+            updatedAt:
+              serverTimestamp()
+
+          }
+        );
+
+      }
+    );
+
+
+    input.value = "";
+
+
+    toast(
+      "Wallet added."
+    );
+
+
+  }catch(e){
+
+    console.error(e);
+
+
+    toast(
+      "Wallet ADD failed: " +
+      e.message,
+      true
+    );
+
+  }
+
 }
+
+
+/* =====================================================
+   WALLET DEDUCT
+===================================================== */
 
 async function deductWallet(id){
-  const input=$("wallet-"+id);
-  const amount=Number(input?.value);
-  if(!amount||amount<=0){alert("Valid amount enter pannunga.");return;}
-  if(!confirm("Deduct ₹"+amount+" from wallet? Negative balance is allowed."))return;
+
+  const input =
+    $("wallet-"+id);
+
+
+  const amount =
+    Number(
+      input?.value
+    );
+
+
+  if(
+    !amount ||
+    amount <= 0
+  ){
+
+    toast(
+      "Valid amount enter pannunga.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  const ok =
+    await confirmBox(
+      "Wallet Deduction",
+      "₹" +
+      amount +
+      " deduct செய்யப்படும்.\n\nNegative balance allowed.",
+      "DEDUCT",
+      true
+    );
+
+
+  if(!ok)
+    return;
+
+
   try{
-    await runTransaction(db,async tx=>{
-      const ref=doc(db,"drivers",id);
-      const snap=await tx.get(ref);
-      if(!snap.exists())throw new Error("Driver not found");
-      const old=Number(snap.data().walletBalance??snap.data().wallet??0);
-      const next=old-amount;
-      tx.update(ref,{
-        walletBalance:next,
-        wallet:next,
-        lastWalletAction:"DEDUCT",
-        lastWalletAmount:amount,
-        walletUpdatedAt:serverTimestamp(),
-        updatedAt:serverTimestamp()
-      });
-    });
-    input.value="";
-    alert("Wallet deducted.");
-  }catch(e){console.error(e);alert("Wallet DEDUCT failed: "+e.message);}
+
+    await runTransaction(
+      db,
+      async tx => {
+
+        const ref =
+          doc(
+            db,
+            "drivers",
+            id
+          );
+
+
+        const snap =
+          await tx.get(ref);
+
+
+        if(!snap.exists()){
+
+          throw new Error(
+            "Driver not found"
+          );
+
+        }
+
+
+        const data =
+          snap.data();
+
+
+        const old =
+          Number(
+            data.walletBalance ??
+            data.wallet ??
+            0
+          );
+
+
+        const next =
+          old - amount;
+
+
+        tx.update(
+          ref,
+          {
+
+            walletBalance:
+              next,
+
+            wallet:
+              next,
+
+            lastWalletAction:
+              "DEDUCT",
+
+            lastWalletAmount:
+              amount,
+
+            walletUpdatedAt:
+              serverTimestamp(),
+
+            updatedAt:
+              serverTimestamp()
+
+          }
+        );
+
+      }
+    );
+
+
+    input.value = "";
+
+
+    toast(
+      "Wallet deducted."
+    );
+
+
+  }catch(e){
+
+    console.error(e);
+
+
+    toast(
+      "Wallet DEDUCT failed: " +
+      e.message,
+      true
+    );
+
+  }
+
 }
+
+
+/* =====================================================
+   DELETE OPEN DUTY
+===================================================== */
 
 async function deleteDuty(id){
-  const d=duties.find(x=>x.id===id);
-  if(!d)return;
-  if(!confirm("DELETE this duty permanently?"))return;
+
+  const d =
+    duties.find(
+      x => x.id === id
+    );
+
+
+  if(!d)
+    return;
+
+
+  if(
+    statusOf(d) !== "OPEN"
+  ){
+
+    toast(
+      "Only OPEN duty can be deleted.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  const ok =
+    await confirmBox(
+      "DELETE DUTY",
+      "இந்த duty permanently DELETE ஆகும்.\n\n" +
+      "Delete செய்தவுடன் OPEN DUTIES-ல் இருக்காது.",
+      "DELETE DUTY",
+      true
+    );
+
+
+  if(!ok)
+    return;
+
 
   try{
-    // Save history first. Then delete the actual active duty document.
-    await addDoc(collection(db,"duty_history"),{
-      ...historySafe(d),
-      type:"DUTY_DELETED",
-      status:"DELETED",
-      deletedAt:serverTimestamp(),
-      createdAt:serverTimestamp()
-    });
-    await deleteDoc(doc(db,"duties",id));
-    duties=duties.filter(x=>x.id!==id);
+
+    await runTransaction(
+      db,
+      async tx => {
+
+        const dutyRef =
+          doc(
+            db,
+            "duties",
+            id
+          );
+
+
+        const snap =
+          await tx.get(
+            dutyRef
+          );
+
+
+        if(!snap.exists()){
+
+          throw new Error(
+            "Duty already deleted."
+          );
+
+        }
+
+
+        const data =
+          snap.data();
+
+
+        if(
+          String(
+            data.status || "OPEN"
+          ).toUpperCase()
+          !== "OPEN"
+        ){
+
+          throw new Error(
+            "Duty is no longer OPEN."
+          );
+
+        }
+
+
+        const historyRef =
+          doc(
+            collection(
+              db,
+              "duty_history"
+            )
+          );
+
+
+        tx.set(
+          historyRef,
+          {
+
+            ...historySafe({
+              ...data,
+              id
+            }),
+
+            type:"DUTY_DELETED",
+
+            status:"DELETED",
+
+            deletedBy:"ADMIN",
+
+            createdAt:
+              serverTimestamp()
+
+          }
+        );
+
+
+        tx.delete(
+          dutyRef
+        );
+
+      }
+    );
+
+
+    duties =
+      duties.filter(
+        x => x.id !== id
+      );
+
+
     render();
-    alert("Duty deleted successfully. It is removed from Open Duties.");
+
+
+    toast(
+      "Duty deleted successfully."
+    );
+
+
   }catch(e){
+
     console.error(e);
-    alert("DUTY DELETE FAILED:\n"+e.message);
+
+
+    toast(
+      "DUTY DELETE failed: " +
+      e.message,
+      true
+    );
+
   }
+
 }
+
+
+/* =====================================================
+   CANCEL OPEN DUTY
+===================================================== */
 
 async function cancelDuty(id){
-  const d=duties.find(x=>x.id===id);
-  if(!d)return;
-  if(!confirm("Cancel this duty? It will be removed from Open Duties."))return;
+
+  const d =
+    duties.find(
+      x => x.id === id
+    );
+
+
+  if(!d)
+    return;
+
+
+  if(
+    statusOf(d) !== "OPEN"
+  ){
+
+    toast(
+      "Only OPEN duty can be cancelled.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  const ok =
+    await confirmBox(
+      "CANCEL DUTY",
+      "இந்த duty CANCEL ஆகும்.\n\n" +
+      "Cancel செய்தவுடன் OPEN DUTIES-ல் இருக்காது.",
+      "CANCEL DUTY",
+      true
+    );
+
+
+  if(!ok)
+    return;
+
 
   try{
-    await addDoc(collection(db,"duty_history"),{
-      ...historySafe(d),
-      type:"DUTY_CANCELLED",
-      status:"CANCELLED",
-      cancelledBy:"ADMIN",
-      createdAt:serverTimestamp()
-    });
-    await deleteDoc(doc(db,"duties",id));
-    duties=duties.filter(x=>x.id!==id);
+
+    await runTransaction(
+      db,
+      async tx => {
+
+        const dutyRef =
+          doc(
+            db,
+            "duties",
+            id
+          );
+
+
+        const snap =
+          await tx.get(
+            dutyRef
+          );
+
+
+        if(!snap.exists()){
+
+          throw new Error(
+            "Duty already removed."
+          );
+
+        }
+
+
+        const data =
+          snap.data();
+
+
+        const historyRef =
+          doc(
+            collection(
+              db,
+              "duty_history"
+            )
+          );
+
+
+        tx.set(
+          historyRef,
+          {
+
+            ...historySafe({
+              ...data,
+              id
+            }),
+
+            type:"DUTY_CANCELLED",
+
+            status:"CANCELLED",
+
+            cancelledBy:"ADMIN",
+
+            createdAt:
+              serverTimestamp()
+
+          }
+        );
+
+
+        tx.delete(
+          dutyRef
+        );
+
+      }
+    );
+
+
+    duties =
+      duties.filter(
+        x => x.id !== id
+      );
+
+
     render();
-    alert("Duty cancelled and removed.");
+
+
+    toast(
+      "Duty cancelled and removed."
+    );
+
+
   }catch(e){
+
     console.error(e);
-    alert("CANCEL FAILED:\n"+e.message);
+
+
+    toast(
+      "CANCEL failed: " +
+      e.message,
+      true
+    );
+
   }
+
 }
+
+
+/* =====================================================
+   CANCEL ACCEPTED DUTY
+   ₹150 DEDUCTION
+===================================================== */
 
 async function cancelAcceptedDuty(id){
-  const d=duties.find(x=>x.id===id);
-  if(!d)return;
-  const dr=driverForDuty(d);
-  const driverId=dr?.id||d.acceptedDriverId||d.driverId;
-  const deduction=150;
 
-  if(!confirm("Cancel accepted duty?\n₹150 will be deducted from the driver's wallet."))return;
+  const d =
+    duties.find(
+      x => x.id === id
+    );
+
+
+  if(!d)
+    return;
+
+
+  const dr =
+    driverForDuty(d);
+
+
+  const driverDocId =
+    dr?.id ||
+    "";
+
+
+  const ok =
+    await confirmBox(
+      "CANCEL ACCEPTED DUTY",
+      "இந்த accepted duty CANCEL ஆகும்.\n\n" +
+      "Driver wallet-ல் ₹150 deduct ஆகும்.\n" +
+      "Wallet negative ஆகலாம்.",
+      "CANCEL + ₹150",
+      true
+    );
+
+
+  if(!ok)
+    return;
+
 
   try{
-    if(driverId){
-      await runTransaction(db,async tx=>{
-        const driverRef=doc(db,"drivers",driverId);
-        const dutyRef=doc(db,"duties",id);
-        const ds=await tx.get(driverRef);
-        const ws=await tx.get(dutyRef);
-        if(!ws.exists())throw new Error("Duty no longer exists");
-        const old=ds.exists()?Number(ds.data().walletBalance??ds.data().wallet??0):0;
-        const next=old-deduction;
-        if(ds.exists()){
-          tx.update(driverRef,{
-            walletBalance:next,
-            wallet:next,
-            lastWalletAction:"DUTY_CANCEL_DEDUCTION",
-            lastWalletAmount:deduction,
-            walletUpdatedAt:serverTimestamp(),
-            updatedAt:serverTimestamp()
-          });
+
+    await runTransaction(
+      db,
+      async tx => {
+
+        const dutyRef =
+          doc(
+            db,
+            "duties",
+            id
+          );
+
+
+        const dutySnap =
+          await tx.get(
+            dutyRef
+          );
+
+
+        if(!dutySnap.exists()){
+
+          throw new Error(
+            "Duty no longer exists."
+          );
+
         }
-        tx.delete(dutyRef);
-      });
-    }else{
-      await deleteDoc(doc(db,"duties",id));
-    }
 
-    await addDoc(collection(db,"duty_history"),{
-      ...historySafe(d),
-      type:"DUTY_CANCELLED",
-      status:"CANCELLED",
-      cancelledBy:"ADMIN",
-      cancellationDeduction:deduction,
-      createdAt:serverTimestamp()
-    });
 
-    duties=duties.filter(x=>x.id!==id);
+        const data =
+          dutySnap.data();
+
+
+        let driverRef = null;
+
+        let driverSnap = null;
+
+
+        if(driverDocId){
+
+          driverRef =
+            doc(
+              db,
+              "drivers",
+              driverDocId
+            );
+
+
+          driverSnap =
+            await tx.get(
+              driverRef
+            );
+
+        }
+
+
+        if(
+          driverSnap &&
+          driverSnap.exists()
+        ){
+
+          const driverData =
+            driverSnap.data();
+
+
+          const old =
+            Number(
+              driverData.walletBalance ??
+              driverData.wallet ??
+              0
+            );
+
+
+          const next =
+            old - 150;
+
+
+          tx.update(
+            driverRef,
+            {
+
+              walletBalance:
+                next,
+
+              wallet:
+                next,
+
+              lastWalletAction:
+                "DUTY_CANCEL_DEDUCTION",
+
+              lastWalletAmount:
+                150,
+
+              walletUpdatedAt:
+                serverTimestamp(),
+
+              updatedAt:
+                serverTimestamp()
+
+            }
+          );
+
+        }
+
+
+        const historyRef =
+          doc(
+            collection(
+              db,
+              "duty_history"
+            )
+          );
+
+
+        tx.set(
+          historyRef,
+          {
+
+            ...historySafe({
+              ...data,
+              id
+            }),
+
+            type:"DUTY_CANCELLED",
+
+            status:"CANCELLED",
+
+            cancelledBy:"ADMIN",
+
+            cancellationDeduction:150,
+
+            createdAt:
+              serverTimestamp()
+
+          }
+        );
+
+
+        tx.delete(
+          dutyRef
+        );
+
+      }
+    );
+
+
+    duties =
+      duties.filter(
+        x => x.id !== id
+      );
+
+
     render();
-    alert("Accepted duty cancelled. ₹150 deducted.");
+
+
+    toast(
+      "Accepted duty cancelled. ₹150 deducted."
+    );
+
+
   }catch(e){
+
     console.error(e);
-    alert("ACCEPTED DUTY CANCEL FAILED:\n"+e.message);
+
+
+    toast(
+      "ACCEPTED CANCEL failed: " +
+      e.message,
+      true
+    );
+
   }
+
 }
+
+
+/* =====================================================
+   COMPLETE DUTY - ADMIN
+===================================================== */
 
 async function completeDuty(id){
-  const d=duties.find(x=>x.id===id);
-  if(!d)return;
-  if(!confirm("Mark this duty as COMPLETED?"))return;
+
+  const d =
+    duties.find(
+      x => x.id === id
+    );
+
+
+  if(!d)
+    return;
+
+
+  const ok =
+    await confirmBox(
+      "COMPLETE DUTY",
+      "இந்த duty COMPLETED ஆக mark செய்யப்படும்.\n\n" +
+      "Active / Accepted list-ல் இருந்து remove ஆகும்.",
+      "COMPLETE",
+      false
+    );
+
+
+  if(!ok)
+    return;
+
 
   try{
-    await runTransaction(db,async tx=>{
-      const dutyRef=doc(db,"duties",id);
-      const snap=await tx.get(dutyRef);
-      if(!snap.exists())throw new Error("Duty no longer exists");
 
-      const data=snap.data();
-      const base=historySafe({...data,id});
+    await runTransaction(
+      db,
+      async tx => {
 
-      const tripRef=doc(collection(db,"trips"));
-      const histRef=doc(collection(db,"duty_history"));
+        const dutyRef =
+          doc(
+            db,
+            "duties",
+            id
+          );
 
-      tx.set(tripRef,{
-        ...base,
-        status:"COMPLETED",
-        type:"TRIP_COMPLETED",
-        completedAt:serverTimestamp(),
-        createdAt:serverTimestamp()
-      });
 
-      tx.set(histRef,{
-        ...base,
-        status:"COMPLETED",
-        type:"DUTY_COMPLETED",
-        createdAt:serverTimestamp()
-      });
+        const snap =
+          await tx.get(
+            dutyRef
+          );
 
-      tx.delete(dutyRef);
-    });
 
-    duties=duties.filter(x=>x.id!==id);
+        if(!snap.exists()){
+
+          throw new Error(
+            "Duty no longer exists."
+          );
+
+        }
+
+
+        const data =
+          snap.data();
+
+
+        const base =
+          historySafe({
+            ...data,
+            id
+          });
+
+
+        const tripRef =
+          doc(
+            collection(
+              db,
+              "trips"
+            )
+          );
+
+
+        const historyRef =
+          doc(
+            collection(
+              db,
+              "duty_history"
+            )
+          );
+
+
+        tx.set(
+          tripRef,
+          {
+
+            ...base,
+
+            status:"COMPLETED",
+
+            type:"TRIP_COMPLETED",
+
+            completedAt:
+              serverTimestamp(),
+
+            createdAt:
+              serverTimestamp()
+
+          }
+        );
+
+
+        tx.set(
+          historyRef,
+          {
+
+            ...base,
+
+            status:"COMPLETED",
+
+            type:"DUTY_COMPLETED",
+
+            createdAt:
+              serverTimestamp()
+
+          }
+        );
+
+
+        tx.delete(
+          dutyRef
+        );
+
+      }
+    );
+
+
+    duties =
+      duties.filter(
+        x => x.id !== id
+      );
+
+
     render();
-    alert("Duty completed and removed from active duties.");
+
+
+    toast(
+      "Duty completed and removed."
+    );
+
+
   }catch(e){
+
     console.error(e);
-    alert("COMPLETE FAILED:\n"+e.message);
+
+
+    toast(
+      "COMPLETE failed: " +
+      e.message,
+      true
+    );
+
   }
+
 }
+
+
+/* =====================================================
+   HISTORY SAFE
+===================================================== */
 
 function historySafe(d){
+
   return {
-    dutyId:d.id||"",
-    pickup:d.pickup||"",
-    drop:d.drop||"",
-    date:d.date||"",
-    time:d.time||"",
-    vehicle:d.vehicle||"",
-    km:Number(d.km||0),
-    amount:Number(d.amount||0),
-    note:d.note||"",
-    driverId:d.driverId||d.acceptedDriverId||"",
-    acceptedDriverId:d.acceptedDriverId||"",
-    acceptedByUid:d.acceptedByUid||"",
-    driverName:d.driverName||d.acceptedBy||"",
-    driverMobile:d.driverMobile||"",
-    acceptedBy:d.acceptedBy||"",
-    rejectedBy:d.rejectedBy||"",
-    rejectedByUid:d.rejectedByUid||"",
-    cancelledBy:d.cancelledBy||""
+
+    dutyId:
+      d.dutyId ||
+      d.id ||
+      "",
+
+    pickup:
+      d.pickup ||
+      "",
+
+    drop:
+      d.drop ||
+      "",
+
+    date:
+      d.date ||
+      "",
+
+    time:
+      d.time ||
+      "",
+
+    vehicle:
+      d.vehicle ||
+      "",
+
+    km:
+      Number(
+        d.km || 0
+      ),
+
+    amount:
+      Number(
+        d.amount || 0
+      ),
+
+    note:
+      d.note ||
+      "",
+
+    driverId:
+      d.driverId ||
+      d.acceptedDriverId ||
+      "",
+
+    acceptedDriverId:
+      d.acceptedDriverId ||
+      "",
+
+    acceptedByUid:
+      d.acceptedByUid ||
+      "",
+
+    driverName:
+      d.driverName ||
+      d.acceptedBy ||
+      "",
+
+    driverMobile:
+      d.driverMobile ||
+      d.mobile ||
+      "",
+
+    acceptedBy:
+      d.acceptedBy ||
+      "",
+
+    rejectedBy:
+      d.rejectedBy ||
+      "",
+
+    rejectedByUid:
+      d.rejectedByUid ||
+      "",
+
+    cancelledBy:
+      d.cancelledBy ||
+      ""
+
   };
+
 }
+
+
+/* =====================================================
+   TIMESTAMP
+===================================================== */
 
 function stampMillis(v){
-  if(!v)return 0;
-  if(typeof v.toMillis==="function")return v.toMillis();
-  if(v.seconds)return Number(v.seconds)*1000;
-  const n=Date.parse(v);
-  return isNaN(n)?0:n;
+
+  if(!v)
+    return 0;
+
+
+  if(
+    typeof v.toMillis ===
+    "function"
+  ){
+
+    return v.toMillis();
+
+  }
+
+
+  if(v.seconds){
+
+    return Number(
+      v.seconds
+    ) * 1000;
+
+  }
+
+
+  const n =
+    Date.parse(v);
+
+
+  return isNaN(n)
+    ? 0
+    : n;
+
 }
+
 
 function formatStamp(v){
-  const n=stampMillis(v);
-  return n?new Date(n).toLocaleString("en-IN"):"";
+
+  const n =
+    stampMillis(v);
+
+
+  return n
+    ?
+    new Date(n)
+      .toLocaleString("en-IN")
+    :
+    "";
+
 }
+
+
+/* =====================================================
+   REALTIME LISTENERS
+===================================================== */
 
 function startListeners(){
-  unDrivers=onSnapshot(collection(db,"drivers"),snap=>{
-    drivers=snap.docs.map(x=>({id:x.id,...x.data()}));
-    setConnected(true);
-    render();
-  },err=>{
-    console.error(err);
-    setConnected(false);
-    alert("Drivers read failed: "+err.message);
-  });
 
-  unDuties=onSnapshot(collection(db,"duties"),snap=>{
-    duties=snap.docs.map(x=>({id:x.id,...x.data()}));
-    setConnected(true);
-    render();
-  },err=>{
-    console.error(err);
-    setConnected(false);
-    alert("Duties read failed: "+err.message);
-  });
+  /* =========================
+     DRIVERS
+  ========================= */
 
-  onSnapshot(collection(db,"duty_history"),snap=>{
-    history=snap.docs.map(x=>({id:x.id,...x.data()}));
-    render();
-  },err=>console.error("History:",err));
+  onSnapshot(
+    collection(
+      db,
+      "drivers"
+    ),
+
+    snap => {
+
+      drivers =
+        snap.docs.map(
+          x => ({
+            id:x.id,
+            ...x.data()
+          })
+        );
+
+
+      setConnected(true);
+
+      render();
+
+    },
+
+    err => {
+
+      console.error(
+        "DRIVERS:",
+        err
+      );
+
+
+      setConnected(false);
+
+
+      toast(
+        "Drivers read failed: " +
+        err.message,
+        true
+      );
+
+    }
+  );
+
+
+  /* =========================
+     ACTIVE DUTIES
+  ========================= */
+
+  onSnapshot(
+    collection(
+      db,
+      "duties"
+    ),
+
+    snap => {
+
+      duties =
+        snap.docs.map(
+          x => ({
+            id:x.id,
+            ...x.data()
+          })
+        );
+
+
+      setConnected(true);
+
+      render();
+
+    },
+
+    err => {
+
+      console.error(
+        "DUTIES:",
+        err
+      );
+
+
+      setConnected(false);
+
+
+      toast(
+        "Duties read failed: " +
+        err.message,
+        true
+      );
+
+    }
+  );
+
+
+  /* =========================
+     DUTY HISTORY
+  ========================= */
+
+  onSnapshot(
+    collection(
+      db,
+      "duty_history"
+    ),
+
+    snap => {
+
+      history =
+        snap.docs.map(
+          x => ({
+            id:x.id,
+            ...x.data()
+          })
+        );
+
+
+      render();
+
+    },
+
+    err => {
+
+      console.error(
+        "HISTORY:",
+        err
+      );
+
+    }
+  );
+
+
+  /* =========================
+     COMPLETED TRIPS
+     DRIVER APP COMPLETION
+  ========================= */
+
+  onSnapshot(
+    collection(
+      db,
+      "trips"
+    ),
+
+    snap => {
+
+      trips =
+        snap.docs.map(
+          x => ({
+            id:x.id,
+            ...x.data()
+          })
+        )
+        .filter(
+          x =>
+            String(
+              x.status || ""
+            ).toUpperCase()
+            === "COMPLETED"
+
+            ||
+
+            String(
+              x.type || ""
+            ).toUpperCase()
+            .includes("COMPLETE")
+        );
+
+
+      render();
+
+    },
+
+    err => {
+
+      console.error(
+        "TRIPS:",
+        err
+      );
+
+    }
+  );
+
 }
 
-window.createDuty=createDuty;
-window.approveDriver=approveDriver;
-window.rejectDriver=rejectDriver;
-window.blockDriver=blockDriver;
-window.unblockDriver=unblockDriver;
-window.deleteDriver=deleteDriver;
-window.addWallet=addWallet;
-window.deductWallet=deductWallet;
-window.deleteDuty=deleteDuty;
-window.cancelDuty=cancelDuty;
-window.cancelAcceptedDuty=cancelAcceptedDuty;
-window.completeDuty=completeDuty;
 
-startListeners();
-render();
+/* =====================================================
+   GLOBAL FUNCTIONS
+===================================================== */
+
+window.createDuty =
+  createDuty;
+
+window.approveDriver =
+  approveDriver;
+
+window.rejectDriver =
+  rejectDriver;
+
+window.blockDriver =
+  blockDriver;
+
+window.unblockDriver =
+  unblockDriver;
+
+window.deleteDriver =
+  deleteDriver;
+
+window.addWallet =
+  addWallet;
+
+window.deductWallet =
+  deductWallet;
+
+window.deleteDuty =
+  deleteDuty;
+
+window.cancelDuty =
+  cancelDuty;
+
+window.cancelAcceptedDuty =
+  cancelAcceptedDuty;
+
+window.completeDuty =
+  completeDuty;
+
+
+/* =====================================================
+   IMPORTANT
+   LOGIN SCREEN WILL SHOW FIRST.
+   FIREBASE LISTENERS START ONLY AFTER LOGIN.
+===================================================== */
+
+/*
+  No startListeners() here.
+  No render() here.
+
+  Login success will start both.
+*/
+
+
 </script>
+
 </body>
-</html>
+  </html>
