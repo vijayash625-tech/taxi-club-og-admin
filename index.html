@@ -34,7 +34,7 @@ button{
 
 
 /* =====================================================
-   LOGIN SCREEN
+   LOGIN
 ===================================================== */
 
 #loginScreen{
@@ -56,12 +56,11 @@ button{
 .loginCard{
   width:100%;
   max-width:400px;
-  background:#ffffff;
+  background:#fff;
   border:1px solid #dfe7f1;
   border-radius:22px;
   padding:28px 22px;
-  box-shadow:
-    0 15px 50px rgba(20,40,70,.12);
+  box-shadow:0 15px 50px rgba(20,40,70,.12);
 }
 
 .loginLogo{
@@ -84,7 +83,6 @@ button{
   font-size:20px;
   font-weight:900;
   margin-bottom:18px;
-  color:#172033;
 }
 
 .loginField{
@@ -108,12 +106,6 @@ button{
   outline:none;
 }
 
-.loginField input:focus{
-  border-color:#1769e0;
-  box-shadow:
-    0 0 0 3px rgba(23,105,224,.08);
-}
-
 .loginButton{
   width:100%;
   padding:14px;
@@ -123,10 +115,6 @@ button{
   color:#fff;
   font-weight:900;
   font-size:15px;
-}
-
-.loginButton:active{
-  transform:scale(.98);
 }
 
 .loginError{
@@ -147,13 +135,12 @@ button{
 
 
 /* =====================================================
-   ADMIN PANEL
+   PANEL
 ===================================================== */
 
 #panelScreen{
   display:none;
 }
-
 
 .top{
   position:sticky;
@@ -479,6 +466,50 @@ h1{
   color:#b4233d;
 }
 
+.typeBadge{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:9px;
+  background:#f0f5ff;
+  color:#1769e0;
+  font-size:11px;
+  font-weight:900;
+  margin:5px 0;
+}
+
+.specialBox{
+  margin-top:10px;
+  padding:11px;
+  border-radius:12px;
+  background:#fff8e8;
+  border:1px solid #f3dfad;
+}
+
+.particularBox{
+  margin-top:10px;
+  padding:11px;
+  border-radius:12px;
+  background:#f1f8ff;
+  border:1px solid #d5e7fb;
+}
+
+.searchBox{
+  margin-bottom:12px;
+}
+
+.searchBox input{
+  width:100%;
+  padding:13px;
+  border:1px solid #cfd8e5;
+  border-radius:12px;
+  outline:none;
+}
+
+.searchBox input:focus{
+  border-color:#1769e0;
+  box-shadow:0 0 0 3px rgba(23,105,224,.08);
+}
+
 .notice{
   padding:12px;
   border-radius:12px;
@@ -502,7 +533,7 @@ h1{
 
 
 /* =====================================================
-   CUSTOM MODAL
+   MODAL
 ===================================================== */
 
 .modalBack{
@@ -628,7 +659,7 @@ h1{
 
 
 <!-- =====================================================
-     LOGIN SCREEN
+     LOGIN
 ===================================================== -->
 
 <div id="loginScreen">
@@ -647,12 +678,9 @@ h1{
       ADMIN LOGIN
     </div>
 
-
     <div class="loginField">
 
-      <label>
-        USER ID
-      </label>
+      <label>USER ID</label>
 
       <input
         id="adminUserId"
@@ -663,12 +691,9 @@ h1{
 
     </div>
 
-
     <div class="loginField">
 
-      <label>
-        PASSWORD
-      </label>
+      <label>PASSWORD</label>
 
       <input
         id="adminPassword"
@@ -678,7 +703,6 @@ h1{
 
     </div>
 
-
     <button
       class="loginButton"
       onclick="adminLogin()">
@@ -686,7 +710,6 @@ h1{
       LOGIN
 
     </button>
-
 
     <div
       id="loginError"
@@ -707,7 +730,6 @@ h1{
 
 <div id="panelScreen">
 
-
 <header class="top">
 
   <div class="brand">
@@ -720,7 +742,6 @@ h1{
 
   </div>
 
-
   <div class="headerRight">
 
     <div
@@ -730,7 +751,6 @@ h1{
       CONNECTING...
 
     </div>
-
 
     <button
       class="logoutBtn"
@@ -756,7 +776,6 @@ h1{
 
   </button>
 
-
   <button
     id="nav-open"
     onclick="showPage('open')">
@@ -765,7 +784,6 @@ h1{
 
   </button>
 
-
   <button
     id="nav-accepted"
     onclick="showPage('accepted')">
@@ -773,7 +791,6 @@ h1{
     ✅ ACCEPTED
 
   </button>
-
 
   <button
     id="nav-history"
@@ -809,12 +826,10 @@ h1{
 
     </div>
 
-
     <div
       id="modalText"
       class="modalText">
     </div>
-
 
     <div class="modalActions">
 
@@ -825,7 +840,6 @@ h1{
         CANCEL
 
       </button>
-
 
       <button
         id="modalOK"
@@ -882,7 +896,7 @@ from
 const firebaseConfig = {
 
   apiKey:
-  "AIzaSyCXOKF-5BEE_qqZWuO08A_Dks4F0b-3q8",
+  "AIzaSyCXOKF5BEE_qqZWuO08A_Dks4F0b-3q8",
 
   authDomain:
   "taxi-club-og-driver.firebaseapp.com",
@@ -913,7 +927,7 @@ const db =
 
 
 /* =====================================================
-   ADMIN LOGIN
+   LOGIN
 ===================================================== */
 
 const ADMIN_USER_ID =
@@ -934,11 +948,9 @@ function(){
       .value
       .trim();
 
-
   const password =
     $("adminPassword")
       .value;
-
 
   if(
     userId === ADMIN_USER_ID &&
@@ -949,20 +961,16 @@ function(){
       .classList
       .remove("show");
 
-
     $("adminPassword")
       .value = "";
-
 
     $("loginScreen")
       .style.display =
       "none";
 
-
     $("panelScreen")
       .style.display =
       "block";
-
 
     if(!listenersStarted){
 
@@ -971,7 +979,6 @@ function(){
       startListeners();
 
     }
-
 
     render();
 
@@ -994,19 +1001,15 @@ function(){
     .style.display =
     "none";
 
-
   $("loginScreen")
     .style.display =
     "flex";
 
-
   $("adminUserId")
     .value = "";
 
-
   $("adminPassword")
     .value = "";
-
 
   $("loginError")
     .classList
@@ -1030,6 +1033,8 @@ let history = [];
 let trips = [];
 
 let driverFilter = "ALL";
+
+let driverSearch = "";
 
 
 /* =====================================================
@@ -1073,7 +1078,6 @@ function driverStatus(d){
       d.status || "PENDING"
     ).toUpperCase();
 
-
   if(
     d.approved === true ||
     s === "APPROVED" ||
@@ -1083,7 +1087,6 @@ function driverStatus(d){
     return "APPROVED";
 
   }
-
 
   return s;
 
@@ -1097,7 +1100,6 @@ function normalizeDate(value){
       .replace(/\D/g,"")
       .slice(0,8);
 
-
   if(s.length === 8){
 
     return (
@@ -1109,7 +1111,6 @@ function normalizeDate(value){
     );
 
   }
-
 
   return value || "";
 
@@ -1123,7 +1124,6 @@ function(input){
     input.value
       .replace(/\D/g,"")
       .slice(0,8);
-
 
   if(raw.length <= 2){
 
@@ -1153,7 +1153,7 @@ function(input){
 
 
 /* =====================================================
-   TIME FORMAT - AM / PM
+   TIME
 ===================================================== */
 
 window.formatTime =
@@ -1165,28 +1165,36 @@ function(input){
       .replace(/[^0-9APM: ]/g,"")
       .slice(0,8);
 
-
   input.value =
     raw;
 
 };
 
 
-/* =====================================================
-   TIME VALIDATION
-===================================================== */
-
 function normalizeTime(value){
 
-  let s =
-    String(value || "")
-      .trim()
-      .toUpperCase()
-      .replace(/\s+/g," ");
-
-  return s;
+  return String(value || "")
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g," ");
 
 }
+
+
+/* =====================================================
+   DRIVER SEARCH
+===================================================== */
+
+window.searchDrivers =
+function(value){
+
+  driverSearch =
+    String(value || "")
+      .replace(/\D/g,"");
+
+  render();
+
+};
 
 
 /* =====================================================
@@ -1201,24 +1209,19 @@ function toast(
   const t =
     $("toast");
 
-
   t.textContent =
     message;
-
 
   t.classList.toggle(
     "error",
     error
   );
 
-
   t.classList.add("show");
-
 
   clearTimeout(
     window.__toastTimer
   );
-
 
   window.__toastTimer =
     setTimeout(
@@ -1231,7 +1234,7 @@ function toast(
 
 
 /* =====================================================
-   CUSTOM CONFIRM
+   CONFIRM
 ===================================================== */
 
 function confirmBox(
@@ -1246,21 +1249,17 @@ function confirmBox(
     const back =
       $("modalBack");
 
-
     $("modalTitle")
       .textContent =
       title;
-
 
     $("modalText")
       .textContent =
       text;
 
-
     $("modalOK")
       .textContent =
       okText;
-
 
     $("modalOK")
       .style
@@ -1269,34 +1268,25 @@ function confirmBox(
       ? "#d92d4a"
       : "#1769e0";
 
-
     $("modalCancel").onclick =
       () => {
 
-        back
-          .classList
-          .remove("show");
+        back.classList.remove("show");
 
         resolve(false);
 
       };
 
-
     $("modalOK").onclick =
       () => {
 
-        back
-          .classList
-          .remove("show");
+        back.classList.remove("show");
 
         resolve(true);
 
       };
 
-
-    back
-      .classList
-      .add("show");
+    back.classList.add("show");
 
   });
 
@@ -1304,7 +1294,7 @@ function confirmBox(
 
 
 /* =====================================================
-   DASHBOARD BOX FILTERS
+   DRIVER FILTER
 ===================================================== */
 
 window.showDriverFilter =
@@ -1315,9 +1305,7 @@ function(filter){
       filter || "ALL"
     ).toUpperCase();
 
-
   page = "duty";
-
 
   [
     "duty",
@@ -1336,7 +1324,6 @@ function(filter){
 
   });
 
-
   render();
 
 };
@@ -1348,14 +1335,13 @@ function(){
   driverFilter =
     "ALL";
 
-
   showPage("open");
 
 };
 
 
 /* =====================================================
-   NAVIGATION
+   NAV
 ===================================================== */
 
 window.showPage =
@@ -1363,14 +1349,12 @@ function(p){
 
   page = p;
 
-
   if(p === "duty"){
 
     driverFilter =
       "ALL";
 
   }
-
 
   [
     "duty",
@@ -1389,7 +1373,6 @@ function(p){
 
   });
 
-
   render();
 
 };
@@ -1407,14 +1390,12 @@ function setConnected(ok){
     ? "FIREBASE CONNECTED"
     : "FIREBASE ERROR";
 
-
   $("connection")
     .style
     .background =
     ok
     ? "#e9f8ef"
     : "#ffe8ed";
-
 
   $("connection")
     .style
@@ -1435,15 +1416,11 @@ function driverForDuty(d){
   const values = [
 
     d.acceptedByUid,
-
     d.acceptedDriverId,
-
     d.driverId,
-
     d.driverMobile
 
   ];
-
 
   for(
     const value of values
@@ -1451,7 +1428,6 @@ function driverForDuty(d){
 
     if(!value)
       continue;
-
 
     const found =
       drivers.find(x =>
@@ -1478,12 +1454,10 @@ function driverForDuty(d){
 
       );
 
-
     if(found)
       return found;
 
   }
-
 
   return null;
 
@@ -1524,7 +1498,6 @@ function renderDuty(){
         === "APPROVED"
     ).length;
 
-
   const pending =
     drivers.filter(
       d =>
@@ -1532,14 +1505,12 @@ function renderDuty(){
         === "PENDING"
     ).length;
 
-
   const blocked =
     drivers.filter(
       d =>
         driverStatus(d)
         === "BLOCKED"
     ).length;
-
 
   const open =
     duties.filter(
@@ -1554,10 +1525,8 @@ function renderDuty(){
 
 
   if(
-    driverFilter === "APPROVED"
-    ||
-    driverFilter === "PENDING"
-    ||
+    driverFilter === "APPROVED" ||
+    driverFilter === "PENDING" ||
     driverFilter === "BLOCKED"
   ){
 
@@ -1567,6 +1536,28 @@ function renderDuty(){
           driverStatus(d)
           === driverFilter
       );
+
+  }
+
+
+  if(driverSearch){
+
+    filteredDrivers =
+      filteredDrivers.filter(d => {
+
+        const mobile =
+          String(
+            d.mobile ||
+            d.phone ||
+            d.driverMobile ||
+            ""
+          ).replace(/\D/g,"");
+
+        return mobile.includes(
+          driverSearch
+        );
+
+      });
 
   }
 
@@ -1597,62 +1588,48 @@ function renderDuty(){
 
     <div class="statgrid">
 
-
       <div
         class="stat"
-        onclick="showDriverFilter('APPROVED')"
-        title="Show Approved Drivers">
+        onclick="showDriverFilter('APPROVED')">
 
         <b>${approved}</b>
 
-        <span>
-          APPROVED
-        </span>
+        <span>APPROVED</span>
 
       </div>
 
 
       <div
         class="stat"
-        onclick="showDriverFilter('PENDING')"
-        title="Show Pending Drivers">
+        onclick="showDriverFilter('PENDING')">
 
         <b>${pending}</b>
 
-        <span>
-          PENDING
-        </span>
+        <span>PENDING</span>
 
       </div>
 
 
       <div
         class="stat"
-        onclick="showDriverFilter('BLOCKED')"
-        title="Show Blocked Drivers">
+        onclick="showDriverFilter('BLOCKED')">
 
         <b>${blocked}</b>
 
-        <span>
-          BLOCKED
-        </span>
+        <span>BLOCKED</span>
 
       </div>
 
 
       <div
         class="stat"
-        onclick="showOpenDuties()"
-        title="Show Open Duties">
+        onclick="showOpenDuties()">
 
         <b>${open}</b>
 
-        <span>
-          OPEN DUTIES
-        </span>
+        <span>OPEN DUTIES</span>
 
       </div>
-
 
     </div>
 
@@ -1664,6 +1641,46 @@ function renderDuty(){
       </h2>
 
       <div class="grid">
+
+
+        <div class="field">
+
+          <label>
+            DUTY TYPE
+          </label>
+
+          <select id="dutyType">
+
+            <option value="ONE WAY">
+              ONE WAY
+            </option>
+
+            <option value="ROUND TRIP">
+              ROUND TRIP
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            VEHICLE
+          </label>
+
+          <select id="vehicle">
+
+            <option>SEDAN</option>
+
+            <option>SUV</option>
+
+            <option>MINI</option>
+
+          </select>
+
+        </div>
 
 
         <div class="field">
@@ -1729,31 +1746,6 @@ function renderDuty(){
         <div class="field">
 
           <label>
-            VEHICLE
-          </label>
-
-          <select id="vehicle">
-
-            <option>
-              SEDAN
-            </option>
-
-            <option>
-              SUV
-            </option>
-
-            <option>
-              MINI
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
             KM
           </label>
 
@@ -1781,7 +1773,34 @@ function renderDuty(){
         </div>
 
 
-        <div class="field">
+        <div class="field full">
+
+          <label>
+            ✏️ SPECIAL SERVICE
+          </label>
+
+          <input
+            id="specialService"
+            placeholder="Example: Airport Pickup / VIP / Extra Luggage">
+
+        </div>
+
+
+        <div class="field full">
+
+          <label>
+            ✏️ PARTICULAR / DRIVER NOTE
+          </label>
+
+          <textarea
+            id="particular"
+            rows="3"
+            placeholder="Customer details / special instruction for this duty"></textarea>
+
+        </div>
+
+
+        <div class="field full">
 
           <label>
             NOTE
@@ -1813,6 +1832,39 @@ function renderDuty(){
 
     <div class="card">
 
+      <h2>
+        🔎 DRIVER SEARCH
+      </h2>
+
+
+      <div class="searchBox">
+
+        <input
+          type="tel"
+          inputmode="numeric"
+          placeholder="Enter driver mobile number"
+          value="${esc(driverSearch)}"
+          oninput="searchDrivers(this.value)">
+
+      </div>
+
+
+      ${
+        driverSearch
+        ?
+        `
+        <div class="notice">
+
+          Searching mobile:
+          <b>${esc(driverSearch)}</b>
+
+        </div>
+        `
+        :
+        ""
+      }
+
+
       <div class="row">
 
         <h2 style="margin-bottom:0">
@@ -1823,14 +1875,14 @@ function renderDuty(){
 
 
         ${
-          driverFilter !== "ALL"
+          driverFilter !== "ALL" || driverSearch
           ?
           `
           <button
             class="btn blue"
-            onclick="showDriverFilter('ALL')">
+            onclick="clearDriverSearch()">
 
-            SHOW ALL
+            CLEAR
 
           </button>
           `
@@ -1861,15 +1913,7 @@ function renderDuty(){
         `
         <div class="empty">
 
-          ${
-            driverFilter === "ALL"
-            ?
-            "No drivers found."
-            :
-            "No " +
-            driverFilter.toLowerCase() +
-            " drivers found."
-          }
+          No matching drivers found.
 
         </div>
         `
@@ -1882,6 +1926,18 @@ function renderDuty(){
 }
 
 
+window.clearDriverSearch =
+function(){
+
+  driverSearch = "";
+
+  driverFilter = "ALL";
+
+  render();
+
+};
+
+
 /* =====================================================
    DRIVER CARD
 ===================================================== */
@@ -1891,7 +1947,6 @@ function driverCard(d){
   const s =
     driverStatus(d);
 
-
   const wallet =
     Number(
       d.walletBalance ??
@@ -1899,18 +1954,15 @@ function driverCard(d){
       0
     );
 
-
   const name =
     d.name ||
     d.driverName ||
     "Driver";
 
-
   const mobile =
     d.mobile ||
     d.phone ||
     "-";
-
 
   const payment =
     String(
@@ -1923,7 +1975,6 @@ function driverCard(d){
 
   <div class="driver">
 
-
     <div class="row">
 
       <div>
@@ -1933,7 +1984,6 @@ function driverCard(d){
           👨‍✈️ ${esc(name)}
 
         </div>
-
 
         <div class="muted">
 
@@ -1964,7 +2014,6 @@ function driverCard(d){
         </div>
 
       </div>
-
 
       <span class="badge ${
         s === "APPROVED"
@@ -1999,7 +2048,6 @@ function driverCard(d){
 
 
     <div class="actions">
-
 
       ${
         s !== "APPROVED"
@@ -2079,7 +2127,6 @@ function driverCard(d){
         background:#f8fbff
       ">
 
-
       <div class="wallet">
 
         💰 ₹
@@ -2096,13 +2143,11 @@ function driverCard(d){
 
       </div>
 
-
       <div class="muted">
 
         Admin controlled wallet
 
       </div>
-
 
       <div
         class="grid"
@@ -2123,9 +2168,7 @@ function driverCard(d){
 
       </div>
 
-
       <div class="actions">
-
 
         <button
           class="btn green"
@@ -2134,7 +2177,6 @@ function driverCard(d){
           ＋ ADD
 
         </button>
-
 
         <button
           class="btn red"
@@ -2175,11 +2217,9 @@ function renderOpen(){
       🟢 Open Duties
     </h1>
 
-
     <div class="sub">
       Only duties waiting for drivers
     </div>
-
 
     <div class="notice">
 
@@ -2189,13 +2229,11 @@ function renderOpen(){
 
     </div>
 
-
     <div class="card">
 
       <h2>
         🚕 OPEN DUTIES (${list.length})
       </h2>
-
 
       ${
         list.length
@@ -2228,17 +2266,25 @@ function openDutyCard(d){
 
   <div class="duty">
 
-
     <div class="row">
 
       <b>
         DUTY
       </b>
 
-
       <span class="badge open">
         OPEN
       </span>
+
+    </div>
+
+
+    <div class="typeBadge">
+
+      🚕 ${esc(
+        d.dutyType ||
+        "ONE WAY"
+      )}
 
     </div>
 
@@ -2275,6 +2321,44 @@ function openDutyCard(d){
     </div>
 
 
+    ${
+      d.specialService
+      ?
+      `
+      <div class="specialBox">
+
+        ⭐ <b>Special Service</b>
+
+        <br>
+
+        ${esc(d.specialService)}
+
+      </div>
+      `
+      :
+      ""
+    }
+
+
+    ${
+      d.particular
+      ?
+      `
+      <div class="particularBox">
+
+        ✏️ <b>Particular / Driver Note</b>
+
+        <br>
+
+        ${esc(d.particular)}
+
+      </div>
+      `
+      :
+      ""
+    }
+
+
     <div class="money">
 
       ₹${Number(d.amount || 0)}
@@ -2298,7 +2382,6 @@ function openDutyCard(d){
 
 
     <div class="actions">
-
 
       <button
         class="btn orange"
@@ -2327,7 +2410,7 @@ function openDutyCard(d){
 
 
 /* =====================================================
-   ACCEPTED PAGE
+   ACCEPTED
 ===================================================== */
 
 function renderAccepted(){
@@ -2346,18 +2429,15 @@ function renderAccepted(){
       ✅ Accepted Duties
     </h1>
 
-
     <div class="sub">
       Driver who accepted the duty
     </div>
-
 
     <div class="card">
 
       <h2>
         ACCEPTED DUTIES (${list.length})
       </h2>
-
 
       ${
         list.length
@@ -2422,21 +2502,27 @@ function acceptedCard(d){
 
   <div class="duty">
 
-
     <div class="row">
 
       <b>
-
         👨‍✈️ ${esc(name)}
-
       </b>
-
 
       <span class="badge accepted">
 
         ${esc(statusOf(d))}
 
       </span>
+
+    </div>
+
+
+    <div class="typeBadge">
+
+      🚕 ${esc(
+        d.dutyType ||
+        "ONE WAY"
+      )}
 
     </div>
 
@@ -2494,6 +2580,44 @@ function acceptedCard(d){
     </div>
 
 
+    ${
+      d.specialService
+      ?
+      `
+      <div class="specialBox">
+
+        ⭐ <b>Special Service</b>
+
+        <br>
+
+        ${esc(d.specialService)}
+
+      </div>
+      `
+      :
+      ""
+    }
+
+
+    ${
+      d.particular
+      ?
+      `
+      <div class="particularBox">
+
+        ✏️ <b>Particular / Driver Note</b>
+
+        <br>
+
+        ${esc(d.particular)}
+
+      </div>
+      `
+      :
+      ""
+    }
+
+
     <div class="money">
 
       ₹${Number(d.amount || 0)}
@@ -2523,7 +2647,6 @@ function acceptedCard(d){
 
     <div class="actions">
 
-
       <button
         class="btn orange"
         onclick="cancelAcceptedDuty('${esc(d.id)}')">
@@ -2552,7 +2675,6 @@ function acceptedCard(d){
 
 /* =====================================================
    HISTORY
-   duty_history + trips
 ===================================================== */
 
 function renderHistory(){
@@ -2652,18 +2774,15 @@ function renderHistory(){
       📋 History
     </h1>
 
-
     <div class="sub">
       All driver and duty activity
     </div>
-
 
     <div class="card">
 
       <h2>
         ALL ACTIVITY (${rows.length})
       </h2>
-
 
       ${
         rows.length
@@ -2724,7 +2843,6 @@ function historyCard(h){
 
   <div class="duty">
 
-
     <div class="row">
 
       <b>
@@ -2749,6 +2867,21 @@ function historyCard(h){
 
 
     ${
+      h.dutyType
+      ?
+      `
+      <div class="typeBadge">
+
+        🚕 ${esc(h.dutyType)}
+
+      </div>
+      `
+      :
+      ""
+    }
+
+
+    ${
       h.pickup || h.drop
       ?
       `
@@ -2770,7 +2903,6 @@ function historyCard(h){
 
 
     <div class="muted">
-
 
       ${
         h.driverMobile
@@ -2807,8 +2939,45 @@ function historyCard(h){
         ""
       }
 
-
     </div>
+
+
+    ${
+      h.specialService
+      ?
+      `
+      <div class="specialBox">
+
+        ⭐ <b>Special Service</b>
+
+        <br>
+
+        ${esc(h.specialService)}
+
+      </div>
+      `
+      :
+      ""
+    }
+
+
+    ${
+      h.particular
+      ?
+      `
+      <div class="particularBox">
+
+        ✏️ <b>Particular / Driver Note</b>
+
+        <br>
+
+        ${esc(h.particular)}
+
+      </div>
+      `
+      :
+      ""
+    }
 
 
     ${
@@ -2883,6 +3052,11 @@ async function createDuty(){
 
   try{
 
+    const dutyType =
+      $("dutyType")
+        .value;
+
+
     const pickup =
       $("pickup")
         .value
@@ -2929,13 +3103,23 @@ async function createDuty(){
       );
 
 
+    const specialService =
+      $("specialService")
+        .value
+        .trim();
+
+
+    const particular =
+      $("particular")
+        .value
+        .trim();
+
+
     const note =
       $("note")
         .value
         .trim();
 
-
-    /* AM / PM TIME VALIDATION */
 
     const timeValid =
       /^(0[1-9]|1[0-2]):[0-5]\d\s?(AM|PM)$/i.test(
@@ -2969,6 +3153,8 @@ async function createDuty(){
       ),
       {
 
+        dutyType,
+
         pickup,
 
         drop,
@@ -2982,6 +3168,10 @@ async function createDuty(){
         km,
 
         amount,
+
+        specialService,
+
+        particular,
 
         note,
 
@@ -3034,7 +3224,6 @@ async function createDuty(){
   }catch(e){
 
     console.error(e);
-
 
     toast(
       "Duty create failed: " +
@@ -3108,7 +3297,6 @@ async function approveDriver(id){
   }catch(e){
 
     console.error(e);
-
 
     toast(
       "APPROVE failed: " +
@@ -3199,7 +3387,6 @@ async function rejectDriver(id){
   }catch(e){
 
     console.error(e);
-
 
     toast(
       "REJECT failed: " +
@@ -3293,7 +3480,6 @@ async function blockDriver(id){
 
     console.error(e);
 
-
     toast(
       "BLOCK failed: " +
       e.message,
@@ -3306,7 +3492,7 @@ async function blockDriver(id){
 
 
 /* =====================================================
-   UNBLOCK DRIVER
+   UNBLOCK
 ===================================================== */
 
 async function unblockDriver(id){
@@ -3362,7 +3548,6 @@ async function unblockDriver(id){
   }catch(e){
 
     console.error(e);
-
 
     toast(
       "UNBLOCK failed: " +
@@ -3737,7 +3922,6 @@ async function deleteDriver(id){
 
     console.error(e);
 
-
     toast(
       "DELETE DRIVER failed: " +
       e.message,
@@ -3863,7 +4047,6 @@ async function addWallet(id){
   }catch(e){
 
     console.error(e);
-
 
     toast(
       "Wallet ADD failed: " +
@@ -4005,7 +4188,6 @@ async function deductWallet(id){
   }catch(e){
 
     console.error(e);
-
 
     toast(
       "Wallet DEDUCT failed: " +
@@ -4166,7 +4348,6 @@ async function deleteDuty(id){
 
     console.error(e);
 
-
     toast(
       "DUTY DELETE failed: " +
       e.message,
@@ -4312,7 +4493,6 @@ async function cancelDuty(id){
 
     console.error(e);
 
-
     toast(
       "CANCEL failed: " +
       e.message,
@@ -4326,7 +4506,6 @@ async function cancelDuty(id){
 
 /* =====================================================
    CANCEL ACCEPTED DUTY
-   ₹150 DEDUCTION
 ===================================================== */
 
 async function cancelAcceptedDuty(id){
@@ -4529,7 +4708,6 @@ async function cancelAcceptedDuty(id){
 
     console.error(e);
 
-
     toast(
       "ACCEPTED CANCEL failed: " +
       e.message,
@@ -4542,7 +4720,7 @@ async function cancelAcceptedDuty(id){
 
 
 /* =====================================================
-   COMPLETE DUTY - ADMIN
+   COMPLETE DUTY
 ===================================================== */
 
 async function completeDuty(id){
@@ -4692,7 +4870,6 @@ async function completeDuty(id){
 
     console.error(e);
 
-
     toast(
       "COMPLETE failed: " +
       e.message,
@@ -4716,6 +4893,10 @@ function historySafe(d){
       d.dutyId ||
       d.id ||
       "",
+
+    dutyType:
+      d.dutyType ||
+      "ONE WAY",
 
     pickup:
       d.pickup ||
@@ -4746,6 +4927,14 @@ function historySafe(d){
       Number(
         d.amount || 0
       ),
+
+    specialService:
+      d.specialService ||
+      "",
+
+    particular:
+      d.particular ||
+      "",
 
     note:
       d.note ||
@@ -4857,10 +5046,6 @@ function formatStamp(v){
 
 function startListeners(){
 
-  /* =========================
-     DRIVERS
-  ========================= */
-
   onSnapshot(
     collection(
       db,
@@ -4877,7 +5062,6 @@ function startListeners(){
           })
         );
 
-
       setConnected(true);
 
       render();
@@ -4891,9 +5075,7 @@ function startListeners(){
         err
       );
 
-
       setConnected(false);
-
 
       toast(
         "Drivers read failed: " +
@@ -4904,10 +5086,6 @@ function startListeners(){
     }
   );
 
-
-  /* =========================
-     ACTIVE DUTIES
-  ========================= */
 
   onSnapshot(
     collection(
@@ -4925,7 +5103,6 @@ function startListeners(){
           })
         );
 
-
       setConnected(true);
 
       render();
@@ -4939,9 +5116,7 @@ function startListeners(){
         err
       );
 
-
       setConnected(false);
-
 
       toast(
         "Duties read failed: " +
@@ -4952,10 +5127,6 @@ function startListeners(){
     }
   );
 
-
-  /* =========================
-     DUTY HISTORY
-  ========================= */
 
   onSnapshot(
     collection(
@@ -4973,7 +5144,6 @@ function startListeners(){
           })
         );
 
-
       render();
 
     },
@@ -4988,11 +5158,6 @@ function startListeners(){
     }
   );
 
-
-  /* =========================
-     COMPLETED TRIPS
-     DRIVER APP COMPLETION
-  ========================= */
 
   onSnapshot(
     collection(
@@ -5084,18 +5249,8 @@ window.completeDuty =
 
 
 /* =====================================================
-   IMPORTANT
-   LOGIN SCREEN WILL SHOW FIRST.
-   FIREBASE LISTENERS START ONLY AFTER LOGIN.
+   LOGIN FIRST
 ===================================================== */
-
-/*
-  No startListeners() here.
-  No render() here.
-
-  Login success will start both.
-*/
-
 
 </script>
 
