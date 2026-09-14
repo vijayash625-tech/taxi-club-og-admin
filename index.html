@@ -43,7 +43,70 @@ h1{margin:6px 0 4px;font-size:28px}.sub{color:#68758a;margin-bottom:18px}
 .notice{padding:12px;border-radius:12px;background:#eef6ff;color:#15559b;font-weight:700;margin:10px 0}
 .loading{text-align:center;padding:25px;color:#64748b}
 .hidden{display:none!important}
-@media(max-width:650px){.grid{grid-template-columns:1fr}.statgrid{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}.top{padding:12px}.brand{font-size:18px}}
+
+/* ===== DRIVER MOBILE SEARCH - NEW ONLY ===== */
+.driver-search{
+  margin:14px 0 16px;
+  padding:14px;
+  border:1px solid #d7deea;
+  border-radius:16px;
+  background:#f8fbff;
+}
+.driver-search label{
+  display:block;
+  font-size:13px;
+  font-weight:900;
+  color:#475569;
+  margin-bottom:8px;
+}
+.search-row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+.search-row input{
+  margin:0;
+  flex:1;
+  width:100%;
+  padding:12px;
+  border:1px solid #d7dee9;
+  border-radius:11px;
+  background:#fff;
+  outline:none;
+}
+.search-row input:focus{
+  border-color:#1769e0;
+  box-shadow:0 0 0 3px #1769e01a;
+}
+.search-clear{
+  width:auto;
+  min-width:82px;
+  padding:12px 14px!important;
+}
+.search-count{
+  margin-top:7px;
+  font-size:12px;
+  color:#64748b;
+  font-weight:700;
+}
+
+@media(max-width:650px){
+  .grid{grid-template-columns:1fr}
+  .statgrid{grid-template-columns:repeat(2,1fr)}
+  h1{font-size:24px}
+  .top{padding:12px}
+  .brand{font-size:18px}
+}
+
+@media(max-width:500px){
+  .search-row{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .search-clear{
+    width:100%;
+  }
+}
 </style>
 </head>
 <body>
@@ -100,6 +163,9 @@ let history=[];
 let unDrivers=null;
 let unDuties=null;
 
+/* ===== DRIVER MOBILE SEARCH ===== */
+let driverMobileSearch="";
+
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 
@@ -136,21 +202,29 @@ function driverForDuty(d){
     ["driverId",d.driverId],
     ["mobile",d.driverMobile]
   ];
+
   for(const [,value] of keys){
     if(!value)continue;
+
     const found=drivers.find(x=>
       String(x.uid||"")===String(value) ||
       String(x.driverId||x.id||"")===String(value) ||
       String(x.mobile||x.phone||"")===String(value)
     );
+
     if(found)return found;
   }
+
   return null;
 }
 
 function driverStatus(d){
   const s=String(d.status||"PENDING").toUpperCase();
-  if(d.approved===true||s==="APPROVED"||s==="ACTIVE")return "APPROVED";
+
+  if(d.approved===true||s==="APPROVED"||s==="ACTIVE"){
+    return "APPROVED";
+  }
+
   return s;
 }
 
@@ -180,18 +254,53 @@ function renderDuty(){
 
     <div class="card">
       <h2>➕ CREATE DUTY</h2>
+
       <div class="grid">
-        <div class="field"><label>PICKUP</label><input id="pickup" placeholder="Pickup location"></div>
-        <div class="field"><label>DROP</label><input id="drop" placeholder="Drop location"></div>
-        <div class="field"><label>DATE</label><input id="date" type="text" inputmode="numeric" maxlength="10" placeholder="DD/MM/YYYY" oninput="formatDate(this)"></div>
-        <div class="field"><label>TIME</label><input id="time" type="time"></div>
-        <div class="field"><label>VEHICLE</label>
-          <select id="vehicle"><option>SEDAN</option><option>SUV</option><option>MINI</option></select>
+        <div class="field">
+          <label>PICKUP</label>
+          <input id="pickup" placeholder="Pickup location">
         </div>
-        <div class="field"><label>KM</label><input id="km" type="number" min="0" placeholder="KM"></div>
-        <div class="field"><label>AMOUNT ₹</label><input id="amount" type="number" min="0" placeholder="Amount"></div>
-        <div class="field"><label>NOTE</label><input id="note" placeholder="Toll / parking / extra note"></div>
+
+        <div class="field">
+          <label>DROP</label>
+          <input id="drop" placeholder="Drop location">
+        </div>
+
+        <div class="field">
+          <label>DATE</label>
+          <input id="date" type="text" inputmode="numeric" maxlength="10" placeholder="DD/MM/YYYY" oninput="formatDate(this)">
+        </div>
+
+        <div class="field">
+          <label>TIME</label>
+          <input id="time" type="time">
+        </div>
+
+        <div class="field">
+          <label>VEHICLE</label>
+          <select id="vehicle">
+            <option>SEDAN</option>
+            <option>SUV</option>
+            <option>MINI</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>KM</label>
+          <input id="km" type="number" min="0" placeholder="KM">
+        </div>
+
+        <div class="field">
+          <label>AMOUNT ₹</label>
+          <input id="amount" type="number" min="0" placeholder="Amount">
+        </div>
+
+        <div class="field">
+          <label>NOTE</label>
+          <input id="note" placeholder="Toll / parking / extra note">
+        </div>
       </div>
+
       <div class="actions">
         <button class="btn primary" onclick="createDuty()">CREATE DUTY</button>
       </div>
@@ -199,146 +308,588 @@ function renderDuty(){
 
     <div class="card">
       <h2>👨‍✈️ DRIVER APPROVAL</h2>
-      <div class="notice">Driver registers → ₹400 payment → Admin approves. Only APPROVED drivers can use the Driver App.</div>
-      ${drivers.length?drivers.map(driverCard).join(""):`<div class="empty">No drivers found.</div>`}
+
+      <div class="notice">
+        Driver registers → ₹400 payment → Admin approves. Only APPROVED drivers can use the Driver App.
+      </div>
+
+      <!-- ===== DRIVER MOBILE NUMBER SEARCH ===== -->
+      <div class="driver-search">
+        <label>🔎 SEARCH DRIVER BY MOBILE NUMBER</label>
+
+        <div class="search-row">
+          <input
+            id="driverMobileSearch"
+            type="tel"
+            inputmode="numeric"
+            maxlength="15"
+            placeholder="Enter driver mobile number"
+            value="${esc(driverMobileSearch)}"
+            oninput="filterDriversByMobile(this.value)"
+          >
+
+          <button
+            class="btn gray search-clear"
+            onclick="clearDriverMobileSearch()"
+          >
+            CLEAR
+          </button>
+        </div>
+
+        <div id="driverSearchCount" class="search-count"></div>
+      </div>
+
+      <div id="driverApprovalList">
+        ${renderDriverApprovalList()}
+      </div>
+
     </div>
   `;
 }
 
+/* ===== DRIVER MOBILE SEARCH FUNCTIONS ===== */
+
+function renderDriverApprovalList(){
+
+  const q=String(driverMobileSearch||"").replace(/\D/g,"");
+
+  const list=q
+    ? drivers.filter(d=>{
+
+        const mobile=String(
+          d.mobile||
+          d.phone||
+          d.driverMobile||
+          ""
+        ).replace(/\D/g,"");
+
+        return mobile.includes(q);
+
+      })
+    : drivers;
+
+  const count=$("driverSearchCount");
+
+  if(count){
+    count.textContent=q
+      ? `${list.length} driver${list.length===1?"":"s"} found`
+      : "Showing all drivers";
+  }
+
+  return list.length
+    ? list.map(driverCard).join("")
+    : `<div class="empty">${
+        q
+          ? "No driver found for this mobile number."
+          : "No drivers found."
+      }</div>`;
+}
+
+window.filterDriversByMobile=function(value){
+
+  driverMobileSearch=String(value||"");
+
+  const box=$("driverApprovalList");
+
+  if(box){
+    box.innerHTML=renderDriverApprovalList();
+  }
+};
+
+window.clearDriverMobileSearch=function(){
+
+  driverMobileSearch="";
+
+  const input=$("driverMobileSearch");
+
+  if(input){
+    input.value="";
+  }
+
+  const box=$("driverApprovalList");
+
+  if(box){
+    box.innerHTML=renderDriverApprovalList();
+  }
+};
+
+/* ===== EXISTING DRIVER CARD ===== */
+
 function driverCard(d){
   const s=driverStatus(d);
   const wallet=Number(d.walletBalance??d.wallet??0);
+
   return `
   <div class="driver">
+
     <div class="row">
+
       <div>
-        <div class="name">👨‍✈️ ${esc(d.name||d.driverName||"Driver")}</div>
-        <div class="muted">📱 ${esc(d.mobile||d.phone||"")}<br>
-        🪪 ${esc(d.licenseNumber||"-")}<br>
-        🚕 ${esc(d.vehicleNumber||"-")} - ${esc(d.vehicleModel||d.vehicle||"-")}</div>
+
+        <div class="name">
+          👨‍✈️ ${esc(d.name||d.driverName||"Driver")}
+        </div>
+
+        <div class="muted">
+          📱 ${esc(d.mobile||d.phone||"")}<br>
+          🪪 ${esc(d.licenseNumber||"-")}<br>
+          🚕 ${esc(d.vehicleNumber||"-")} -
+          ${esc(d.vehicleModel||d.vehicle||"-")}
+        </div>
+
       </div>
-      <span class="badge ${s==="APPROVED"?"approved":s==="BLOCKED"?"blocked":s==="REJECTED"?"rejected":"pending"}">${esc(s)}</span>
+
+      <span class="badge ${
+        s==="APPROVED"
+          ?"approved"
+          :s==="BLOCKED"
+          ?"blocked"
+          :s==="REJECTED"
+          ?"rejected"
+          :"pending"
+      }">
+        ${esc(s)}
+      </span>
+
     </div>
 
     <div class="muted" style="margin-top:8px">
-      Payment: <b>${esc(String(d.paymentStatus||"PENDING").toUpperCase())}</b>
-      &nbsp; | &nbsp; Registration: <b>₹${Number(d.registrationFee||400)}</b>
+
+      Payment:
+      <b>${esc(String(d.paymentStatus||"PENDING").toUpperCase())}</b>
+
+      &nbsp; | &nbsp;
+
+      Registration:
+      <b>₹${Number(d.registrationFee||400)}</b>
+
     </div>
 
     <div class="actions">
-      ${s!=="APPROVED"?`<button class="btn green" onclick="approveDriver('${esc(d.id)}')">✓ APPROVE</button>`:""}
-      ${s!=="REJECTED"?`<button class="btn orange" onclick="rejectDriver('${esc(d.id)}')">✕ REJECT</button>`:""}
-      ${s!=="BLOCKED"?`<button class="btn red" onclick="blockDriver('${esc(d.id)}')">⛔ BLOCK</button>`:
-      `<button class="btn green" onclick="unblockDriver('${esc(d.id)}')">UNBLOCK</button>`}
-      <button class="btn gray" onclick="deleteDriver('${esc(d.id)}')">🗑 DELETE</button>
+
+      ${
+        s!=="APPROVED"
+        ?`<button class="btn green" onclick="approveDriver('${esc(d.id)}')">
+            ✓ APPROVE
+          </button>`
+        :""
+      }
+
+      ${
+        s!=="REJECTED"
+        ?`<button class="btn orange" onclick="rejectDriver('${esc(d.id)}')">
+            ✕ REJECT
+          </button>`
+        :""
+      }
+
+      ${
+        s!=="BLOCKED"
+        ?`<button class="btn red" onclick="blockDriver('${esc(d.id)}')">
+            ⛔ BLOCK
+          </button>`
+        :`
+          <button class="btn green" onclick="unblockDriver('${esc(d.id)}')">
+            UNBLOCK
+          </button>
+        `
+      }
+
+      <button class="btn gray" onclick="deleteDriver('${esc(d.id)}')">
+        🗑 DELETE
+      </button>
+
     </div>
 
     <div class="card" style="margin:10px 0 0;padding:12px;background:#f8fbff">
-      <div class="wallet">💰 ₹<span class="${wallet<0?"negative":""}">${wallet}</span></div>
-      <div class="muted">Driver wallet — admin only</div>
+
+      <div class="wallet">
+        💰 ₹<span class="${wallet<0?"negative":""}">
+          ${wallet}
+        </span>
+      </div>
+
+      <div class="muted">
+        Driver wallet — admin only
+      </div>
+
       <div class="grid" style="margin-top:8px">
-        <div class="field"><label>AMOUNT</label><input id="wallet-${esc(d.id)}" type="number" placeholder="Amount"></div>
+
+        <div class="field">
+          <label>AMOUNT</label>
+          <input
+            id="wallet-${esc(d.id)}"
+            type="number"
+            placeholder="Amount"
+          >
+        </div>
+
       </div>
+
       <div class="actions">
-        <button class="btn green" onclick="addWallet('${esc(d.id)}')">＋ ADD</button>
-        <button class="btn red" onclick="deductWallet('${esc(d.id)}')">− DEDUCT</button>
+
+        <button
+          class="btn green"
+          onclick="addWallet('${esc(d.id)}')"
+        >
+          ＋ ADD
+        </button>
+
+        <button
+          class="btn red"
+          onclick="deductWallet('${esc(d.id)}')"
+        >
+          − DEDUCT
+        </button>
+
       </div>
+
     </div>
+
   </div>`;
 }
 
+/* ===== OPEN DUTIES ===== */
+
 function renderOpen(){
-  const list=duties.filter(d=>statusOf(d)==="OPEN");
+
+  const list=duties.filter(
+    d=>statusOf(d)==="OPEN"
+  );
+
   $("app").innerHTML=`
+
     <h1>🟢 Open Duties</h1>
-    <div class="sub">Only duties waiting for a driver</div>
-    <div class="notice">Accepted / Cancelled / Completed / Deleted duties will NOT appear here.</div>
+
+    <div class="sub">
+      Only duties waiting for a driver
+    </div>
+
+    <div class="notice">
+      Accepted / Cancelled / Completed / Deleted duties will NOT appear here.
+    </div>
+
     <div class="card">
-      <h2>🚕 OPEN DUTIES (${list.length})</h2>
-      ${list.length?list.map(openDutyCard).join(""):`<div class="empty">No open duties.</div>`}
-    </div>`;
+
+      <h2>
+        🚕 OPEN DUTIES (${list.length})
+      </h2>
+
+      ${
+        list.length
+          ?list.map(openDutyCard).join("")
+          :`<div class="empty">No open duties.</div>`
+      }
+
+    </div>
+
+  `;
 }
 
 function openDutyCard(d){
-  return `<div class="duty">
-    <div class="row"><b>DUTY</b><span class="badge open">OPEN</span></div>
-    <div class="route"><div>📍 ${esc(d.pickup)}</div><div>🏁 ${esc(d.drop)}</div></div>
-    <div class="muted">📅 ${esc(d.date||"-")} &nbsp; ⏰ ${esc(d.time||"-")}<br>
-    🚕 ${esc(d.vehicle||"-")} &nbsp; 📏 ${Number(d.km||0)} KM</div>
-    <div class="money">₹${Number(d.amount||0)}</div>
-    ${d.note?`<div class="notice">📝 ${esc(d.note)}</div>`:""}
-    <div class="actions">
-      <button class="btn orange" onclick="cancelDuty('${esc(d.id)}')">✕ CANCEL</button>
-      <button class="btn red" onclick="deleteDuty('${esc(d.id)}')">🗑 DELETE</button>
+
+  return `
+  <div class="duty">
+
+    <div class="row">
+      <b>DUTY</b>
+      <span class="badge open">OPEN</span>
     </div>
+
+    <div class="route">
+      <div>📍 ${esc(d.pickup)}</div>
+      <div>🏁 ${esc(d.drop)}</div>
+    </div>
+
+    <div class="muted">
+      📅 ${esc(d.date||"-")}
+      &nbsp;
+      ⏰ ${esc(d.time||"-")}
+      <br>
+      🚕 ${esc(d.vehicle||"-")}
+      &nbsp;
+      📏 ${Number(d.km||0)} KM
+    </div>
+
+    <div class="money">
+      ₹${Number(d.amount||0)}
+    </div>
+
+    ${
+      d.note
+      ?`<div class="notice">
+          📝 ${esc(d.note)}
+        </div>`
+      :""
+    }
+
+    <div class="actions">
+
+      <button
+        class="btn orange"
+        onclick="cancelDuty('${esc(d.id)}')"
+      >
+        ✕ CANCEL
+      </button>
+
+      <button
+        class="btn red"
+        onclick="deleteDuty('${esc(d.id)}')"
+      >
+        🗑 DELETE
+      </button>
+
+    </div>
+
   </div>`;
 }
 
+/* ===== ACCEPTED DUTIES ===== */
+
 function renderAccepted(){
-  const list=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d)));
+
+  const list=duties.filter(
+    d=>["ACCEPTED","STARTED"].includes(statusOf(d))
+  );
+
   $("app").innerHTML=`
+
     <h1>✅ Accepted Duties</h1>
-    <div class="sub">Driver who accepted each duty</div>
+
+    <div class="sub">
+      Driver who accepted each duty
+    </div>
+
     <div class="card">
-      <h2>ACCEPTED DUTIES (${list.length})</h2>
-      ${list.length?list.map(acceptedCard).join(""):`<div class="empty">No accepted duties.</div>`}
-    </div>`;
+
+      <h2>
+        ACCEPTED DUTIES (${list.length})
+      </h2>
+
+      ${
+        list.length
+          ?list.map(acceptedCard).join("")
+          :`<div class="empty">No accepted duties.</div>`
+      }
+
+    </div>
+
+  `;
 }
 
 function acceptedCard(d){
+
   const dr=driverForDuty(d);
-  const name=d.driverName||d.acceptedBy||dr?.name||dr?.driverName||"Unknown Driver";
-  const mobile=d.driverMobile||dr?.mobile||dr?.phone||"-";
-  const vid=dr?.vehicleNumber||d.vehicleNumber||"-";
-  const vm=dr?.vehicleModel||"-";
-  return `<div class="duty">
-    <div class="row"><b>${esc(name)}</b><span class="badge accepted">${esc(statusOf(d))}</span></div>
-    <div class="route"><div>📍 ${esc(d.pickup)}</div><div>🏁 ${esc(d.drop)}</div></div>
-    <div class="muted">📅 ${esc(d.date||"-")} &nbsp; ⏰ ${esc(d.time||"-")}<br>
-    📱 ${esc(mobile)}<br>
-    🚘 Vehicle: ${esc(vid)} - ${esc(vm)}<br>
-    🆔 Driver ID: ${esc(d.acceptedDriverId||d.driverId||dr?.driverId||"-")}<br>
-    🔐 UID: ${esc(d.acceptedByUid||dr?.uid||"-")}</div>
-    <div class="money">₹${Number(d.amount||0)} · ${Number(d.km||0)} KM</div>
-    ${d.acceptedAt?`<div class="muted">Accepted: ${formatStamp(d.acceptedAt)}</div>`:""}
-    <div class="actions">
-      <button class="btn orange" onclick="cancelAcceptedDuty('${esc(d.id)}')">✕ CANCEL</button>
-      <button class="btn green" onclick="completeDuty('${esc(d.id)}')">✓ COMPLETE</button>
+
+  const name=
+    d.driverName||
+    d.acceptedBy||
+    dr?.name||
+    dr?.driverName||
+    "Unknown Driver";
+
+  const mobile=
+    d.driverMobile||
+    dr?.mobile||
+    dr?.phone||
+    "-";
+
+  const vid=
+    dr?.vehicleNumber||
+    d.vehicleNumber||
+    "-";
+
+  const vm=
+    dr?.vehicleModel||
+    "-";
+
+  return `
+  <div class="duty">
+
+    <div class="row">
+
+      <b>${esc(name)}</b>
+
+      <span class="badge accepted">
+        ${esc(statusOf(d))}
+      </span>
+
     </div>
+
+    <div class="route">
+      <div>📍 ${esc(d.pickup)}</div>
+      <div>🏁 ${esc(d.drop)}</div>
+    </div>
+
+    <div class="muted">
+
+      📅 ${esc(d.date||"-")}
+      &nbsp;
+      ⏰ ${esc(d.time||"-")}
+      <br>
+
+      📱 ${esc(mobile)}
+      <br>
+
+      🚘 Vehicle:
+      ${esc(vid)} - ${esc(vm)}
+      <br>
+
+      🆔 Driver ID:
+      ${esc(d.acceptedDriverId||d.driverId||dr?.driverId||"-")}
+      <br>
+
+      🔐 UID:
+      ${esc(d.acceptedByUid||dr?.uid||"-")}
+
+    </div>
+
+    <div class="money">
+      ₹${Number(d.amount||0)}
+      ·
+      ${Number(d.km||0)} KM
+    </div>
+
+    ${
+      d.acceptedAt
+      ?`<div class="muted">
+          Accepted: ${formatStamp(d.acceptedAt)}
+        </div>`
+      :""
+    }
+
+    <div class="actions">
+
+      <button
+        class="btn orange"
+        onclick="cancelAcceptedDuty('${esc(d.id)}')"
+      >
+        ✕ CANCEL
+      </button>
+
+      <button
+        class="btn green"
+        onclick="completeDuty('${esc(d.id)}')"
+      >
+        ✓ COMPLETE
+      </button>
+
+    </div>
+
   </div>`;
 }
 
+/* ===== HISTORY ===== */
+
 function renderHistory(){
-  const rows=[...history].sort((a,b)=>stampMillis(b.createdAt)-stampMillis(a.createdAt));
+
+  const rows=[
+    ...history
+  ].sort(
+    (a,b)=>
+      stampMillis(b.createdAt)-
+      stampMillis(a.createdAt)
+  );
+
   $("app").innerHTML=`
+
     <h1>📋 Trip History</h1>
-    <div class="sub">Completed / Cancelled / Rejected / Deleted — all drivers</div>
+
+    <div class="sub">
+      Completed / Cancelled / Rejected / Deleted — all drivers
+    </div>
+
     <div class="card">
-      <h2>ALL ACTIVITY (${rows.length})</h2>
-      ${rows.length?rows.map(historyCard).join(""):`<div class="empty">No history yet.</div>`}
-    </div>`;
+
+      <h2>
+        ALL ACTIVITY (${rows.length})
+      </h2>
+
+      ${
+        rows.length
+          ?rows.map(historyCard).join("")
+          :`<div class="empty">No history yet.</div>`
+      }
+
+    </div>
+
+  `;
 }
 
 function historyCard(h){
-  const type=String(h.type||h.status||"").toUpperCase();
-  const cls=type.includes("COMPLETE")?"completed":type.includes("CANCEL")?"cancelled":type.includes("REJECT")?"rejected":"pending";
-  return `<div class="duty">
+
+  const type=
+    String(h.type||h.status||"").toUpperCase();
+
+  const cls=
+    type.includes("COMPLETE")
+      ?"completed"
+      :type.includes("CANCEL")
+      ?"cancelled"
+      :type.includes("REJECT")
+      ?"rejected"
+      :"pending";
+
+  return `
+  <div class="duty">
+
     <div class="row">
-      <b>${esc(h.driverName||h.acceptedBy||"Driver")}</b>
-      <span class="badge ${cls}">${esc(type)}</span>
+
+      <b>
+        ${esc(h.driverName||h.acceptedBy||"Driver")}
+      </b>
+
+      <span class="badge ${cls}">
+        ${esc(type)}
+      </span>
+
     </div>
-    <div class="route"><div>📍 ${esc(h.pickup||"-")}</div><div>🏁 ${esc(h.drop||"-")}</div></div>
-    <div class="muted">📱 ${esc(h.driverMobile||h.mobile||"-")}<br>
-    📅 ${esc(h.date||"-")} &nbsp; ⏰ ${esc(h.time||"-")}<br>
-    📏 ${Number(h.km||0)} KM</div>
-    <div class="money">₹${Number(h.amount||0)}</div>
-    ${h.cancellationDeduction?`<div class="notice">Wallet deduction: ₹${Number(h.cancellationDeduction)}</div>`:""}
-    <div class="muted">${formatStamp(h.createdAt)}</div>
+
+    <div class="route">
+      <div>📍 ${esc(h.pickup||"-")}</div>
+      <div>🏁 ${esc(h.drop||"-")}</div>
+    </div>
+
+    <div class="muted">
+
+      📱 ${esc(h.driverMobile||h.mobile||"-")}
+      <br>
+
+      📅 ${esc(h.date||"-")}
+      &nbsp;
+      ⏰ ${esc(h.time||"-")}
+      <br>
+
+      📏 ${Number(h.km||0)} KM
+
+    </div>
+
+    <div class="money">
+      ₹${Number(h.amount||0)}
+    </div>
+
+    ${
+      h.cancellationDeduction
+      ?`<div class="notice">
+          Wallet deduction:
+          ₹${Number(h.cancellationDeduction)}
+        </div>`
+      :""
+    }
+
+    <div class="muted">
+      ${formatStamp(h.createdAt)}
+    </div>
+
   </div>`;
 }
 
+/* ===== CREATE DUTY ===== */
+
 async function createDuty(){
+
   try{
+
     const pickup=$("pickup").value.trim();
     const drop=$("drop").value.trim();
     const date=normalizeDate($("date").value.trim());
@@ -348,360 +899,970 @@ async function createDuty(){
     const amount=Number($("amount").value);
     const note=$("note").value.trim();
 
-    if(!pickup||!drop||!date||!time||!km||amount<0){
-      alert("Pickup, Drop, Date, Time, KM and Amount enter pannunga.");
+    if(
+      !pickup||
+      !drop||
+      !date||
+      !time||
+      !km||
+      amount<0
+    ){
+      alert(
+        "Pickup, Drop, Date, Time, KM and Amount enter pannunga."
+      );
       return;
     }
-    await addDoc(collection(db,"duties"),{
-      pickup,drop,date,time,vehicle,km,amount,note,
-      status:"OPEN",
-      acceptedBy:"",
-      acceptedDriverId:"",
-      acceptedByUid:"",
-      driverId:"",
-      driverName:"",
-      driverMobile:"",
-      rejectedBy:"",
-      rejectedByUid:"",
-      rejectedDriverId:"",
-      cancelledBy:"",
-      cancelledByUid:"",
-      cancelledDriverId:"",
-      cancellationDeduction:0,
-      createdAt:serverTimestamp(),
-      updatedAt:serverTimestamp()
-    });
+
+    await addDoc(
+      collection(db,"duties"),
+      {
+        pickup,
+        drop,
+        date,
+        time,
+        vehicle,
+        km,
+        amount,
+        note,
+
+        status:"OPEN",
+
+        acceptedBy:"",
+        acceptedDriverId:"",
+        acceptedByUid:"",
+        driverId:"",
+        driverName:"",
+        driverMobile:"",
+
+        rejectedBy:"",
+        rejectedByUid:"",
+        rejectedDriverId:"",
+
+        cancelledBy:"",
+        cancelledByUid:"",
+        cancelledDriverId:"",
+
+        cancellationDeduction:0,
+
+        createdAt:serverTimestamp(),
+        updatedAt:serverTimestamp()
+      }
+    );
+
     alert("Duty created successfully.");
+
     showPage("open");
+
   }catch(e){
+
     console.error(e);
-    alert("Duty create failed: "+e.message);
+
+    alert(
+      "Duty create failed: "+e.message
+    );
+
   }
 }
 
+/* ===== DRIVER APPROVAL ===== */
+
 async function approveDriver(id){
+
   try{
-    await updateDoc(doc(db,"drivers",id),{
-      status:"APPROVED",
-      approved:true,
-      paymentStatus:"APPROVED",
-      paymentVerified:true,
-      registrationFee:400,
-      updatedAt:serverTimestamp()
-    });
+
+    await updateDoc(
+      doc(db,"drivers",id),
+      {
+        status:"APPROVED",
+        approved:true,
+        paymentStatus:"APPROVED",
+        paymentVerified:true,
+        registrationFee:400,
+        updatedAt:serverTimestamp()
+      }
+    );
+
     alert("Driver APPROVED.");
-  }catch(e){console.error(e);alert("Approve failed: "+e.message);}
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      "Approve failed: "+e.message
+    );
+
+  }
 }
 
 async function rejectDriver(id){
+
   if(!confirm("Reject this driver?"))return;
+
   try{
-    await updateDoc(doc(db,"drivers",id),{
-      status:"REJECTED",
-      approved:false,
-      updatedAt:serverTimestamp()
-    });
+
+    await updateDoc(
+      doc(db,"drivers",id),
+      {
+        status:"REJECTED",
+        approved:false,
+        updatedAt:serverTimestamp()
+      }
+    );
+
     alert("Driver REJECTED.");
-  }catch(e){console.error(e);alert("Reject failed: "+e.message);}
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      "Reject failed: "+e.message
+    );
+
+  }
 }
 
 async function blockDriver(id){
+
   if(!confirm("Block this driver?"))return;
+
   try{
-    await updateDoc(doc(db,"drivers",id),{
-      status:"BLOCKED",
-      approved:false,
-      blocked:true,
-      updatedAt:serverTimestamp()
-    });
-    alert("Driver BLOCKED. Driver App will not allow this driver.");
-  }catch(e){console.error(e);alert("BLOCK failed: "+e.message);}
+
+    await updateDoc(
+      doc(db,"drivers",id),
+      {
+        status:"BLOCKED",
+        approved:false,
+        blocked:true,
+        updatedAt:serverTimestamp()
+      }
+    );
+
+    alert(
+      "Driver BLOCKED. Driver App will not allow this driver."
+    );
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      "BLOCK failed: "+e.message
+    );
+
+  }
 }
 
 async function unblockDriver(id){
+
   try{
-    await updateDoc(doc(db,"drivers",id),{
-      status:"APPROVED",
-      approved:true,
-      blocked:false,
-      updatedAt:serverTimestamp()
-    });
+
+    await updateDoc(
+      doc(db,"drivers",id),
+      {
+        status:"APPROVED",
+        approved:true,
+        blocked:false,
+        updatedAt:serverTimestamp()
+      }
+    );
+
     alert("Driver UNBLOCKED.");
-  }catch(e){console.error(e);alert("Unblock failed: "+e.message);}
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      "Unblock failed: "+e.message
+    );
+
+  }
 }
 
 async function deleteDriver(id){
-  const d=drivers.find(x=>x.id===id);
+
+  const d=drivers.find(
+    x=>x.id===id
+  );
+
   if(!d)return;
-  const name=d.name||d.driverName||"Driver";
-  if(!confirm("DELETE DRIVER ACCOUNT?\n"+name+"\n\nFirestore driver record will be permanently deleted."))return;
+
+  const name=
+    d.name||
+    d.driverName||
+    "Driver";
+
+  if(
+    !confirm(
+      "DELETE DRIVER ACCOUNT?\n"+
+      name+
+      "\n\nFirestore driver record will be permanently deleted."
+    )
+  )return;
+
   try{
-    await deleteDoc(doc(db,"drivers",id));
-    drivers=drivers.filter(x=>x.id!==id);
+
+    await deleteDoc(
+      doc(db,"drivers",id)
+    );
+
+    drivers=drivers.filter(
+      x=>x.id!==id
+    );
+
     render();
-    alert("Driver account record deleted.");
+
+    alert(
+      "Driver account record deleted."
+    );
+
   }catch(e){
+
     console.error(e);
-    alert("DELETE DRIVER FAILED:\n"+e.message);
+
+    alert(
+      "DELETE DRIVER FAILED:\n"+
+      e.message
+    );
+
   }
 }
 
+/* ===== WALLET ===== */
+
 async function addWallet(id){
+
   const input=$("wallet-"+id);
-  const amount=Number(input?.value);
-  if(!amount||amount<=0){alert("Valid amount enter pannunga.");return;}
+
+  const amount=Number(
+    input?.value
+  );
+
+  if(
+    !amount||
+    amount<=0
+  ){
+    alert(
+      "Valid amount enter pannunga."
+    );
+    return;
+  }
+
   try{
-    await runTransaction(db,async tx=>{
-      const ref=doc(db,"drivers",id);
-      const snap=await tx.get(ref);
-      if(!snap.exists())throw new Error("Driver not found");
-      const old=Number(snap.data().walletBalance??snap.data().wallet??0);
-      tx.update(ref,{
-        walletBalance:old+amount,
-        wallet:old+amount,
-        lastWalletAction:"ADD",
-        lastWalletAmount:amount,
-        walletUpdatedAt:serverTimestamp(),
-        updatedAt:serverTimestamp()
-      });
-    });
+
+    await runTransaction(
+      db,
+      async tx=>{
+
+        const ref=
+          doc(db,"drivers",id);
+
+        const snap=
+          await tx.get(ref);
+
+        if(!snap.exists()){
+          throw new Error(
+            "Driver not found"
+          );
+        }
+
+        const old=
+          Number(
+            snap.data().walletBalance??
+            snap.data().wallet??
+            0
+          );
+
+        tx.update(
+          ref,
+          {
+            walletBalance:old+amount,
+            wallet:old+amount,
+
+            lastWalletAction:"ADD",
+            lastWalletAmount:amount,
+
+            walletUpdatedAt:
+              serverTimestamp(),
+
+            updatedAt:
+              serverTimestamp()
+          }
+        );
+
+      }
+    );
+
     input.value="";
-    alert("Wallet added.");
-  }catch(e){console.error(e);alert("Wallet ADD failed: "+e.message);}
+
+    alert(
+      "Wallet added."
+    );
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      "Wallet ADD failed: "+
+      e.message
+    );
+
+  }
 }
 
 async function deductWallet(id){
+
   const input=$("wallet-"+id);
-  const amount=Number(input?.value);
-  if(!amount||amount<=0){alert("Valid amount enter pannunga.");return;}
-  if(!confirm("Deduct ₹"+amount+" from wallet? Negative balance is allowed."))return;
-  try{
-    await runTransaction(db,async tx=>{
-      const ref=doc(db,"drivers",id);
-      const snap=await tx.get(ref);
-      if(!snap.exists())throw new Error("Driver not found");
-      const old=Number(snap.data().walletBalance??snap.data().wallet??0);
-      const next=old-amount;
-      tx.update(ref,{
-        walletBalance:next,
-        wallet:next,
-        lastWalletAction:"DEDUCT",
-        lastWalletAmount:amount,
-        walletUpdatedAt:serverTimestamp(),
-        updatedAt:serverTimestamp()
-      });
-    });
-    input.value="";
-    alert("Wallet deducted.");
-  }catch(e){console.error(e);alert("Wallet DEDUCT failed: "+e.message);}
-}
 
-async function deleteDuty(id){
-  const d=duties.find(x=>x.id===id);
-  if(!d)return;
-  if(!confirm("DELETE this duty permanently?"))return;
+  const amount=Number(
+    input?.value
+  );
 
-  try{
-    // Save history first. Then delete the actual active duty document.
-    await addDoc(collection(db,"duty_history"),{
-      ...historySafe(d),
-      type:"DUTY_DELETED",
-      status:"DELETED",
-      deletedAt:serverTimestamp(),
-      createdAt:serverTimestamp()
-    });
-    await deleteDoc(doc(db,"duties",id));
-    duties=duties.filter(x=>x.id!==id);
-    render();
-    alert("Duty deleted successfully. It is removed from Open Duties.");
-  }catch(e){
-    console.error(e);
-    alert("DUTY DELETE FAILED:\n"+e.message);
+  if(
+    !amount||
+    amount<=0
+  ){
+    alert(
+      "Valid amount enter pannunga."
+    );
+    return;
   }
-}
 
-async function cancelDuty(id){
-  const d=duties.find(x=>x.id===id);
-  if(!d)return;
-  if(!confirm("Cancel this duty? It will be removed from Open Duties."))return;
-
-  try{
-    await addDoc(collection(db,"duty_history"),{
-      ...historySafe(d),
-      type:"DUTY_CANCELLED",
-      status:"CANCELLED",
-      cancelledBy:"ADMIN",
-      createdAt:serverTimestamp()
-    });
-    await deleteDoc(doc(db,"duties",id));
-    duties=duties.filter(x=>x.id!==id);
-    render();
-    alert("Duty cancelled and removed.");
-  }catch(e){
-    console.error(e);
-    alert("CANCEL FAILED:\n"+e.message);
-  }
-}
-
-async function cancelAcceptedDuty(id){
-  const d=duties.find(x=>x.id===id);
-  if(!d)return;
-  const dr=driverForDuty(d);
-  const driverId=dr?.id||d.acceptedDriverId||d.driverId;
-  const deduction=150;
-
-  if(!confirm("Cancel accepted duty?\n₹150 will be deducted from the driver's wallet."))return;
+  if(
+    !confirm(
+      "Deduct ₹"+
+      amount+
+      " from wallet? Negative balance is allowed."
+    )
+  )return;
 
   try{
-    if(driverId){
-      await runTransaction(db,async tx=>{
-        const driverRef=doc(db,"drivers",driverId);
-        const dutyRef=doc(db,"duties",id);
-        const ds=await tx.get(driverRef);
-        const ws=await tx.get(dutyRef);
-        if(!ws.exists())throw new Error("Duty no longer exists");
-        const old=ds.exists()?Number(ds.data().walletBalance??ds.data().wallet??0):0;
-        const next=old-deduction;
-        if(ds.exists()){
-          tx.update(driverRef,{
+
+    await runTransaction(
+      db,
+      async tx=>{
+
+        const ref=
+          doc(db,"drivers",id);
+
+        const snap=
+          await tx.get(ref);
+
+        if(!snap.exists()){
+          throw new Error(
+            "Driver not found"
+          );
+        }
+
+        const old=
+          Number(
+            snap.data().walletBalance??
+            snap.data().wallet??
+            0
+          );
+
+        const next=
+          old-amount;
+
+        tx.update(
+          ref,
+          {
             walletBalance:next,
             wallet:next,
-            lastWalletAction:"DUTY_CANCEL_DEDUCTION",
-            lastWalletAmount:deduction,
-            walletUpdatedAt:serverTimestamp(),
-            updatedAt:serverTimestamp()
-          });
-        }
-        tx.delete(dutyRef);
-      });
-    }else{
-      await deleteDoc(doc(db,"duties",id));
-    }
 
-    await addDoc(collection(db,"duty_history"),{
-      ...historySafe(d),
-      type:"DUTY_CANCELLED",
-      status:"CANCELLED",
-      cancelledBy:"ADMIN",
-      cancellationDeduction:deduction,
-      createdAt:serverTimestamp()
-    });
+            lastWalletAction:"DEDUCT",
+            lastWalletAmount:amount,
 
-    duties=duties.filter(x=>x.id!==id);
-    render();
-    alert("Accepted duty cancelled. ₹150 deducted.");
+            walletUpdatedAt:
+              serverTimestamp(),
+
+            updatedAt:
+              serverTimestamp()
+          }
+        );
+
+      }
+    );
+
+    input.value="";
+
+    alert(
+      "Wallet deducted."
+    );
+
   }catch(e){
+
     console.error(e);
-    alert("ACCEPTED DUTY CANCEL FAILED:\n"+e.message);
+
+    alert(
+      "Wallet DEDUCT failed: "+
+      e.message
+    );
+
   }
 }
 
-async function completeDuty(id){
-  const d=duties.find(x=>x.id===id);
+/* ===== DUTY DELETE ===== */
+
+async function deleteDuty(id){
+
+  const d=duties.find(
+    x=>x.id===id
+  );
+
   if(!d)return;
-  if(!confirm("Mark this duty as COMPLETED?"))return;
+
+  if(
+    !confirm(
+      "DELETE this duty permanently?"
+    )
+  )return;
 
   try{
-    await runTransaction(db,async tx=>{
-      const dutyRef=doc(db,"duties",id);
-      const snap=await tx.get(dutyRef);
-      if(!snap.exists())throw new Error("Duty no longer exists");
 
-      const data=snap.data();
-      const base=historySafe({...data,id});
+    await addDoc(
+      collection(db,"duty_history"),
+      {
+        ...historySafe(d),
 
-      const tripRef=doc(collection(db,"trips"));
-      const histRef=doc(collection(db,"duty_history"));
+        type:"DUTY_DELETED",
+        status:"DELETED",
 
-      tx.set(tripRef,{
-        ...base,
-        status:"COMPLETED",
-        type:"TRIP_COMPLETED",
-        completedAt:serverTimestamp(),
-        createdAt:serverTimestamp()
-      });
+        deletedAt:
+          serverTimestamp(),
 
-      tx.set(histRef,{
-        ...base,
-        status:"COMPLETED",
-        type:"DUTY_COMPLETED",
-        createdAt:serverTimestamp()
-      });
+        createdAt:
+          serverTimestamp()
+      }
+    );
 
-      tx.delete(dutyRef);
-    });
+    await deleteDoc(
+      doc(db,"duties",id)
+    );
 
-    duties=duties.filter(x=>x.id!==id);
+    duties=duties.filter(
+      x=>x.id!==id
+    );
+
     render();
-    alert("Duty completed and removed from active duties.");
+
+    alert(
+      "Duty deleted successfully. It is removed from Open Duties."
+    );
+
   }catch(e){
+
     console.error(e);
-    alert("COMPLETE FAILED:\n"+e.message);
+
+    alert(
+      "DUTY DELETE FAILED:\n"+
+      e.message
+    );
+
   }
 }
 
+/* ===== CANCEL OPEN DUTY ===== */
+
+async function cancelDuty(id){
+
+  const d=duties.find(
+    x=>x.id===id
+  );
+
+  if(!d)return;
+
+  if(
+    !confirm(
+      "Cancel this duty? It will be removed from Open Duties."
+    )
+  )return;
+
+  try{
+
+    await addDoc(
+      collection(db,"duty_history"),
+      {
+        ...historySafe(d),
+
+        type:"DUTY_CANCELLED",
+        status:"CANCELLED",
+
+        cancelledBy:"ADMIN",
+
+        createdAt:
+          serverTimestamp()
+      }
+    );
+
+    await deleteDoc(
+      doc(db,"duties",id)
+    );
+
+    duties=duties.filter(
+      x=>x.id!==id
+    );
+
+    render();
+
+    alert(
+      "Duty cancelled and removed."
+    );
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      "CANCEL FAILED:\n"+
+      e.message
+    );
+
+  }
+}
+
+/* ===== CANCEL ACCEPTED DUTY ===== */
+
+async function cancelAcceptedDuty(id){
+
+  const d=duties.find(
+    x=>x.id===id
+  );
+
+  if(!d)return;
+
+  const dr=
+    driverForDuty(d);
+
+  const driverId=
+    dr?.id||
+    d.acceptedDriverId||
+    d.driverId;
+
+  const deduction=150;
+
+  if(
+    !confirm(
+      "Cancel accepted duty?\n"+
+      "₹150 will be deducted from the driver's wallet."
+    )
+  )return;
+
+  try{
+
+    if(driverId){
+
+      await runTransaction(
+        db,
+        async tx=>{
+
+          const driverRef=
+            doc(db,"drivers",driverId);
+
+          const dutyRef=
+            doc(db,"duties",id);
+
+          const ds=
+            await tx.get(driverRef);
+
+          const ws=
+            await tx.get(dutyRef);
+
+          if(!ws.exists()){
+            throw new Error(
+              "Duty no longer exists"
+            );
+          }
+
+          const old=
+            ds.exists()
+            ?Number(
+              ds.data().walletBalance??
+              ds.data().wallet??
+              0
+            )
+            :0;
+
+          const next=
+            old-deduction;
+
+          if(ds.exists()){
+
+            tx.update(
+              driverRef,
+              {
+                walletBalance:next,
+                wallet:next,
+
+                lastWalletAction:
+                  "DUTY_CANCEL_DEDUCTION",
+
+                lastWalletAmount:
+                  deduction,
+
+                walletUpdatedAt:
+                  serverTimestamp(),
+
+                updatedAt:
+                  serverTimestamp()
+              }
+            );
+
+          }
+
+          tx.delete(dutyRef);
+
+        }
+      );
+
+    }else{
+
+      await deleteDoc(
+        doc(db,"duties",id)
+      );
+
+    }
+
+    await addDoc(
+      collection(db,"duty_history"),
+      {
+        ...historySafe(d),
+
+        type:"DUTY_CANCELLED",
+        status:"CANCELLED",
+
+        cancelledBy:"ADMIN",
+
+        cancellationDeduction:
+          deduction,
+
+        createdAt:
+          serverTimestamp()
+      }
+    );
+
+    duties=duties.filter(
+      x=>x.id!==id
+    );
+
+    render();
+
+    alert(
+      "Accepted duty cancelled. ₹150 deducted."
+    );
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      "ACCEPTED DUTY CANCEL FAILED:\n"+
+      e.message
+    );
+
+  }
+}
+
+/* ===== COMPLETE DUTY ===== */
+
+async function completeDuty(id){
+
+  const d=duties.find(
+    x=>x.id===id
+  );
+
+  if(!d)return;
+
+  if(
+    !confirm(
+      "Mark this duty as COMPLETED?"
+    )
+  )return;
+
+  try{
+
+    await runTransaction(
+      db,
+      async tx=>{
+
+        const dutyRef=
+          doc(db,"duties",id);
+
+        const snap=
+          await tx.get(dutyRef);
+
+        if(!snap.exists()){
+          throw new Error(
+            "Duty no longer exists"
+          );
+        }
+
+        const data=
+          snap.data();
+
+        const base=
+          historySafe({
+            ...data,
+            id
+          });
+
+        const tripRef=
+          doc(
+            collection(db,"trips")
+          );
+
+        const histRef=
+          doc(
+            collection(db,"duty_history")
+          );
+
+        tx.set(
+          tripRef,
+          {
+            ...base,
+
+            status:"COMPLETED",
+            type:"TRIP_COMPLETED",
+
+            completedAt:
+              serverTimestamp(),
+
+            createdAt:
+              serverTimestamp()
+          }
+        );
+
+        tx.set(
+          histRef,
+          {
+            ...base,
+
+            status:"COMPLETED",
+            type:"DUTY_COMPLETED",
+
+            createdAt:
+              serverTimestamp()
+          }
+        );
+
+        tx.delete(dutyRef);
+
+      }
+    );
+
+    duties=duties.filter(
+      x=>x.id!==id
+    );
+
+    render();
+
+    alert(
+      "Duty completed and removed from active duties."
+    );
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      "COMPLETE FAILED:\n"+
+      e.message
+    );
+
+  }
+}
+
+/* ===== HISTORY SAFE ===== */
+
 function historySafe(d){
+
   return {
+
     dutyId:d.id||"",
+
     pickup:d.pickup||"",
     drop:d.drop||"",
+
     date:d.date||"",
     time:d.time||"",
+
     vehicle:d.vehicle||"",
+
     km:Number(d.km||0),
     amount:Number(d.amount||0),
+
     note:d.note||"",
-    driverId:d.driverId||d.acceptedDriverId||"",
-    acceptedDriverId:d.acceptedDriverId||"",
-    acceptedByUid:d.acceptedByUid||"",
-    driverName:d.driverName||d.acceptedBy||"",
-    driverMobile:d.driverMobile||"",
-    acceptedBy:d.acceptedBy||"",
-    rejectedBy:d.rejectedBy||"",
-    rejectedByUid:d.rejectedByUid||"",
-    cancelledBy:d.cancelledBy||""
+
+    driverId:
+      d.driverId||
+      d.acceptedDriverId||
+      "",
+
+    acceptedDriverId:
+      d.acceptedDriverId||
+      "",
+
+    acceptedByUid:
+      d.acceptedByUid||
+      "",
+
+    driverName:
+      d.driverName||
+      d.acceptedBy||
+      "",
+
+    driverMobile:
+      d.driverMobile||
+      "",
+
+    acceptedBy:
+      d.acceptedBy||
+      "",
+
+    rejectedBy:
+      d.rejectedBy||
+      "",
+
+    rejectedByUid:
+      d.rejectedByUid||
+      "",
+
+    cancelledBy:
+      d.cancelledBy||
+      ""
+
   };
 }
 
+/* ===== TIMESTAMP ===== */
+
 function stampMillis(v){
+
   if(!v)return 0;
-  if(typeof v.toMillis==="function")return v.toMillis();
-  if(v.seconds)return Number(v.seconds)*1000;
-  const n=Date.parse(v);
-  return isNaN(n)?0:n;
+
+  if(
+    typeof v.toMillis==="function"
+  ){
+    return v.toMillis();
+  }
+
+  if(v.seconds){
+    return Number(v.seconds)*1000;
+  }
+
+  const n=
+    Date.parse(v);
+
+  return isNaN(n)
+    ?0
+    :n;
 }
 
 function formatStamp(v){
-  const n=stampMillis(v);
-  return n?new Date(n).toLocaleString("en-IN"):"";
+
+  const n=
+    stampMillis(v);
+
+  return n
+    ?new Date(n).toLocaleString("en-IN")
+    :"";
 }
+
+/* ===== FIREBASE LISTENERS ===== */
 
 function startListeners(){
-  unDrivers=onSnapshot(collection(db,"drivers"),snap=>{
-    drivers=snap.docs.map(x=>({id:x.id,...x.data()}));
-    setConnected(true);
-    render();
-  },err=>{
-    console.error(err);
-    setConnected(false);
-    alert("Drivers read failed: "+err.message);
-  });
 
-  unDuties=onSnapshot(collection(db,"duties"),snap=>{
-    duties=snap.docs.map(x=>({id:x.id,...x.data()}));
-    setConnected(true);
-    render();
-  },err=>{
-    console.error(err);
-    setConnected(false);
-    alert("Duties read failed: "+err.message);
-  });
+  unDrivers=
+    onSnapshot(
+      collection(db,"drivers"),
+      snap=>{
 
-  onSnapshot(collection(db,"duty_history"),snap=>{
-    history=snap.docs.map(x=>({id:x.id,...x.data()}));
-    render();
-  },err=>console.error("History:",err));
+        drivers=
+          snap.docs.map(
+            x=>({
+              id:x.id,
+              ...x.data()
+            })
+          );
+
+        setConnected(true);
+
+        render();
+
+      },
+      err=>{
+
+        console.error(err);
+
+        setConnected(false);
+
+        alert(
+          "Drivers read failed: "+
+          err.message
+        );
+
+      }
+    );
+
+  unDuties=
+    onSnapshot(
+      collection(db,"duties"),
+      snap=>{
+
+        duties=
+          snap.docs.map(
+            x=>({
+              id:x.id,
+              ...x.data()
+            })
+          );
+
+        setConnected(true);
+
+        render();
+
+      },
+      err=>{
+
+        console.error(err);
+
+        setConnected(false);
+
+        alert(
+          "Duties read failed: "+
+          err.message
+        );
+
+      }
+    );
+
+  onSnapshot(
+    collection(db,"duty_history"),
+    snap=>{
+
+      history=
+        snap.docs.map(
+          x=>({
+            id:x.id,
+            ...x.data()
+          })
+        );
+
+      render();
+
+    },
+    err=>
+      console.error(
+        "History:",
+        err
+      )
+  );
 }
+
+/* ===== WINDOW FUNCTIONS ===== */
 
 window.createDuty=createDuty;
 window.approveDriver=approveDriver;
@@ -720,281 +1881,1697 @@ startListeners();
 render();
 
 
-/* ===== DUTY SCREENSHOT OCR V5 - DRIVER CLEAN PAYLOAD ===== */
+/* =========================================================
+   DUTY SCREENSHOT OCR V5 - DRIVER CLEAN PAYLOAD
+   ========================================================= */
+
 const OCR_CSS = `
-#ocrFab{position:fixed;right:16px;bottom:76px;z-index:50;border-radius:999px;padding:13px 17px;background:linear-gradient(135deg,#1769e0,#7c3aed);color:#fff;font-weight:900;box-shadow:0 8px 24px #1769e055}
-#ocrOverlay{position:fixed;inset:0;background:#0008;z-index:100;display:none;align-items:center;justify-content:center;padding:12px}
-#ocrModal{width:min(760px,100%);max-height:94vh;overflow:auto;background:#fff;border-radius:20px;padding:16px;box-shadow:0 20px 60px #0005}
-#ocrModal h2{margin:0 0 5px}.ocrSub{color:#64748b;font-size:13px;margin-bottom:12px}
-.ocrPreview{max-width:100%;max-height:220px;display:block;margin:10px auto;border-radius:12px;border:1px solid #d7dee9}
-.ocrGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ocrGrid .full{grid-column:1/-1}
-.ocrField label{display:block;font-size:11px;font-weight:800;color:#56647a;margin-bottom:4px}
-.ocrField input,.ocrField select,.ocrField textarea{width:100%;padding:11px;border:1px solid #d7dee9;border-radius:10px}
-.ocrField textarea{min-height:65px}.ocrActions{display:flex;gap:8px;margin-top:12px}
-.ocrActions button{flex:1;padding:12px;border-radius:10px;font-weight:900}
-.ocrClose{background:#edf1f6}.ocrScan{background:#1769e0;color:#fff}.ocrCreate{background:#0b9b62;color:#fff}
-.ocrProgress{font-size:12px;color:#1769e0;font-weight:800;margin:8px 0}
-.ocrText{font-size:11px;color:#64748b;background:#f7f9fc;padding:8px;border-radius:9px;white-space:pre-wrap;max-height:130px;overflow:auto}
-.ocrHint{font-size:11px;color:#64748b;margin-top:4px}
-@media(max-width:650px){.ocrGrid{grid-template-columns:1fr}.ocrGrid .full{grid-column:auto}}
-`;
-const st=document.createElement('style');st.textContent=OCR_CSS;document.head.appendChild(st);
-const fab=document.createElement('button');fab.id='ocrFab';fab.textContent='📷 OCR DUTY';fab.onclick=()=>window.openDutyOCR();document.body.appendChild(fab);
 
-const ov=document.createElement('div');ov.id='ocrOverlay';ov.innerHTML=`<div id="ocrModal">
-<h2>📷 DUTY SCREENSHOT OCR</h2>
-<div class="ocrSub">Upload a duty screenshot. OCR extracts only the details needed to create and show the duty to drivers. Check/edit before creating.</div>
-<input id="ocrFile" type="file" accept="image/*"><img id="ocrPreview" class="ocrPreview" style="display:none">
-<div id="ocrProgress" class="ocrProgress"></div>
-<div class="ocrActions"><button class="ocrScan" onclick="runDutyOCR()">🔍 READ SCREENSHOT</button><button class="ocrClose" onclick="closeDutyOCR()">CLOSE</button></div>
-<div class="ocrGrid" style="margin-top:12px">
-<div class="ocrField"><label>DUTY TYPE</label><select id="ocrDutyType"><option>ONE WAY</option><option>ROUND TRIP</option><option>LOCAL RENTAL</option></select></div>
-<div class="ocrField"><label>VEHICLE</label><select id="ocrVehicle"><option>SEDAN</option><option>SUV</option><option>MINI</option><option>INNOVA CRYSTA</option></select></div>
-<div class="ocrField"><label>DATE</label><input id="ocrDate" placeholder="DD/MM/YYYY"></div>
-<div class="ocrField"><label>TIME</label><input id="ocrTime" placeholder="HH:MM AM/PM"></div>
-<div class="ocrField"><label>KM</label><input id="ocrKm" type="number" min="0"></div>
-<div class="ocrField"><label>AMOUNT ₹</label><input id="ocrAmount" type="number" min="0"></div>
-<div class="ocrField"><label>RENTAL HOURS</label><input id="ocrHours" type="number" min="1" max="24" placeholder="For LOCAL RENTAL"></div>
-<div class="ocrField"><label>PERSONS</label><input id="ocrPersons" type="number" min="1" placeholder="For LOCAL RENTAL"></div>
-<div class="ocrField full"><label>PICKUP</label><input id="ocrPickup"></div>
-<div class="ocrField full"><label>DROP</label><input id="ocrDrop"></div>
-<div class="ocrField full"><label>PICKUP MAP</label><input id="ocrPickupMap"></div>
-<div class="ocrField full"><label>DROP MAP</label><input id="ocrDropMap"></div>
-<div class="ocrField"><label>SPECIAL SERVICE</label><input id="ocrSpecial"></div>
-<div class="ocrField"><label>PARTICULAR</label><input id="ocrParticular"></div>
-<div class="ocrField full"><label>NOTE</label><textarea id="ocrNote"></textarea></div>
-</div>
-<div class="ocrActions"><button class="ocrCreate" onclick="createDutyFromOCR()">✅ CREATE DUTY</button></div>
-</div>`;document.body.appendChild(ov);
+#ocrFab{
+  position:fixed;
+  right:16px;
+  bottom:76px;
+  z-index:50;
+  border-radius:999px;
+  padding:13px 17px;
+  background:linear-gradient(135deg,#1769e0,#7c3aed);
+  color:#fff;
+  font-weight:900;
+  box-shadow:0 8px 24px #1769e055
+}
 
-window.openDutyOCR=function(){ov.style.display='flex';};
-window.closeDutyOCR=function(){ov.style.display='none';};
-document.getElementById('ocrFile').addEventListener('change',e=>{
-  const f=e.target.files?.[0]; if(!f)return;
-  const img=document.getElementById('ocrPreview'); img.src=URL.createObjectURL(f); img.style.display='block';
-});
-function ocrSet(id,v){if(v!==undefined&&v!==null&&String(v).trim())$(id).value=String(v).trim();}
-function cleanOCR(v){return String(v||'').replace(/[|]+/g,' ').replace(/https?:\/\/[^\s]+/gi,' ').replace(/\s+/g,' ').trim();}
-function firstMatch(raw, regs){for(const re of regs){const m=raw.match(re);if(m&&m[1])return cleanOCR(m[1]);}return '';}
-function normalizeOcrDateValue(s){
-  s=cleanOCR(s).replace(/[.,]/g,'');
-  let m=s.match(/\b(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})\b/);
-  if(m){let y=m[3].length===2?'20'+m[3]:m[3];return m[1].padStart(2,'0')+'/'+m[2].padStart(2,'0')+'/'+y;}
-  m=s.match(/\b(\d{1,2})\s+(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s*,?\s*(\d{4})?\b/i);
-  if(m){
-    const months={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
-    const key=m[2].slice(0,3).toLowerCase(); const y=m[3]||String(new Date().getFullYear());
-    return m[1].padStart(2,'0')+'/'+String(months[key]).padStart(2,'0')+'/'+y;
+#ocrOverlay{
+  position:fixed;
+  inset:0;
+  background:#0008;
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:12px
+}
+
+#ocrModal{
+  width:min(760px,100%);
+  max-height:94vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:20px;
+  padding:16px;
+  box-shadow:0 20px 60px #0005
+}
+
+#ocrModal h2{
+  margin:0 0 5px
+}
+
+.ocrSub{
+  color:#64748b;
+  font-size:13px;
+  margin-bottom:12px
+}
+
+.ocrPreview{
+  max-width:100%;
+  max-height:220px;
+  display:block;
+  margin:10px auto;
+  border-radius:12px;
+  border:1px solid #d7dee9
+}
+
+.ocrGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px
+}
+
+.ocrGrid .full{
+  grid-column:1/-1
+}
+
+.ocrField label{
+  display:block;
+  font-size:11px;
+  font-weight:800;
+  color:#56647a;
+  margin-bottom:4px
+}
+
+.ocrField input,
+.ocrField select,
+.ocrField textarea{
+  width:100%;
+  padding:11px;
+  border:1px solid #d7dee9;
+  border-radius:10px
+}
+
+.ocrField textarea{
+  min-height:65px
+}
+
+.ocrActions{
+  display:flex;
+  gap:8px;
+  margin-top:12px
+}
+
+.ocrActions button{
+  flex:1;
+  padding:12px;
+  border-radius:10px;
+  font-weight:900
+}
+
+.ocrClose{
+  background:#edf1f6
+}
+
+.ocrScan{
+  background:#1769e0;
+  color:#fff
+}
+
+.ocrCreate{
+  background:#0b9b62;
+  color:#fff
+}
+
+.ocrProgress{
+  font-size:12px;
+  color:#1769e0;
+  font-weight:800;
+  margin:8px 0
+}
+
+.ocrText{
+  font-size:11px;
+  color:#64748b;
+  background:#f7f9fc;
+  padding:8px;
+  border-radius:9px;
+  white-space:pre-wrap;
+  max-height:130px;
+  overflow:auto
+}
+
+.ocrHint{
+  font-size:11px;
+  color:#64748b;
+  margin-top:4px
+}
+
+@media(max-width:650px){
+  .ocrGrid{
+    grid-template-columns:1fr
   }
+
+  .ocrGrid .full{
+    grid-column:auto
+  }
+}
+
+`;
+
+const st=
+  document.createElement('style');
+
+st.textContent=
+  OCR_CSS;
+
+document.head.appendChild(st);
+
+const fab=
+  document.createElement('button');
+
+fab.id=
+  'ocrFab';
+
+fab.textContent=
+  '📷 OCR DUTY';
+
+fab.onclick=
+  ()=>window.openDutyOCR();
+
+document.body.appendChild(fab);
+
+const ov=
+  document.createElement('div');
+
+ov.id=
+  'ocrOverlay';
+
+ov.innerHTML=`
+
+<div id="ocrModal">
+
+<h2>📷 DUTY SCREENSHOT OCR</h2>
+
+<div class="ocrSub">
+Upload a duty screenshot. OCR extracts only the details needed to create and show the duty to drivers. Check/edit before creating.
+</div>
+
+<input
+  id="ocrFile"
+  type="file"
+  accept="image/*"
+>
+
+<img
+  id="ocrPreview"
+  class="ocrPreview"
+  style="display:none"
+>
+
+<div
+  id="ocrProgress"
+  class="ocrProgress"
+></div>
+
+<div class="ocrActions">
+
+<button
+  class="ocrScan"
+  onclick="runDutyOCR()"
+>
+  🔍 READ SCREENSHOT
+</button>
+
+<button
+  class="ocrClose"
+  onclick="closeDutyOCR()"
+>
+  CLOSE
+</button>
+
+</div>
+
+<div
+  class="ocrGrid"
+  style="margin-top:12px"
+>
+
+<div class="ocrField">
+
+<label>DUTY TYPE</label>
+
+<select id="ocrDutyType">
+
+<option>ONE WAY</option>
+<option>ROUND TRIP</option>
+<option>LOCAL RENTAL</option>
+
+</select>
+
+</div>
+
+<div class="ocrField">
+
+<label>VEHICLE</label>
+
+<select id="ocrVehicle">
+
+<option>SEDAN</option>
+<option>SUV</option>
+<option>MINI</option>
+<option>INNOVA CRYSTA</option>
+
+</select>
+
+</div>
+
+<div class="ocrField">
+
+<label>DATE</label>
+
+<input
+  id="ocrDate"
+  placeholder="DD/MM/YYYY"
+>
+
+</div>
+
+<div class="ocrField">
+
+<label>TIME</label>
+
+<input
+  id="ocrTime"
+  placeholder="HH:MM AM/PM"
+>
+
+</div>
+
+<div class="ocrField">
+
+<label>KM</label>
+
+<input
+  id="ocrKm"
+  type="number"
+  min="0"
+>
+
+</div>
+
+<div class="ocrField">
+
+<label>AMOUNT ₹</label>
+
+<input
+  id="ocrAmount"
+  type="number"
+  min="0"
+>
+
+</div>
+
+<div class="ocrField">
+
+<label>RENTAL HOURS</label>
+
+<input
+  id="ocrHours"
+  type="number"
+  min="1"
+  max="24"
+  placeholder="For LOCAL RENTAL"
+>
+
+</div>
+
+<div class="ocrField">
+
+<label>PERSONS</label>
+
+<input
+  id="ocrPersons"
+  type="number"
+  min="1"
+  placeholder="For LOCAL RENTAL"
+>
+
+</div>
+
+<div class="ocrField full">
+
+<label>PICKUP</label>
+
+<input id="ocrPickup">
+
+</div>
+
+<div class="ocrField full">
+
+<label>DROP</label>
+
+<input id="ocrDrop">
+
+</div>
+
+<div class="ocrField full">
+
+<label>PICKUP MAP</label>
+
+<input id="ocrPickupMap">
+
+</div>
+
+<div class="ocrField full">
+
+<label>DROP MAP</label>
+
+<input id="ocrDropMap">
+
+</div>
+
+<div class="ocrField">
+
+<label>SPECIAL SERVICE</label>
+
+<input id="ocrSpecial">
+
+</div>
+
+<div class="ocrField">
+
+<label>PARTICULAR</label>
+
+<input id="ocrParticular">
+
+</div>
+
+<div class="ocrField full">
+
+<label>NOTE</label>
+
+<textarea id="ocrNote"></textarea>
+
+</div>
+
+</div>
+
+<div class="ocrActions">
+
+<button
+  class="ocrCreate"
+  onclick="createDutyFromOCR()"
+>
+  ✅ CREATE DUTY
+</button>
+
+</div>
+
+</div>
+
+`;
+
+document.body.appendChild(ov);
+
+window.openDutyOCR=function(){
+  ov.style.display='flex';
+};
+
+window.closeDutyOCR=function(){
+  ov.style.display='none';
+};
+
+document
+  .getElementById('ocrFile')
+  .addEventListener(
+    'change',
+    e=>{
+
+      const f=
+        e.target.files?.[0];
+
+      if(!f)return;
+
+      const img=
+        document.getElementById(
+          'ocrPreview'
+        );
+
+      img.src=
+        URL.createObjectURL(f);
+
+      img.style.display=
+        'block';
+
+    }
+  );
+
+function ocrSet(id,v){
+
+  if(
+    v!==undefined&&
+    v!==null&&
+    String(v).trim()
+  ){
+    $(id).value=
+      String(v).trim();
+  }
+
+}
+
+function cleanOCR(v){
+
+  return String(v||'')
+    .replace(/[|]+/g,' ')
+    .replace(
+      /https?:\/\/[^\s]+/gi,
+      ' '
+    )
+    .replace(
+      /\s+/g,
+      ' '
+    )
+    .trim();
+
+}
+
+function firstMatch(raw,regs){
+
+  for(
+    const re of regs
+  ){
+
+    const m=
+      raw.match(re);
+
+    if(
+      m&&
+      m[1]
+    ){
+      return cleanOCR(
+        m[1]
+      );
+    }
+
+  }
+
+  return '';
+
+}
+
+function normalizeOcrDateValue(s){
+
+  s=
+    cleanOCR(s)
+    .replace(/[.,]/g,'');
+
+  let m=
+    s.match(
+      /\b(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})\b/
+    );
+
+  if(m){
+
+    let y=
+      m[3].length===2
+      ?'20'+m[3]
+      :m[3];
+
+    return (
+      m[1].padStart(2,'0')+
+      '/'+
+      m[2].padStart(2,'0')+
+      '/'+
+      y
+    );
+
+  }
+
+  m=
+    s.match(
+      /\b(\d{1,2})\s+(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s*,?\s*(\d{4})?\b/i
+    );
+
+  if(m){
+
+    const months={
+      jan:1,
+      feb:2,
+      mar:3,
+      apr:4,
+      may:5,
+      jun:6,
+      jul:7,
+      aug:8,
+      sep:9,
+      oct:10,
+      nov:11,
+      dec:12
+    };
+
+    const key=
+      m[2]
+        .slice(0,3)
+        .toLowerCase();
+
+    const y=
+      m[3]||
+      String(
+        new Date()
+          .getFullYear()
+      );
+
+    return (
+      m[1].padStart(2,'0')+
+      '/'+
+      String(months[key])
+        .padStart(2,'0')+
+      '/'+
+      y
+    );
+
+  }
+
   return s;
+
 }
+
 function extractDate(raw){
-  const labeled=firstMatch(raw,[
-    /(?:pickup\s*date|travel\s*date|journey\s*date)\s*[:=-]?\s*([^\n]+)/i
-  ]);
-  if(labeled){const d=normalizeOcrDateValue(labeled);if(/\d{2}\/\d{2}\/\d{4}/.test(d))return d;}
-  const d=firstMatch(raw,[/\b(\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4})\b/]);
-  if(d)return normalizeOcrDateValue(d);
-  const dm=raw.match(/\b(\d{1,2})\s+(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b/i);
-  return dm?normalizeOcrDateValue(dm[0]):'';
+
+  const labeled=
+    firstMatch(
+      raw,
+      [
+        /(?:pickup\s*date|travel\s*date|journey\s*date)\s*[:=-]?\s*([^\n]+)/i
+      ]
+    );
+
+  if(labeled){
+
+    const d=
+      normalizeOcrDateValue(
+        labeled
+      );
+
+    if(
+      /\d{2}\/\d{2}\/\d{4}/
+        .test(d)
+    ){
+      return d;
+    }
+
+  }
+
+  const d=
+    firstMatch(
+      raw,
+      [
+        /\b(\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4})\b/
+      ]
+    );
+
+  if(d){
+    return normalizeOcrDateValue(d);
+  }
+
+  const dm=
+    raw.match(
+      /\b(\d{1,2})\s+(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b/i
+    );
+
+  return dm
+    ?normalizeOcrDateValue(dm[0])
+    :'';
+
 }
+
 function extractTime(raw){
-  // Prefer the actual duty pickup/reporting time, not WhatsApp message timestamps.
-  let m=raw.match(/pickup\s*-\s*[^\n,]+,\s*(\d{1,2}:\d{2}\s*(?:am|pm))/i);
-  if(m)return normalizeOcrTime(m[1]);
-  m=raw.match(/(?:reporting\s*time|pickup\s*time|pick\s*up\s*time)\s*[:=-]?\s*(\d{1,2}:\d{2}\s*(?:AM|PM))/i);
-  if(m)return normalizeOcrTime(m[1]);
-  m=raw.match(/\b(\d{1,2}:\d{2}\s*(?:AM|PM))\b/i);
-  return m?normalizeOcrTime(m[1]):'';
+
+  let m=
+    raw.match(
+      /pickup\s*-\s*[^\n,]+,\s*(\d{1,2}:\d{2}\s*(?:am|pm))/i
+    );
+
+  if(m){
+    return normalizeOcrTime(
+      m[1]
+    );
+  }
+
+  m=
+    raw.match(
+      /(?:reporting\s*time|pickup\s*time|pick\s*up\s*time)\s*[:=-]?\s*(\d{1,2}:\d{2}\s*(?:AM|PM))/i
+    );
+
+  if(m){
+    return normalizeOcrTime(
+      m[1]
+    );
+  }
+
+  m=
+    raw.match(
+      /\b(\d{1,2}:\d{2}\s*(?:AM|PM))\b/i
+    );
+
+  return m
+    ?normalizeOcrTime(m[1])
+    :'';
+
 }
+
 function normalizeOcrTime(s){
-  s=cleanOCR(s).toUpperCase().replace(/\s+/g,' ');
-  const m=s.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/);
+
+  s=
+    cleanOCR(s)
+    .toUpperCase()
+    .replace(/\s+/g,' ');
+
+  const m=
+    s.match(
+      /^(\d{1,2}):(\d{2})\s*(AM|PM)$/
+    );
+
   if(!m)return s;
-  let h=Math.min(12,Math.max(1,Number(m[1]))), min=Number(m[2]);
-  // Keep valid OCR times untouched. Invalid minutes are left visible for manual correction.
-  return String(h).padStart(2,'0')+':'+String(min).padStart(2,'0')+' '+m[3];
+
+  let h=
+    Math.min(
+      12,
+      Math.max(
+        1,
+        Number(m[1])
+      )
+    );
+
+  let min=
+    Number(m[2]);
+
+  return (
+    String(h).padStart(2,'0')+
+    ':'+
+    String(min).padStart(2,'0')+
+    ' '+
+    m[3]
+  );
+
 }
 
 function extractAmount(raw){
-  // Prefer the driver's payable/confirm price. OCR can read @ as @, a, or the word "at".
-  let v=firstMatch(raw,[
-    /(?:confirm|confirmed)\s*(?:@|at|a)\s*(?:₹|Rs\.?|INR)?\s*([\d,]+(?:\.\d{1,2})?)/i,
-    /\bconfirm\s*[@a-z]?\s*(\d{3,6}(?:\.\d{1,2})?)\b/i,
-    /(?:confirm|confirmed)[^\d]{0,20}(?:₹|Rs\.?|INR)?\s*([\d,]+(?:\.\d{1,2})?)/i,
-    /(?:payable|fare|trip\s*amount|booking\s*amount|amount)\s*[:=@-]?\s*[₹Rs\.]*\s*([\d,]+(?:\.\d{1,2})?)/i,
-    /(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d{1,2})?)\s*(?:\([^)]*\))?/i
-  ]);
-  return v.replace(/,/g,'');
+
+  let v=
+    firstMatch(
+      raw,
+      [
+        /(?:confirm|confirmed)\s*(?:@|at|a)\s*(?:₹|Rs\.?|INR)?\s*([\d,]+(?:\.\d{1,2})?)/i,
+
+        /\bconfirm\s*[@a-z]?\s*(\d{3,6}(?:\.\d{1,2})?)\b/i,
+
+        /(?:confirm|confirmed)[^\d]{0,20}(?:₹|Rs\.?|INR)?\s*([\d,]+(?:\.\d{1,2})?)/i,
+
+        /(?:payable|fare|trip\s*amount|booking\s*amount|amount)\s*[:=@-]?\s*[₹Rs\.]*\s*([\d,]+(?:\.\d{1,2})?)/i,
+
+        /(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d{1,2})?)\s*(?:\([^)]*\))?/i
+      ]
+    );
+
+  return v.replace(
+    /,/g,
+    ''
+  );
+
 }
+
 function extractKm(raw){
-  return firstMatch(raw,[
-    /(?:km\s*limit|kilometer\s*limit|kilometre\s*limit)\s*[:=-]?\s*(\d+(?:\.\d+)?)\s*(?:kms?|km)?/i,
-    /(?:^|\n)\s*(\d+(?:\.\d+)?)\s*KM\b/im,
-    /\b(\d+(?:\.\d+)?)\s*KMs?\b/i
-  ]);
+
+  return firstMatch(
+    raw,
+    [
+      /(?:km\s*limit|kilometer\s*limit|kilometre\s*limit)\s*[:=-]?\s*(\d+(?:\.\d+)?)\s*(?:kms?|km)?/i,
+
+      /(?:^|\n)\s*(\d+(?:\.\d+)?)\s*KM\b/im,
+
+      /\b(\d+(?:\.\d+)?)\s*KMs?\b/i
+    ]
+  );
+
 }
-function extractLabeled(raw,labelNames){
-  const names=labelNames.join('|');
-  const m=raw.match(new RegExp('(?:^|\\n)\\s*(?:'+names+')\\s*[:=-]?\\s*([^\\n]+)','i'));
-  return m?cleanOCR(m[1]):'';
+
+function extractLabeled(
+  raw,
+  labelNames
+){
+
+  const names=
+    labelNames.join('|');
+
+  const m=
+    raw.match(
+      new RegExp(
+        '(?:^|\\n)\\s*(?:'+
+        names+
+        ')\\s*[:=-]?\\s*([^\\n]+)',
+        'i'
+      )
+    );
+
+  return m
+    ?cleanOCR(m[1])
+    :'';
+
 }
-function extractSectionAddress(raw,labelNames,nextNames){
-  const start=new RegExp('(?:^|\\n)\\s*(?:'+labelNames.join('|')+')\\s*[:=-]?\\s*','i').exec(raw);
+
+function extractSectionAddress(
+  raw,
+  labelNames,
+  nextNames
+){
+
+  const start=
+    new RegExp(
+      '(?:^|\\n)\\s*(?:'+
+      labelNames.join('|')+
+      ')\\s*[:=-]?\\s*',
+      'i'
+    ).exec(raw);
+
   if(!start)return '';
-  let s=raw.slice(start.index+start[0].length);
-  const stop=new RegExp('\\n\\s*(?:'+nextNames.join('|')+')\\s*[:=-]?\\s*','i').exec(s);
-  if(stop)s=s.slice(0,stop.index);
-  s=s.replace(/https?:\/\/\S+/gi,' ');
-  return cleanOCR(s).replace(/^[~`^_-]+\s*/,'').replace(/\s*[~`^_-]+$/,'');
-}
-function extractMapAfter(raw,label){
-  const m=raw.match(new RegExp(label+'\\s*:\\s*(https?:\\/\\/[^\\s]+(?:\\s+[^\\n]*)?)','i'));
-  if(!m)return '';
-  return m[1].replace(/\s+/g,'').replace(/(https?:\/\/[^ ]+).*/,'$1');
-}
-function parseOCRText(t){
-  const raw=t.replace(/\r/g,'');
-  const low=raw.toLowerCase();
-  const lines=raw.split('\n').map(x=>cleanOCR(x)).filter(Boolean);
 
-  const date=extractDate(raw);
-  const time=extractTime(raw);
-  const km=extractKm(raw);
-  const amount=extractAmount(raw);
+  let s=
+    raw.slice(
+      start.index+
+      start[0].length
+    );
 
-  let vehicle='';
-  if(/innova\s*(crysta)?/i.test(raw)) vehicle='INNOVA CRYSTA';
-  else if(/\bSUV\b/i.test(raw)) vehicle='SUV';
-  else if(/\b(?:sedan|sedan\s*-\s*petrol|sedan\s*-\s*diesel)\b/i.test(raw)) vehicle='SEDAN';
-  else if(/\b(?:wagon\s*r|swift|dzire|alto|hatchback|mini)\b/i.test(raw)) vehicle='MINI';
+  const stop=
+    new RegExp(
+      '\\n\\s*(?:'+
+      nextNames.join('|')+
+      ')\\s*[:=-]?\\s*',
+      'i'
+    ).exec(s);
 
-  let dutyType='ONE WAY';
-  if(/local\s*(rental|hire)|rental\s*(package|hours?)/i.test(raw)) dutyType='LOCAL RENTAL';
-  else if(/round\s*trip|return\s*trip|two\s*way|return\s*drop/i.test(raw)) dutyType='ROUND TRIP';
-  else if(/outstation\s*\(\s*one\s*way\s*drop\s*\)|one\s*way\s*drop|one\s*way/i.test(raw)) dutyType='ONE WAY';
-
-  let hours=firstMatch(raw,[
-    /(?:rental\s*)?(?:hours?|hrs?)\s*[:=-]?\s*(\d{1,2})/i,
-    /\b(\d{1,2})\s*(?:hours?|hrs?)\b/i
-  ]);
-  let persons=firstMatch(raw,[/(?:persons?|pax|passengers?)\s*[:=-]?\s*(\d+)/i]);
-
-  // Format A: Rideally WhatsApp "Pickup - date, time" followed by address.
-  let pickup='', drop='';
-  let m=raw.match(/pickup\s*-\s*[^,\n]+,\s*\d{1,2}:\d{2}\s*(?:am|pm)\s*\n([\s\S]*?)(?=\n\s*(?:https?:\/\/|google\s*maps|drop\b))/i);
-  if(m)pickup=cleanOCR(m[1].replace(/https?:\/\/\S+/gi,' ')).replace(/^[~`^_-]+\s*/,'');
-  if(!pickup)pickup=extractSectionAddress(raw,['pickup\\s+address'],['pickup\\s+date','reporting\\s+time','drop\\s+address','trip\\s+type','car\\s+type']);
-  if(!pickup)pickup=extractLabeled(raw,['pickup','pick up','from']);
-
-  m=raw.match(/\bdrop\b\s*\n([\s\S]*?)(?=\n\s*(?:google\s*maps|vehicle\s*type|trip\s*type|car\s*type|\d+(?:\.\d+)?\s*KM|Rs\.?|₹)\b)/i);
-  if(m)drop=cleanOCR(m[1].replace(/google\s*maps\s*:\s*https?:\/\/\S+/gi,' ').replace(/https?:\/\/\S+/gi,' '));
-  if(!drop)drop=extractSectionAddress(raw,['drop\\s+address'],['trip\\s+type','car\\s+type','km\\s+limit','extras']);
-  if(!drop)drop=extractLabeled(raw,['drop','dropoff','drop off','to']);
-
-  let pickupMap='';
-  const pm=raw.match(/pickup\s*-\s*[\s\S]*?(https?:\/\/(?:www\.)?google\.com\/maps\/search\/\?api=1&query=[^\s]+)/i);
-  if(pm)pickupMap=pm[1];
-  let dropMap='';
-  const dm=raw.match(/google\s*maps\s*:\s*(https?:\/\/(?:www\.)?google\.com\/maps\/search\/\?api=1&query=[^\s]+)/i);
-  if(dm)dropMap=dm[1];
-
-  // Booking ID / trip code.
-  const bookingId=firstMatch(raw,[
-    /booking\s*id\s*[:#-]?\s*([A-Z0-9-]+)/i,
-    /\btrip\s*id\s*[:#-]?\s*([A-Z0-9-]+)/i,
-    /\bTRIP\s+ALERT\s*\n\s*([A-Z0-9-]+)/i
-  ]);
-
-  let source='';
-  if(/rideally\s*taxi\s*mmt/i.test(raw))source='Rideally Taxi MMT';
-  else if(/rideally/i.test(raw))source='RideAlly';
-
-  let special=extractLabeled(raw,['special service']);
-  let particular=extractLabeled(raw,['particular']);
-  // Do not copy company/source, booking IDs, WhatsApp timestamps or raw OCR text into NOTE.
-  let note='';
-
-  // Capture trip/car details from labeled booking screenshot.
-  const tripType=extractLabeled(raw,['trip type']);
-  const carType=extractLabeled(raw,['car type']);
-  const kmLimit=extractLabeled(raw,['km limit']);
-  if(tripType && /round|return/i.test(tripType))dutyType='ROUND TRIP';
-  if(tripType && /local/i.test(tripType))dutyType='LOCAL RENTAL';
-  if(!km && kmLimit){const k=kmLimit.match(/(\d+(?:\.\d+)?)/);if(k){}}
-  if(carType && !vehicle){
-    if(/innova|crysta/i.test(carType))vehicle='INNOVA CRYSTA';
-    else if(/suv/i.test(carType))vehicle='SUV';
-    else if(/sedan|dzire/i.test(carType))vehicle='SEDAN';
-    else if(/wagon\s*r|swift|alto|hatchback/i.test(carType))vehicle='MINI';
-    else if(/dzire|sedan/i.test(carType))vehicle='SEDAN';
-    else vehicle='MINI';
+  if(stop){
+    s=
+      s.slice(
+        0,
+        stop.index
+      );
   }
 
-  // Keep these details in their dedicated fields only. NOTE stays clean.
+  s=
+    s.replace(
+      /https?:\/\/\S+/gi,
+      ' '
+    );
+
+  return cleanOCR(s)
+    .replace(
+      /^[~`^_-]+\s*/,
+      ''
+    )
+    .replace(
+      /\s*[~`^_-]+$/,
+      ''
+    );
+
+}
+
+function extractMapAfter(
+  raw,
+  label
+){
+
+  const m=
+    raw.match(
+      new RegExp(
+        label+
+        '\\s*:\\s*(https?:\\/\\/[^\\s]+(?:\\s+[^\\n]*)?)',
+        'i'
+      )
+    );
+
+  if(!m)return '';
+
+  return m[1]
+    .replace(/\s+/g,'')
+    .replace(
+      /(https?:\/\/[^ ]+).*/,
+      '$1'
+    );
+
+}
+
+function parseOCRText(t){
+
+  const raw=
+    t.replace(
+      /\r/g,
+      ''
+    );
+
+  const low=
+    raw.toLowerCase();
+
+  const lines=
+    raw
+      .split('\n')
+      .map(
+        x=>cleanOCR(x)
+      )
+      .filter(Boolean);
+
+  const date=
+    extractDate(raw);
+
+  const time=
+    extractTime(raw);
+
+  const km=
+    extractKm(raw);
+
+  const amount=
+    extractAmount(raw);
+
+  let vehicle='';
+
+  if(
+    /innova\s*(crysta)?/i
+      .test(raw)
+  ){
+    vehicle=
+      'INNOVA CRYSTA';
+
+  }else if(
+    /\bSUV\b/i
+      .test(raw)
+  ){
+
+    vehicle='SUV';
+
+  }else if(
+    /\b(?:sedan|sedan\s*-\s*petrol|sedan\s*-\s*diesel)\b/i
+      .test(raw)
+  ){
+
+    vehicle='SEDAN';
+
+  }else if(
+    /\b(?:wagon\s*r|swift|dzire|alto|hatchback|mini)\b/i
+      .test(raw)
+  ){
+
+    vehicle='MINI';
+
+  }
+
+  let dutyType=
+    'ONE WAY';
+
+  if(
+    /local\s*(rental|hire)|rental\s*(package|hours?)/i
+      .test(raw)
+  ){
+
+    dutyType=
+      'LOCAL RENTAL';
+
+  }else if(
+    /round\s*trip|return\s*trip|two\s*way|return\s*drop/i
+      .test(raw)
+  ){
+
+    dutyType=
+      'ROUND TRIP';
+
+  }else if(
+    /outstation\s*\(\s*one\s*way\s*drop\s*\)|one\s*way\s*drop|one\s*way/i
+      .test(raw)
+  ){
+
+    dutyType=
+      'ONE WAY';
+
+  }
+
+  let hours=
+    firstMatch(
+      raw,
+      [
+        /(?:rental\s*)?(?:hours?|hrs?)\s*[:=-]?\s*(\d{1,2})/i,
+
+        /\b(\d{1,2})\s*(?:hours?|hrs?)\b/i
+      ]
+    );
+
+  let persons=
+    firstMatch(
+      raw,
+      [
+        /(?:persons?|pax|passengers?)\s*[:=-]?\s*(\d+)/i
+      ]
+    );
+
+  /* Format A:
+     Rideally WhatsApp
+     "Pickup - date, time"
+  */
+
+  let pickup='';
+  let drop='';
+
+  let m=
+    raw.match(
+      /pickup\s*-\s*[^,\n]+,\s*\d{1,2}:\d{2}\s*(?:am|pm)\s*\n([\s\S]*?)(?=\n\s*(?:https?:\/\/|google\s*maps|drop\b))/i
+    );
+
+  if(m){
+
+    pickup=
+      cleanOCR(
+        m[1]
+          .replace(
+            /https?:\/\/\S+/gi,
+            ' '
+          )
+      )
+      .replace(
+        /^[~`^_-]+\s*/,
+        ''
+      );
+
+  }
+
+  if(!pickup){
+
+    pickup=
+      extractSectionAddress(
+        raw,
+        [
+          'pickup\\s+address'
+        ],
+        [
+          'pickup\\s+date',
+          'reporting\\s+time',
+          'drop\\s+address',
+          'trip\\s+type',
+          'car\\s+type'
+        ]
+      );
+
+  }
+
+  if(!pickup){
+
+    pickup=
+      extractLabeled(
+        raw,
+        [
+          'pickup',
+          'pick up',
+          'from'
+        ]
+      );
+
+  }
+
+  m=
+    raw.match(
+      /\bdrop\b\s*\n([\s\S]*?)(?=\n\s*(?:google\s*maps|vehicle\s*type|trip\s*type|car\s*type|\d+(?:\.\d+)?\s*KM|Rs\.?|₹)\b)/i
+    );
+
+  if(m){
+
+    drop=
+      cleanOCR(
+        m[1]
+          .replace(
+            /google\s*maps\s*:\s*https?:\/\/\S+/gi,
+            ' '
+          )
+          .replace(
+            /https?:\/\/\S+/gi,
+            ' '
+          )
+      );
+
+  }
+
+  if(!drop){
+
+    drop=
+      extractSectionAddress(
+        raw,
+        [
+          'drop\\s+address'
+        ],
+        [
+          'trip\\s+type',
+          'car\\s+type',
+          'km\\s+limit',
+          'extras'
+        ]
+      );
+
+  }
+
+  if(!drop){
+
+    drop=
+      extractLabeled(
+        raw,
+        [
+          'drop',
+          'dropoff',
+          'drop off',
+          'to'
+        ]
+      );
+
+  }
+
+  let pickupMap='';
+
+  const pm=
+    raw.match(
+      /pickup\s*-\s*[\s\S]*?(https?:\/\/(?:www\.)?google\.com\/maps\/search\/\?api=1&query=[^\s]+)/i
+    );
+
+  if(pm){
+    pickupMap=
+      pm[1];
+  }
+
+  let dropMap='';
+
+  const dm=
+    raw.match(
+      /google\s*maps\s*:\s*(https?:\/\/(?:www\.)?google\.com\/maps\/search\/\?api=1&query=[^\s]+)/i
+    );
+
+  if(dm){
+    dropMap=
+      dm[1];
+  }
+
+  /* Booking ID / trip code */
+
+  const bookingId=
+    firstMatch(
+      raw,
+      [
+        /booking\s*id\s*[:#-]?\s*([A-Z0-9-]+)/i,
+
+        /\btrip\s*id\s*[:#-]?\s*([A-Z0-9-]+)/i,
+
+        /\bTRIP\s+ALERT\s*\n\s*([A-Z0-9-]+)/i
+      ]
+    );
+
+  let source='';
+
+  if(
+    /rideally\s*taxi\s*mmt/i
+      .test(raw)
+  ){
+
+    source=
+      'Rideally Taxi MMT';
+
+  }else if(
+    /rideally/i
+      .test(raw)
+  ){
+
+    source=
+      'RideAlly';
+
+  }
+
+  let special=
+    extractLabeled(
+      raw,
+      [
+        'special service'
+      ]
+    );
+
+  let particular=
+    extractLabeled(
+      raw,
+      [
+        'particular'
+      ]
+    );
+
+  /* NOTE intentionally clean */
+
+  let note='';
+
+  const tripType=
+    extractLabeled(
+      raw,
+      [
+        'trip type'
+      ]
+    );
+
+  const carType=
+    extractLabeled(
+      raw,
+      [
+        'car type'
+      ]
+    );
+
+  const kmLimit=
+    extractLabeled(
+      raw,
+      [
+        'km limit'
+      ]
+    );
+
+  if(
+    tripType&&
+    /round|return/i.test(tripType)
+  ){
+
+    dutyType=
+      'ROUND TRIP';
+
+  }
+
+  if(
+    tripType&&
+    /local/i.test(tripType)
+  ){
+
+    dutyType=
+      'LOCAL RENTAL';
+
+  }
+
+  if(
+    !km&&
+    kmLimit
+  ){
+
+    const k=
+      kmLimit.match(
+        /(\d+(?:\.\d+)?)/
+      );
+
+    if(k){}
+  }
+
+  if(
+    carType&&
+    !vehicle
+  ){
+
+    if(
+      /innova|crysta/i
+        .test(carType)
+    ){
+
+      vehicle=
+        'INNOVA CRYSTA';
+
+    }else if(
+      /suv/i
+        .test(carType)
+    ){
+
+      vehicle=
+        'SUV';
+
+    }else if(
+      /sedan|dzire/i
+        .test(carType)
+    ){
+
+      vehicle=
+        'SEDAN';
+
+    }else if(
+      /wagon\s*r|swift|alto|hatchback/i
+        .test(carType)
+    ){
+
+      vehicle=
+        'MINI';
+
+    }else if(
+      /dzire|sedan/i
+        .test(carType)
+    ){
+
+      vehicle=
+        'SEDAN';
+
+    }else{
+
+      vehicle=
+        'MINI';
+
+    }
+
+  }
+
+  /* Keep NOTE clean */
+
   note='';
 
   return {
-    date,time,km,amount,vehicle,dutyType,hours,persons,
-    pickup:cleanOCR(pickup),drop:cleanOCR(drop),pickupMap,dropMap,
-    special,particular,note
+
+    date,
+    time,
+    km,
+    amount,
+    vehicle,
+    dutyType,
+    hours,
+    persons,
+
+    pickup:
+      cleanOCR(pickup),
+
+    drop:
+      cleanOCR(drop),
+
+    pickupMap,
+    dropMap,
+
+    special,
+    particular,
+    note
+
   };
+
 }
 
-window.runDutyOCR=async function(){
-  const f=$('ocrFile').files?.[0];
-  if(!f){alert('First screenshot select pannunga.');return;}
-  const p=$('ocrProgress');p.textContent='Reading screenshot...';
-  try{
-    if(!window.Tesseract){
-      await new Promise((res,rej)=>{
-        const s=document.createElement('script');
-        s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
-        s.onload=res;s.onerror=rej;document.head.appendChild(s);
-      });
-    }
-    const r=await Tesseract.recognize(f,'eng',{
-      logger:m=>{if(m.status)p.textContent=m.status+' '+(m.progress?Math.round(m.progress*100)+'%':'');}
-    });
-    const text=r.data.text||''; const x=parseOCRText(text);
-    ocrSet('ocrDate',x.date);ocrSet('ocrTime',x.time);ocrSet('ocrKm',x.km);ocrSet('ocrAmount',x.amount);
-    ocrSet('ocrPickup',x.pickup);ocrSet('ocrDrop',x.drop);ocrSet('ocrPickupMap',x.pickupMap);ocrSet('ocrDropMap',x.dropMap);
-    ocrSet('ocrHours',x.hours);ocrSet('ocrPersons',x.persons);ocrSet('ocrSpecial',x.special);ocrSet('ocrParticular',x.particular);ocrSet('ocrNote',x.note);
-    if(x.vehicle)$('ocrVehicle').value=x.vehicle;if(x.dutyType)$('ocrDutyType').value=x.dutyType;
-    p.textContent='OCR complete. Check/edit the fields, then CREATE DUTY.';
-  }catch(e){console.error(e);p.textContent='OCR failed';alert('OCR failed: '+e.message);}
-};
+/* ===== OCR READ ===== */
 
-window.createDutyFromOCR=async function(){
-  try{
-    const pickup=$('ocrPickup').value.trim(),drop=$('ocrDrop').value.trim();
-    const date=normalizeDate($('ocrDate').value.trim()),time=$('ocrTime').value.trim();
-    const vehicle=$('ocrVehicle').value,dutyType=$('ocrDutyType').value;
-    const km=Number($('ocrKm').value),amount=Number($('ocrAmount').value);
-    const rentalHours=Number($('ocrHours').value||0),persons=Number($('ocrPersons').value||0);
-    const pickupMap=$('ocrPickupMap').value.trim(),dropMap=$('ocrDropMap').value.trim();
-    const specialService=$('ocrSpecial').value.trim(),particular=$('ocrParticular').value.trim(),note=$('ocrNote').value.trim();
+window.runDutyOCR=
+  async function(){
 
-    if(!pickup||!drop||!date||!time||!km||amount<0){
-      alert('Pickup, Drop, Date, Time, KM and Amount check pannunga.');return;
-    }
-    if(dutyType==='LOCAL RENTAL'&&(rentalHours<1||rentalHours>24)){
-      alert('LOCAL RENTAL hours 1-24 enter pannunga.');return;
-    }
-    if(dutyType==='LOCAL RENTAL'&&persons<1){alert('LOCAL RENTAL persons enter pannunga.');return;}
+    const f=
+      $('ocrFile')
+        .files?.[0];
 
-    await addDoc(collection(db,'duties'),{
-      dutyType,rentalHours:dutyType==='LOCAL RENTAL'?rentalHours:0,persons:dutyType==='LOCAL RENTAL'?persons:0,
-      tripType:dutyType,vehicleCategory:vehicle,category:vehicle,
-      pickup,drop,pickupMap,dropMap,date,time,vehicle,km,amount,specialService,particular,note,
-      status:'OPEN',acceptedBy:'',acceptedDriverId:'',acceptedByUid:'',driverId:'',driverName:'',driverMobile:'',
-      rejectedBy:'',rejectedByUid:'',rejectedDriverId:'',cancelledBy:'',cancelledByUid:'',cancelledDriverId:'',
-      cancellationDeduction:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp()
-    });
-    alert('Duty created successfully from OCR.');closeDutyOCR();showPage('open');
-  }catch(e){console.error(e);alert('Duty create failed: '+e.message);}
-};
+    if(!f){
+
+      alert(
+        'First screenshot select pannunga.'
+      );
+
+      return;
+    }
+
+    const p=
+      $('ocrProgress');
+
+    p.textContent=
+      'Reading screenshot...';
+
+    try{
+
+      if(!window.Tesseract){
+
+        await new Promise(
+          (res,rej)=>{
+
+            const s=
+              document.createElement(
+                'script'
+              );
+
+            s.src=
+              'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+
+            s.onload=
+              res;
+
+            s.onerror=
+              rej;
+
+            document.head
+              .appendChild(s);
+
+          }
+        );
+
+      }
+
+      const r=
+        await Tesseract.recognize(
+          f,
+          'eng',
+          {
+            logger:m=>{
+
+              if(m.status){
+
+                p.textContent=
+                  m.status+
+                  ' '+
+                  (
+                    m.progress
+                    ?Math.round(
+                      m.progress*100
+                    )+'%'
+                    :''
+                  );
+
+              }
+
+            }
+          }
+        );
+
+      const text=
+        r.data.text||'';
+
+      const x=
+        parseOCRText(text);
+
+      ocrSet(
+        'ocrDate',
+        x.date
+      );
+
+      ocrSet(
+        'ocrTime',
+        x.time
+      );
+
+      ocrSet(
+        'ocrKm',
+        x.km
+      );
+
+      ocrSet(
+        'ocrAmount',
+        x.amount
+      );
+
+      ocrSet(
+        'ocrPickup',
+        x.pickup
+      );
+
+      ocrSet(
+        'ocrDrop',
+        x.drop
+      );
+
+      ocrSet(
+        'ocrPickupMap',
+        x.pickupMap
+      );
+
+      ocrSet(
+        'ocrDropMap',
+        x.dropMap
+      );
+
+      ocrSet(
+        'ocrHours',
+        x.hours
+      );
+
+      ocrSet(
+        'ocrPersons',
+        x.persons
+      );
+
+      ocrSet(
+        'ocrSpecial',
+        x.special
+      );
+
+      ocrSet(
+        'ocrParticular',
+        x.particular
+      );
+
+      ocrSet(
+        'ocrNote',
+        x.note
+      );
+
+      if(x.vehicle){
+
+        $('ocrVehicle').value=
+          x.vehicle;
+
+      }
+
+      if(x.dutyType){
+
+        $('ocrDutyType').value=
+          x.dutyType;
+
+      }
+
+      p.textContent=
+        'OCR complete. Check/edit the fields, then CREATE DUTY.';
+
+    }catch(e){
+
+      console.error(e);
+
+      p.textContent=
+        'OCR failed';
+
+      alert(
+        'OCR failed: '+
+        e.message
+      );
+
+    }
+
+  };
+
+/* ===== CREATE DUTY FROM OCR ===== */
+
+window.createDutyFromOCR=
+  async function(){
+
+    try{
+
+      const pickup=
+        $('ocrPickup')
+          .value
+          .trim();
+
+      const drop=
+        $('ocrDrop')
+          .value
+          .trim();
+
+      const date=
+        normalizeDate(
+          $('ocrDate')
+            .value
+            .trim()
+        );
+
+      const time=
+        $('ocrTime')
+          .value
+          .trim();
+
+      const vehicle=
+        $('ocrVehicle')
+          .value;
+
+      const dutyType=
+        $('ocrDutyType')
+          .value;
+
+      const km=
+        Number(
+          $('ocrKm')
+            .value
+        );
+
+      const amount=
+        Number(
+          $('ocrAmount')
+            .value
+        );
+
+      const rentalHours=
+        Number(
+          $('ocrHours')
+            .value||0
+        );
+
+      const persons=
+        Number(
+          $('ocrPersons')
+            .value||0
+        );
+
+      const pickupMap=
+        $('ocrPickupMap')
+          .value
+          .trim();
+
+      const dropMap=
+        $('ocrDropMap')
+          .value
+          .trim();
+
+      const specialService=
+        $('ocrSpecial')
+          .value
+          .trim();
+
+      const particular=
+        $('ocrParticular')
+          .value
+          .trim();
+
+      const note=
+        $('ocrNote')
+          .value
+          .trim();
+
+      if(
+        !pickup||
+        !drop||
+        !date||
+        !time||
+        !km||
+        amount<0
+      ){
+
+        alert(
+          'Pickup, Drop, Date, Time, KM and Amount check pannunga.'
+        );
+
+        return;
+      }
+
+      if(
+        dutyType==='LOCAL RENTAL'&&
+        (
+          rentalHours<1||
+          rentalHours>24
+        )
+      ){
+
+        alert(
+          'LOCAL RENTAL hours 1-24 enter pannunga.'
+        );
+
+        return;
+      }
+
+      if(
+        dutyType==='LOCAL RENTAL'&&
+        persons<1
+      ){
+
+        alert(
+          'LOCAL RENTAL persons enter pannunga.'
+        );
+
+        return;
+      }
+
+      await addDoc(
+        collection(db,'duties'),
+        {
+
+          dutyType,
+
+          rentalHours:
+            dutyType==='LOCAL RENTAL'
+            ?rentalHours
+            :0,
+
+          persons:
+            dutyType==='LOCAL RENTAL'
+            ?persons
+            :0,
+
+          tripType:
+            dutyType,
+
+          vehicleCategory:
+            vehicle,
+
+          category:
+            vehicle,
+
+          pickup,
+          drop,
+
+          pickupMap,
+          dropMap,
+
+          date,
+          time,
+          vehicle,
+          km,
+          amount,
+
+          specialService,
+          particular,
+          note,
+
+          status:
+            'OPEN',
+
+          acceptedBy:'',
+          acceptedDriverId:'',
+          acceptedByUid:'',
+
+          driverId:'',
+          driverName:'',
+          driverMobile:'',
+
+          rejectedBy:'',
+          rejectedByUid:'',
+          rejectedDriverId:'',
+
+          cancelledBy:'',
+          cancelledByUid:'',
+          cancelledDriverId:'',
+
+          cancellationDeduction:0,
+
+          createdAt:
+            serverTimestamp(),
+
+          updatedAt:
+            serverTimestamp()
+
+        }
+      );
+
+      alert(
+        'Duty created successfully from OCR.'
+      );
+
+      closeDutyOCR();
+
+      showPage(
+        'open'
+      );
+
+    }catch(e){
+
+      console.error(e);
+
+      alert(
+        'Duty create failed: '+
+        e.message
+      );
+
+    }
+
+  };
 
 </script>
 </body>
-</html>
+  </html>
