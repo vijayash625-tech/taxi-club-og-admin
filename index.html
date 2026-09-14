@@ -720,7 +720,7 @@ startListeners();
 render();
 
 
-/* ===== DUTY SCREENSHOT OCR V2 ===== */
+/* ===== DUTY SCREENSHOT OCR V5 - DRIVER CLEAN PAYLOAD ===== */
 const OCR_CSS = `
 #ocrFab{position:fixed;right:16px;bottom:76px;z-index:50;border-radius:999px;padding:13px 17px;background:linear-gradient(135deg,#1769e0,#7c3aed);color:#fff;font-weight:900;box-shadow:0 8px 24px #1769e055}
 #ocrOverlay{position:fixed;inset:0;background:#0008;z-index:100;display:none;align-items:center;justify-content:center;padding:12px}
@@ -799,11 +799,23 @@ function extractDate(raw){
   return dm?normalizeOcrDateValue(dm[0]):'';
 }
 function extractTime(raw){
-  return firstMatch(raw,[
-    /(?:reporting\s*time|pickup\s*time|pick\s*up\s*time)\s*[:=-]?\s*(\d{1,2}:\d{2}\s*(?:AM|PM))/i,
-    /\b(\d{1,2}:\d{2}\s*(?:AM|PM))\b/i
-  ]);
+  // Prefer the actual duty pickup/reporting time, not WhatsApp message timestamps.
+  let m=raw.match(/pickup\s*-\s*[^\n,]+,\s*(\d{1,2}:\d{2}\s*(?:am|pm))/i);
+  if(m)return normalizeOcrTime(m[1]);
+  m=raw.match(/(?:reporting\s*time|pickup\s*time|pick\s*up\s*time)\s*[:=-]?\s*(\d{1,2}:\d{2}\s*(?:AM|PM))/i);
+  if(m)return normalizeOcrTime(m[1]);
+  m=raw.match(/\b(\d{1,2}:\d{2}\s*(?:AM|PM))\b/i);
+  return m?normalizeOcrTime(m[1]):'';
 }
+function normalizeOcrTime(s){
+  s=cleanOCR(s).toUpperCase().replace(/\s+/g,' ');
+  const m=s.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/);
+  if(!m)return s;
+  let h=Math.min(12,Math.max(1,Number(m[1]))), min=Number(m[2]);
+  // Keep valid OCR times untouched. Invalid minutes are left visible for manual correction.
+  return String(h).padStart(2,'0')+':'+String(min).padStart(2,'0')+' '+m[3];
+}
+
 function extractAmount(raw){
   // Prefer the driver's payable/confirm price. OCR can read @ as @, a, or the word "at".
   let v=firstMatch(raw,[
@@ -834,7 +846,7 @@ function extractSectionAddress(raw,labelNames,nextNames){
   const stop=new RegExp('\\n\\s*(?:'+nextNames.join('|')+')\\s*[:=-]?\\s*','i').exec(s);
   if(stop)s=s.slice(0,stop.index);
   s=s.replace(/https?:\/\/\S+/gi,' ');
-  return cleanOCR(s);
+  return cleanOCR(s).replace(/^[~`^_-]+\s*/,'').replace(/\s*[~`^_-]+$/,'');
 }
 function extractMapAfter(raw,label){
   const m=raw.match(new RegExp(label+'\\s*:\\s*(https?:\\/\\/[^\\s]+(?:\\s+[^\\n]*)?)','i'));
@@ -871,7 +883,7 @@ function parseOCRText(t){
   // Format A: Rideally WhatsApp "Pickup - date, time" followed by address.
   let pickup='', drop='';
   let m=raw.match(/pickup\s*-\s*[^,\n]+,\s*\d{1,2}:\d{2}\s*(?:am|pm)\s*\n([\s\S]*?)(?=\n\s*(?:https?:\/\/|google\s*maps|drop\b))/i);
-  if(m)pickup=cleanOCR(m[1].replace(/https?:\/\/\S+/gi,' '));
+  if(m)pickup=cleanOCR(m[1].replace(/https?:\/\/\S+/gi,' ')).replace(/^[~`^_-]+\s*/,'');
   if(!pickup)pickup=extractSectionAddress(raw,['pickup\\s+address'],['pickup\\s+date','reporting\\s+time','drop\\s+address','trip\\s+type','car\\s+type']);
   if(!pickup)pickup=extractLabeled(raw,['pickup','pick up','from']);
 
@@ -900,7 +912,8 @@ function parseOCRText(t){
 
   let special=extractLabeled(raw,['special service']);
   let particular=extractLabeled(raw,['particular']);
-  let note=extractLabeled(raw,['note','remarks']);
+  // Do not copy company/source, booking IDs, WhatsApp timestamps or raw OCR text into NOTE.
+  let note='';
 
   // Capture trip/car details from labeled booking screenshot.
   const tripType=extractLabeled(raw,['trip type']);
@@ -913,20 +926,16 @@ function parseOCRText(t){
     if(/innova|crysta/i.test(carType))vehicle='INNOVA CRYSTA';
     else if(/suv/i.test(carType))vehicle='SUV';
     else if(/sedan|dzire/i.test(carType))vehicle='SEDAN';
-    else if(/wagon\s*r|swift|dzire|alto/i.test(carType))vehicle='MINI';
+    else if(/wagon\s*r|swift|alto|hatchback/i.test(carType))vehicle='MINI';
+    else if(/dzire|sedan/i.test(carType))vehicle='SEDAN';
     else vehicle='MINI';
   }
 
-  // Keep useful source details without polluting pickup/drop.
-  const extraParts=[];
-  if(tripType)extraParts.push('Trip Type: '+tripType);
-  if(carType)extraParts.push('Car Type: '+carType);
-  if(kmLimit)extraParts.push('KM Limit: '+kmLimit);
-  if(/(?:pay\s*online)/i.test(raw))extraParts.push('Pay Online');
-  if(extraParts.length)note=cleanOCR([note,...extraParts].filter(Boolean).join(' | '));
+  // Keep these details in their dedicated fields only. NOTE stays clean.
+  note='';
 
   return {
-    source,bookingId,date,time,km,amount,vehicle,dutyType,hours,persons,
+    date,time,km,amount,vehicle,dutyType,hours,persons,
     pickup:cleanOCR(pickup),drop:cleanOCR(drop),pickupMap,dropMap,
     special,particular,note
   };
@@ -976,6 +985,7 @@ window.createDutyFromOCR=async function(){
 
     await addDoc(collection(db,'duties'),{
       dutyType,rentalHours:dutyType==='LOCAL RENTAL'?rentalHours:0,persons:dutyType==='LOCAL RENTAL'?persons:0,
+      tripType:dutyType,vehicleCategory:vehicle,category:vehicle,
       pickup,drop,pickupMap,dropMap,date,time,vehicle,km,amount,specialService,particular,note,
       status:'OPEN',acceptedBy:'',acceptedDriverId:'',acceptedByUid:'',driverId:'',driverName:'',driverMobile:'',
       rejectedBy:'',rejectedByUid:'',rejectedDriverId:'',cancelledBy:'',cancelledByUid:'',cancelledDriverId:'',
