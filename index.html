@@ -743,13 +743,11 @@ const fab=document.createElement('button');fab.id='ocrFab';fab.textContent='📷
 
 const ov=document.createElement('div');ov.id='ocrOverlay';ov.innerHTML=`<div id="ocrModal">
 <h2>📷 DUTY SCREENSHOT OCR</h2>
-<div class="ocrSub">Works with RideAlly / Rideally Taxi MMT duty screenshots. OCR fills the fields; check/edit before creating.</div>
+<div class="ocrSub">Upload a duty screenshot. OCR extracts only the details needed to create and show the duty to drivers. Check/edit before creating.</div>
 <input id="ocrFile" type="file" accept="image/*"><img id="ocrPreview" class="ocrPreview" style="display:none">
 <div id="ocrProgress" class="ocrProgress"></div>
 <div class="ocrActions"><button class="ocrScan" onclick="runDutyOCR()">🔍 READ SCREENSHOT</button><button class="ocrClose" onclick="closeDutyOCR()">CLOSE</button></div>
 <div class="ocrGrid" style="margin-top:12px">
-<div class="ocrField"><label>SOURCE</label><input id="ocrSource" placeholder="RideAlly / Rideally Taxi MMT"></div>
-<div class="ocrField"><label>BOOKING / TRIP ID</label><input id="ocrBookingId"></div>
 <div class="ocrField"><label>DUTY TYPE</label><select id="ocrDutyType"><option>ONE WAY</option><option>ROUND TRIP</option><option>LOCAL RENTAL</option></select></div>
 <div class="ocrField"><label>VEHICLE</label><select id="ocrVehicle"><option>SEDAN</option><option>SUV</option><option>MINI</option><option>INNOVA CRYSTA</option></select></div>
 <div class="ocrField"><label>DATE</label><input id="ocrDate" placeholder="DD/MM/YYYY"></div>
@@ -766,7 +764,6 @@ const ov=document.createElement('div');ov.id='ocrOverlay';ov.innerHTML=`<div id=
 <div class="ocrField"><label>PARTICULAR</label><input id="ocrParticular"></div>
 <div class="ocrField full"><label>NOTE</label><textarea id="ocrNote"></textarea></div>
 </div>
-<div id="ocrRaw" class="ocrText" style="display:none"></div>
 <div class="ocrActions"><button class="ocrCreate" onclick="createDutyFromOCR()">✅ CREATE DUTY</button></div>
 </div>`;document.body.appendChild(ov);
 
@@ -777,7 +774,7 @@ document.getElementById('ocrFile').addEventListener('change',e=>{
   const img=document.getElementById('ocrPreview'); img.src=URL.createObjectURL(f); img.style.display='block';
 });
 function ocrSet(id,v){if(v!==undefined&&v!==null&&String(v).trim())$(id).value=String(v).trim();}
-function cleanOCR(v){return String(v||'').replace(/[|]+/g,' ').replace(/\s+/g,' ').trim();}
+function cleanOCR(v){return String(v||'').replace(/[|]+/g,' ').replace(/https?:\/\/[^\s]+/gi,' ').replace(/\s+/g,' ').trim();}
 function firstMatch(raw, regs){for(const re of regs){const m=raw.match(re);if(m&&m[1])return cleanOCR(m[1]);}return '';}
 function normalizeOcrDateValue(s){
   s=cleanOCR(s).replace(/[.,]/g,'');
@@ -808,11 +805,13 @@ function extractTime(raw){
   ]);
 }
 function extractAmount(raw){
-  // Prefer the actual payable/confirm amount over unrelated "Rs..." messages.
+  // Prefer the driver's payable/confirm price. OCR can read @ as @, a, or the word "at".
   let v=firstMatch(raw,[
-    /(?:confirm|confirmed)\s*@\s*[₹Rs\.]*\s*([\d,]+)/i,
-    /(?:payable|fare|trip\s*amount|booking\s*amount|amount)\s*[:=@-]?\s*[₹Rs\.]*\s*([\d,]+)/i,
-    /(?:₹|Rs\.?|INR)\s*([\d,]+)\s*(?:\([^)]*\))?/i
+    /(?:confirm|confirmed)\s*(?:@|at|a)\s*(?:₹|Rs\.?|INR)?\s*([\d,]+(?:\.\d{1,2})?)/i,
+    /\bconfirm\s*[@a-z]?\s*(\d{3,6}(?:\.\d{1,2})?)\b/i,
+    /(?:confirm|confirmed)[^\d]{0,20}(?:₹|Rs\.?|INR)?\s*([\d,]+(?:\.\d{1,2})?)/i,
+    /(?:payable|fare|trip\s*amount|booking\s*amount|amount)\s*[:=@-]?\s*[₹Rs\.]*\s*([\d,]+(?:\.\d{1,2})?)/i,
+    /(?:₹|Rs\.?|INR)\s*([\d,]+(?:\.\d{1,2})?)\s*(?:\([^)]*\))?/i
   ]);
   return v.replace(/,/g,'');
 }
@@ -871,12 +870,12 @@ function parseOCRText(t){
 
   // Format A: Rideally WhatsApp "Pickup - date, time" followed by address.
   let pickup='', drop='';
-  let m=raw.match(/pickup\s*-\s*[^,\n]+,\s*\d{1,2}:\d{2}\s*(?:am|pm)\s*\n([\s\S]*?)(?=\n\s*drop\b)/i);
+  let m=raw.match(/pickup\s*-\s*[^,\n]+,\s*\d{1,2}:\d{2}\s*(?:am|pm)\s*\n([\s\S]*?)(?=\n\s*(?:https?:\/\/|google\s*maps|drop\b))/i);
   if(m)pickup=cleanOCR(m[1].replace(/https?:\/\/\S+/gi,' '));
   if(!pickup)pickup=extractSectionAddress(raw,['pickup\\s+address'],['pickup\\s+date','reporting\\s+time','drop\\s+address','trip\\s+type','car\\s+type']);
   if(!pickup)pickup=extractLabeled(raw,['pickup','pick up','from']);
 
-  m=raw.match(/\bdrop\b\s*\n([\s\S]*?)(?=\n\s*(?:google\s*maps|vehicle\s*type|trip\s*type|car\s*type)\b)/i);
+  m=raw.match(/\bdrop\b\s*\n([\s\S]*?)(?=\n\s*(?:google\s*maps|vehicle\s*type|trip\s*type|car\s*type|\d+(?:\.\d+)?\s*KM|Rs\.?|₹)\b)/i);
   if(m)drop=cleanOCR(m[1].replace(/google\s*maps\s*:\s*https?:\/\/\S+/gi,' ').replace(/https?:\/\/\S+/gi,' '));
   if(!drop)drop=extractSectionAddress(raw,['drop\\s+address'],['trip\\s+type','car\\s+type','km\\s+limit','extras']);
   if(!drop)drop=extractLabeled(raw,['drop','dropoff','drop off','to']);
@@ -914,6 +913,7 @@ function parseOCRText(t){
     if(/innova|crysta/i.test(carType))vehicle='INNOVA CRYSTA';
     else if(/suv/i.test(carType))vehicle='SUV';
     else if(/sedan|dzire/i.test(carType))vehicle='SEDAN';
+    else if(/wagon\s*r|swift|dzire|alto/i.test(carType))vehicle='MINI';
     else vehicle='MINI';
   }
 
@@ -948,19 +948,16 @@ window.runDutyOCR=async function(){
       logger:m=>{if(m.status)p.textContent=m.status+' '+(m.progress?Math.round(m.progress*100)+'%':'');}
     });
     const text=r.data.text||''; const x=parseOCRText(text);
-    ocrSet('ocrSource',x.source);ocrSet('ocrBookingId',x.bookingId);
     ocrSet('ocrDate',x.date);ocrSet('ocrTime',x.time);ocrSet('ocrKm',x.km);ocrSet('ocrAmount',x.amount);
     ocrSet('ocrPickup',x.pickup);ocrSet('ocrDrop',x.drop);ocrSet('ocrPickupMap',x.pickupMap);ocrSet('ocrDropMap',x.dropMap);
     ocrSet('ocrHours',x.hours);ocrSet('ocrPersons',x.persons);ocrSet('ocrSpecial',x.special);ocrSet('ocrParticular',x.particular);ocrSet('ocrNote',x.note);
     if(x.vehicle)$('ocrVehicle').value=x.vehicle;if(x.dutyType)$('ocrDutyType').value=x.dutyType;
-    $('ocrRaw').style.display='block';$('ocrRaw').textContent=text;
     p.textContent='OCR complete. Check/edit the fields, then CREATE DUTY.';
   }catch(e){console.error(e);p.textContent='OCR failed';alert('OCR failed: '+e.message);}
 };
 
 window.createDutyFromOCR=async function(){
   try{
-    const source=$('ocrSource').value.trim(),bookingId=$('ocrBookingId').value.trim();
     const pickup=$('ocrPickup').value.trim(),drop=$('ocrDrop').value.trim();
     const date=normalizeDate($('ocrDate').value.trim()),time=$('ocrTime').value.trim();
     const vehicle=$('ocrVehicle').value,dutyType=$('ocrDutyType').value;
@@ -978,7 +975,7 @@ window.createDutyFromOCR=async function(){
     if(dutyType==='LOCAL RENTAL'&&persons<1){alert('LOCAL RENTAL persons enter pannunga.');return;}
 
     await addDoc(collection(db,'duties'),{
-      source,bookingId,dutyType,rentalHours:dutyType==='LOCAL RENTAL'?rentalHours:0,persons:dutyType==='LOCAL RENTAL'?persons:0,
+      dutyType,rentalHours:dutyType==='LOCAL RENTAL'?rentalHours:0,persons:dutyType==='LOCAL RENTAL'?persons:0,
       pickup,drop,pickupMap,dropMap,date,time,vehicle,km,amount,specialService,particular,note,
       status:'OPEN',acceptedBy:'',acceptedDriverId:'',acceptedByUid:'',driverId:'',driverName:'',driverMobile:'',
       rejectedBy:'',rejectedByUid:'',rejectedDriverId:'',cancelledBy:'',cancelledByUid:'',cancelledDriverId:'',
