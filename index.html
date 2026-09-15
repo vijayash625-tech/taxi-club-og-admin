@@ -153,14 +153,25 @@ body{background:radial-gradient(circle at 0% 0%,#e7f4ff 0,#f7f9ff 28%,transparen
    Change these two values to the same Admin ID / Password you already use. */
 const ADMIN_ID = "7708988625";
 const ADMIN_PASSWORD = "vijay8978";
+const ADMIN_LOGIN_KEY = "taxi_club_og_admin_logged_in_v1";
+
+function openAdminPanel(){
+  document.getElementById("loginGate").style.display="none";
+  document.getElementById("app").classList.remove("hidden");
+}
+
+// Keep the admin signed in on this browser/device until the browser site data is cleared.
+try{
+  if(localStorage.getItem(ADMIN_LOGIN_KEY) === "1") openAdminPanel();
+}catch(e){}
 
 window.adminLogin = function(){
   const id = document.getElementById("loginId").value.trim();
   const pw = document.getElementById("loginPassword").value;
   const err = document.getElementById("loginError");
   if(id === ADMIN_ID && pw === ADMIN_PASSWORD){
-    document.getElementById("loginGate").style.display="none";
-    document.getElementById("app").classList.remove("hidden");
+    try{ localStorage.setItem(ADMIN_LOGIN_KEY,"1"); }catch(e){}
+    openAdminPanel();
     err.style.display="none";
   }else{
     err.style.display="block";
