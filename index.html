@@ -103,6 +103,17 @@ display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 a
   .statgrid{grid-template-columns:repeat(2,1fr)}h1{font-size:27px}.top{padding:12px}
   .brand{font-size:19px}.search-row{flex-direction:column}
 }
+
+/* ===== LUXURY COLOR ADMIN UI ===== */
+body{background:radial-gradient(circle at 0% 0%,#e7f4ff 0,#f7f9ff 28%,transparent 52%),radial-gradient(circle at 100% 10%,#f4eaff 0,#fbf9ff 30%,transparent 55%),linear-gradient(145deg,#f8fbff,#ffffff 52%,#f6fbff)}
+.top{background:linear-gradient(135deg,rgba(255,255,255,.97),rgba(241,247,255,.96));border-bottom:1px solid #dce6f5;box-shadow:0 8px 24px rgba(57,79,128,.08)}.brand{color:#17294d}.brand small{color:#7256d8}.status{background:#e9fbf7;color:#087d68}
+.menuBar{display:flex;align-items:center;gap:12px;padding:10px 15px;background:linear-gradient(135deg,#fff,#f4f0ff);border-bottom:1px solid #e2e6f3;position:sticky;top:0;z-index:18}.menuBtn{width:46px;height:42px;border-radius:14px;color:#fff;font-size:24px;background:linear-gradient(135deg,#3456d8,#7a45d8);box-shadow:0 8px 20px #5c55d833}.menuTitle{font-weight:950;color:#26375e;letter-spacing:.4px;flex:1}.menuTitle span{font-size:10px;color:#8b53d9;letter-spacing:1.5px;margin-left:5px}.menuDot{font-size:12px;color:#09b58e}
+.desktopNav{top:63px;background:rgba(255,255,255,.97);border-bottom:1px solid #e2e6f3;box-shadow:0 5px 18px rgba(57,79,128,.05);z-index:17}.desktopNav button{color:#68748d}.desktopNav button.active{color:#5a43cf;border-bottom:3px solid #6b4ee6;background:linear-gradient(#f5f1ff,#fff)}
+.sideMenu{position:fixed;left:0;top:0;bottom:0;width:min(330px,88vw);z-index:300;background:linear-gradient(180deg,#fff,#f4f1ff 55%,#eefaff);box-shadow:20px 0 55px rgba(37,50,96,.22);transform:translateX(-105%);transition:transform .25s ease;padding:16px}.sideMenu.open{transform:translateX(0)}.sideHead{display:flex;align-items:center;justify-content:space-between;padding:8px 4px 20px}.sideHead b{display:block;font-size:19px;color:#26375e}.sideHead small{display:block;margin-top:4px;color:#7958d7;font-weight:900;letter-spacing:1px}.sideHead button{width:38px;height:38px;border-radius:12px;background:#efeaff;color:#6544cc;font-weight:900}.sideMenu>button:not(.sideHead button){width:100%;display:flex;gap:12px;align-items:center;text-align:left;padding:15px 14px;margin:7px 0;border-radius:15px;background:#fff;color:#31415f;font-weight:900;border:1px solid #e5e9f4;box-shadow:0 6px 16px rgba(56,72,120,.06)}.menuBackdrop{position:fixed;inset:0;background:rgba(31,42,75,.28);z-index:299;display:none}.menuBackdrop.open{display:block}
+.card{background:rgba(255,255,255,.94);border:1px solid #dfe6f4;box-shadow:0 14px 35px rgba(60,76,125,.09)}.card h2{color:#26375e}.stat{background:linear-gradient(145deg,#fff,#f4f7ff);border:1px solid #dfe5f4;box-shadow:0 10px 25px rgba(59,76,129,.08)}.stat:nth-child(1){border-top:4px solid #7a4ee6}.stat:nth-child(2){border-top:4px solid #0ea5e9}.stat:nth-child(3){border-top:4px solid #00b894}.stat:nth-child(4){border-top:4px solid #ec4899}.stat b{color:#24365e}.duty,.driver{background:linear-gradient(145deg,#fff,#f8f9ff);border:1px solid #e0e6f2;box-shadow:0 9px 25px rgba(56,73,124,.07)}
+.field input,.field select,.field textarea{border:1px solid #d7dfed;background:#fbfcff;color:#17294d}.primary{background:linear-gradient(135deg,#5b4be7,#8b4ee8,#d34fa5)}.green{background:linear-gradient(135deg,#00a878,#10c99a)}.red{background:linear-gradient(135deg,#e84d70,#f06aa0)}.orange{background:linear-gradient(135deg,#f09a32,#ef6e68)}.notice{background:linear-gradient(135deg,#edf7ff,#f3efff);color:#405a86;border:1px solid #dce5f4}.badge.open{background:#e7f7ff;color:#087ab2}.badge.accepted{background:#e7fbf4;color:#087e62}.badge.completed{background:#eeeaff;color:#6446ca}.badge.cancelled{background:#fff0e6;color:#aa6418}.historyFilters button{background:#eef2fa;color:#4d5b76;border:1px solid #dde4f0}.historyFilters button.active{background:linear-gradient(135deg,#6049df,#a34bd7);color:#fff;border:0}
+#ocrFab{background:linear-gradient(135deg,#4b55df,#8c45db,#e34f9a)}#ocrOverlay{background:rgba(37,43,76,.48)}#ocrModal,#driverDocModal{background:linear-gradient(145deg,#fff,#f7f5ff)}.ocrScan{background:linear-gradient(135deg,#4d58df,#8c49dc)!important}.ocrCreate{background:linear-gradient(135deg,#00a878,#10c99a)!important}.docOpen{background:#eeeaff;color:#6047cb}.loginBox{background:linear-gradient(145deg,#fff,#f5f3ff);border-color:#e0e4f1}.loginLogo{background:linear-gradient(145deg,#4c58df,#8a48dd,#e34e9d)}.loginBtn{background:linear-gradient(135deg,#4b55df,#8d49df)}
+.dashboardHero{border-radius:26px;padding:22px;color:#fff;margin:14px 0;background:linear-gradient(135deg,#4354dc,#7549d8 52%,#d44f9e);box-shadow:0 18px 38px rgba(87,70,190,.22)}.dashboardHero h2{margin:0 0 5px;font-size:24px}.dashboardHero p{margin:0;opacity:.9;font-size:13px}.quickGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}.quickBtn{padding:18px;border-radius:18px;background:#fff;border:1px solid #e0e6f3;box-shadow:0 9px 22px rgba(55,72,120,.07);font-weight:950;color:#30405e;text-align:left}.quickBtn b{display:block;font-size:22px;margin-bottom:6px}.quickBtn small{color:#73819a}.stat.clickable{cursor:pointer;transition:.18s}.stat.clickable:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(59,76,129,.13)}.allDutyCard{border-left:5px solid #7357e8}.allDutyCard.openState{border-left-color:#00b894}.allDutyCard.acceptedState{border-left-color:#ec4899}.allDutyCard.doneState{border-left-color:#6446ca}.allDutyCard.cancelState{border-left-color:#f09a32}.allDutyCard.rejectedState{border-left-color:#e84d70}.mobileBottomNav{display:none}@media(max-width:650px){.mobileBottomNav{position:fixed;display:grid;grid-template-columns:repeat(4,1fr);left:10px;right:10px;bottom:10px;z-index:60;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border:1px solid #dfe5f4;border-radius:20px;box-shadow:0 12px 35px rgba(35,48,91,.18);padding:6px}.mobileBottomNav button{background:transparent;color:#56647a;padding:8px 3px;border-radius:14px;font-size:10px;font-weight:900}.mobileBottomNav button.active{background:linear-gradient(135deg,#5b4be7,#a34bd7);color:#fff}.mobileBottomNav button b{display:block;font-size:17px;margin-bottom:2px}}@media(max-width:650px){.desktopNav{display:none}.quickGrid{grid-template-columns:1fr 1fr}}@media(min-width:651px){.menuBar{display:none}}
 </style>
 </head>
 <body>
@@ -129,12 +140,10 @@ display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 a
   <div id="connection" class="status">CONNECTING...</div>
 </header>
 
-<nav>
-  <button id="nav-duty" class="active" onclick="showPage('duty')">🚕 DUTY</button>
-  <button id="nav-open" onclick="showPage('open')">🟢 OPEN</button>
-  <button id="nav-accepted" onclick="showPage('accepted')">✅ ACCEPTED</button>
-  <button id="nav-history" onclick="showPage('history')">📋 HISTORY</button>
-</nav>
+<div class="menuBar"><button class="menuBtn" onclick="toggleMenu()" aria-label="Open menu">☰</button><div class="menuTitle">TAXI CLUB OG <span>ADMIN</span></div><div id="menuConnection" class="menuDot">●</div></div>
+<div id="sideMenu" class="sideMenu"><div class="sideHead"><div><b>🚕 TAXI CLUB OG</b><small>ADMIN MENU</small></div><button onclick="toggleMenu()">✕</button></div><button onclick="showPage('dashboard');toggleMenu()">🏠 <span>DASHBOARD</span></button><button onclick="showPage('duty');toggleMenu()">🚕 <span>DUTY MANAGEMENT</span></button><button onclick="showPage('drivers');toggleMenu()">👨‍✈️ <span>DRIVER LIST</span></button><button onclick="showPage('open');toggleMenu()">🟢 <span>OPEN DUTIES</span></button><button onclick="showPage('accepted');toggleMenu()">✅ <span>ACCEPTED DUTIES</span></button><button onclick="showPage('all');toggleMenu()">📚 <span>ALL DUTIES</span></button><button onclick="showPage('history');toggleMenu()">📋 <span>FULL HISTORY</span></button></div>
+<div id="menuBackdrop" class="menuBackdrop" onclick="toggleMenu()"></div>
+<nav class="desktopNav"><button id="nav-dashboard" onclick="showPage('dashboard')">🏠 DASHBOARD</button><button id="nav-duty" onclick="showPage('duty')">🚕 DUTY</button><button id="nav-drivers" onclick="showPage('drivers')">👨‍✈️ DRIVERS</button><button id="nav-open" onclick="showPage('open')">🟢 OPEN</button><button id="nav-accepted" onclick="showPage('accepted')">✅ ACCEPTED</button><button id="nav-all" onclick="showPage('all')">📚 ALL DUTIES</button><button id="nav-history" onclick="showPage('history')">📋 HISTORY</button></nav><div class="mobileBottomNav"><button id="mb-dashboard" onclick="showPage('dashboard')"><b>🏠</b>HOME</button><button id="mb-duty" onclick="showPage('duty')"><b>🚕</b>DUTY</button><button id="mb-all" onclick="showPage('all')"><b>📚</b>ALL DUTIES</button><button id="mb-history" onclick="showPage('history')"><b>📋</b>HISTORY</button></div>
 
 <main id="app" class="hidden"><div class="loading">Loading...</div></main>
 
@@ -171,6 +180,7 @@ import {
   getDocs,
   doc,
   updateDoc,
+  setDoc,
   deleteDoc,
   onSnapshot,
   serverTimestamp,
@@ -191,7 +201,7 @@ const firebaseConfig={
 const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
 
-let page="duty";
+let page="dashboard";
 let drivers=[];
 let duties=[];
 let history=[];
@@ -204,13 +214,8 @@ let driverMobileSearch="";
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 
-window.showPage=function(p){
-  page=p;
-  ["duty","open","accepted","history"].forEach(x=>{
-    $("nav-"+x).classList.toggle("active",x===p);
-  });
-  render();
-};
+window.showPage=function(p){page=p;["dashboard","duty","drivers","open","accepted","all","history"].forEach(x=>{const el=$("nav-"+x);if(el)el.classList.toggle("active",x===p);const mb=$("mb-"+x);if(mb)mb.classList.toggle("active",x===p);});render();window.scrollTo({top:0,behavior:"smooth"});};
+window.toggleMenu=function(){$("sideMenu").classList.toggle("open");$("menuBackdrop").classList.toggle("open");};
 
 function setConnected(ok){
   $("connection").textContent=ok?"FIREBASE CONNECTED":"FIREBASE ERROR";
@@ -256,11 +261,16 @@ function driverStatus(d){
 }
 
 function render(){
+  if(page==="dashboard")renderDashboard();
   if(page==="duty")renderDuty();
+  if(page==="drivers")renderDrivers();
   if(page==="open")renderOpen();
   if(page==="accepted")renderAccepted();
+  if(page==="all")renderAllDuties();
   if(page==="history")renderHistory();
 }
+
+function renderDashboard(){const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;const pending=drivers.filter(d=>driverStatus(d)==="PENDING").length;const open=duties.filter(d=>statusOf(d)==="OPEN").length;const accepted=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d))).length;$("app").innerHTML=`<div class="dashboardHero"><h2>🚕 TAXI CLUB OG</h2><p>Luxury Admin Dashboard • Manage duties, drivers and trip activity</p></div><div class="statgrid"><button class="stat clickable" onclick="showPage('drivers')"><b>${approved}</b><span>APPROVED DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="filterDriverStatus('PENDING')"><b>${pending}</b><span>PENDING DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('open')"><b>${open}</b><span>OPEN DUTIES • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('accepted')"><b>${accepted}</b><span>ACCEPTED • VIEW ALL</span></button></div><div class="card"><h2>⚡ QUICK MENU</h2><div class="quickGrid"><button class="quickBtn" onclick="showPage('duty')"><b>🚕</b>CREATE DUTY<small>Create a new driver duty</small></button><button class="quickBtn" onclick="showPage('open')"><b>🟢</b>OPEN DUTIES<small>View duties waiting for drivers</small></button><button class="quickBtn" onclick="showPage('accepted')"><b>✅</b>ACCEPTED<small>See driver assignments</small></button><button class="quickBtn" onclick="showPage('history')"><b>📋</b>HISTORY<small>Track all duty actions</small></button></div></div><div class="card"><h2>👨‍✈️ DRIVER PANEL</h2><div class="notice">Driver approval, ₹400 registration verification, documents and wallet controls are available inside Duty Management.</div><button class="btn primary" onclick="showPage('duty')">OPEN DRIVER MANAGEMENT →</button></div>`;}
 
 function renderDuty(){
   const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;
@@ -273,10 +283,10 @@ function renderDuty(){
     <div class="sub">Create duty + driver approval/payment control</div>
 
     <div class="statgrid">
-      <div class="stat"><b>${approved}</b><span>APPROVED DRIVERS</span></div>
-      <div class="stat"><b>${pending}</b><span>PENDING DRIVERS</span></div>
-      <div class="stat"><b>${open}</b><span>OPEN DUTIES</span></div>
-      <div class="stat"><b>${accepted}</b><span>ACCEPTED</span></div>
+      <button class="stat clickable" onclick="showPage('drivers')"><b>${approved}</b><span>APPROVED DRIVERS • VIEW ALL</span></button>
+      <button class="stat clickable" onclick="filterDriverStatus('PENDING')"><b>${pending}</b><span>PENDING DRIVERS • VIEW ALL</span></button>
+      <button class="stat clickable" onclick="showPage('open')"><b>${open}</b><span>OPEN DUTIES • VIEW ALL</span></button>
+      <button class="stat clickable" onclick="showPage('accepted')"><b>${accepted}</b><span>ACCEPTED • VIEW ALL</span></button>
     </div>
 
     <div class="card">
@@ -299,7 +309,7 @@ function renderDuty(){
         <div class="field"><label>LOCAL RENTAL HOURS</label><input id="rentalHours" type="number" min="1" placeholder="Only for Local Rental"></div>
         <div class="field"><label>SPECIAL SERVICE / NOTE</label><input id="specialService" placeholder="Optional — shown to driver"></div>
       </div>
-      <div class="actions"><button class="btn primary" onclick="createDuty()">✅ CREATE DUTY</button></div>
+      <div class="actions"><button class="btn primary" onclick="createDuty()">✅ CREATE DUTY</button><button class="btn gray" onclick="showPage('all')">📚 VIEW ALL DUTIES</button></div>
     </div>
 
     <div class="card">
@@ -332,18 +342,19 @@ function renderDuty(){
 }
 
 /* ===== DRIVER MOBILE SEARCH FUNCTIONS ===== */
-function renderDriverApprovalList(){
+function renderDriverApprovalList(statusFilter="ALL"){
   const q=String(driverMobileSearch||"").replace(/\D/g,"");
 
+  const sourceDrivers=statusFilter!=="ALL" ? drivers.filter(d=>driverStatus(d)===statusFilter) : drivers;
   const list=q
-    ? drivers.filter(d=>{
+    ? sourceDrivers.filter(d=>{
         const mobile=String(
           d.mobile||d.phone||d.driverMobile||""
         ).replace(/\D/g,"");
 
         return mobile.includes(q);
       })
-    : drivers;
+    : sourceDrivers;
 
   const count=$("driverSearchCount");
 
@@ -445,6 +456,54 @@ function driverCard(d){
         <button class="btn red" onclick="deductWallet('${esc(d.id)}')">− DEDUCT</button>
       </div>
     </div>
+  </div>`;
+}
+
+let driverStatusFilter="ALL";
+window.filterDriverStatus=function(s){driverStatusFilter=s;showPage("drivers");};
+
+function renderDrivers(){
+  const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;
+  const pending=drivers.filter(d=>driverStatus(d)==="PENDING").length;
+  $("app").innerHTML=`
+    <h1>👨‍✈️ Driver List</h1>
+    <div class="sub">Approval, documents and wallet management</div>
+    <div class="statgrid"><div class="stat"><b>${drivers.length}</b><span>TOTAL DRIVERS</span></div><div class="stat"><b>${approved}</b><span>APPROVED</span></div><div class="stat"><b>${pending}</b><span>PENDING</span></div><div class="stat"><b>₹400</b><span>REGISTRATION FEE</span></div></div>
+    <div class="card"><h2>🔎 SEARCH DRIVER</h2>
+      <div class="driver-search"><label>SEARCH BY MOBILE NUMBER</label><div class="search-row"><input id="driverMobileSearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter driver mobile number" value="${esc(driverMobileSearch)}" oninput="filterDriversByMobile(this.value)"><button class="btn gray" onclick="clearDriverMobileSearch()">CLEAR</button></div><div id="driverSearchCount" class="search-count"></div></div>
+      <div id="driverApprovalList">${renderDriverApprovalList(driverStatusFilter)}</div>
+    </div>`;
+}
+
+function renderAllDuties(){
+  const list=[...duties].sort((a,b)=>stampMillis(b.createdAt)-stampMillis(a.createdAt));
+  const counts={OPEN:0,ACCEPTED:0,STARTED:0};
+  list.forEach(d=>{const s=statusOf(d); if(counts[s]!==undefined)counts[s]++;});
+  $("app").innerHTML=`
+    <h1>📚 All Duties</h1>
+    <div class="sub">Every duty currently stored in Firestore — OPEN and driver-assigned duties included</div>
+    <div class="statgrid">
+      <button class="stat clickable" onclick="showPage('open')"><b>${counts.OPEN}</b><span>OPEN DUTIES</span></button>
+      <button class="stat clickable" onclick="showPage('accepted')"><b>${counts.ACCEPTED+counts.STARTED}</b><span>ACCEPTED / STARTED</span></button>
+      <div class="stat"><b>${list.length}</b><span>TOTAL ACTIVE DUTIES</span></div>
+      <button class="stat clickable" onclick="showPage('history')"><b>${history.length}</b><span>FULL HISTORY</span></button>
+    </div>
+    <div class="card"><h2>🚕 ALL CURRENT DUTIES (${list.length})</h2>
+      ${list.length?list.map(allDutyCard).join(""):`<div class="empty">No active duties in Firestore.</div>`}
+    </div>`;
+}
+function allDutyCard(d){
+  const s=statusOf(d); const dr=driverForDuty(d);
+  const name=d.driverName||d.acceptedBy||dr?.name||dr?.driverName||"Not accepted yet";
+  const mobile=d.driverMobile||dr?.mobile||dr?.phone||"-";
+  const cls=s==="OPEN"?"openState":(s==="ACCEPTED"||s==="STARTED")?"acceptedState":"";
+  return `<div class="duty allDutyCard ${cls}">
+    <div class="row"><b>🚕 DUTY</b><span class="badge ${s==="OPEN"?"open":"accepted"}">${esc(s)}</span></div>
+    <div class="route"><div>📍 ${esc(d.pickup||"-")}</div><div>🏁 ${esc(d.drop||"-")}</div></div>
+    <div class="muted">📅 ${esc(d.date||"-")} &nbsp; ⏰ ${esc(d.time||"-")}<br>🚘 ${esc(d.vehicle||"-")} &nbsp; 📏 ${Number(d.km||0)} KM<br>💰 Amount: ₹${Number(d.amount||0)}</div>
+    ${s!=="OPEN"?`<div class="notice">👨‍✈️ <b>${esc(name)}</b><br>📱 ${esc(mobile)}<br>🆔 ${esc(d.acceptedDriverId||d.driverId||dr?.driverId||"-")}</div>`:`<div class="notice">🟢 Waiting for a driver to accept</div>`}
+    ${(d.specialService||d.note)?`<div class="notice">⭐ ${esc(d.specialService||d.note)}</div>`:""}
+    <div class="actions"><button class="btn ${s==="OPEN"?"orange":"red"}" onclick="${s==="OPEN"?`cancelDuty('${esc(d.id)}')`:`cancelAcceptedDuty('${esc(d.id)}')`}">✕ CANCEL</button>${s!=="OPEN"?`<button class="btn green" onclick="completeDuty('${esc(d.id)}')">✓ COMPLETE</button>`:""}</div>
   </div>`;
 }
 
@@ -569,8 +628,8 @@ async function createDuty(){
     const rentalHours=Number($("rentalHours").value||0);
     const specialService=$("specialService").value.trim();
 
-    if(!pickup||!drop||!date||!time||!km||amount<0){
-      alert("Pickup, Drop, Date, Time, KM and Amount enter pannunga.");
+    if(!pickup||!date||!time||!km||amount<0 || (dutyType!=="LOCAL RENTAL"&&!drop)){
+      alert(dutyType==="LOCAL RENTAL" ? "Pickup, Date, Time, KM and Amount enter pannunga." : "Pickup, Drop, Date, Time, KM and Amount enter pannunga.");
       return;
     }
     if(dutyType==="LOCAL RENTAL" && rentalHours<1){
@@ -1061,6 +1120,7 @@ window.completeDuty=completeDuty;
 
 startListeners();
 render();
+showPage(page);
 
 
 /* ===== DUTY SCREENSHOT OCR ===== */
@@ -1334,6 +1394,10 @@ function parseOCRText(t){
     const m=raw.match(/\b\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}\b/i);
     if(m) date=normalizeOCRDate(m[0]);
   }
+  if(!date){
+    const m=raw.match(/\b(\d{1,2})\s+(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\b/i);
+    if(m){const mo=monthMap[m[2].toLowerCase()];if(mo)date=m[1].padStart(2,'0')+'/'+mo+'/'+new Date().getFullYear();}
+  }
 
   let time='';
   const timeLabel=raw.match(/(?:reporting\s*time|pickup\s*time|time)\s*[:=-]?\s*(\d{1,2}:\d{2}\s*(?:AM|PM)?)/i);
@@ -1391,6 +1455,7 @@ function parseOCRText(t){
     for(let j=idx+1;j<lines.length;j++){
       if(stop.test(lines[j]))break;
       if(/^(address|pickup|pick\s*up)\s*$/i.test(lines[j]))continue;
+      if(/^https?:\/\/(?:www\.)?google\.[^\s]+/i.test(lines[j]) || /^maps\.?app\.?goo\.gl/i.test(lines[j]))continue;
       out.push(lines[j]);
       if(out.length>=4)break;
     }
@@ -1398,6 +1463,20 @@ function parseOCRText(t){
   }
   if(!pickup) pickup=addressBlock('pickup(?:\\s+address)?');
   if(!drop) drop=addressBlock('drop(?:\\s+address|\\s+location)?');
+
+  // Duty screenshots often put date/time directly after Pickup -.
+  function stripPickupDateTime(v){
+    let x=cleanOCR(v);
+    x=x.replace(/^\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s*,?\s*\d{1,2}:\d{2}\s*(?:AM|PM)?\s*/i,'');
+    x=x.replace(/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\s*,?\s*\d{1,2}:\d{2}\s*(?:AM|PM)?\s*/i,'');
+    return cleanOCR(x);
+  }
+  pickup=stripPickupDateTime(pickup);
+  // If Pickup was only "15 Sep, 10:30 am", recover the actual address block.
+  if(!pickup) pickup=addressBlock('pickup(?:\s+address)?');
+  // Never allow date/time fragments to become the pickup address.
+  pickup=stripPickupDateTime(pickup);
+  pickup=pickup.replace(/^[-–—:]+\s*/,'').trim();
 
   // Special Service is the only optional note we keep.
   let special=findAfterLabel([/^(?:special\s*service|special\s*services?)\s*[:=-]?\s*(.*)$/i,/special\s*service\s*[:=-]?\s*(.*)/i]);
@@ -1532,6 +1611,119 @@ window.createDutyFromOCR=async function(){
   }
 };
 
+</script>
+
+<style>
+/* ===== FINAL ADMIN NAV / DRIVER DASHBOARD ===== */
+.adminSectionGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:14px 0}
+.adminAction{border:1px solid #dfe5f4;border-radius:22px;padding:18px;background:linear-gradient(145deg,#fff,#f6f7ff);box-shadow:0 12px 28px rgba(56,73,124,.09);text-align:left;color:#23385f;min-height:108px}
+.adminAction b{display:block;font-size:18px;margin-bottom:7px}.adminAction small{color:#71809a;font-weight:700}.adminAction.blue{border-top:5px solid #3977ff}.adminAction.purple{border-top:5px solid #8b5cf6}.adminAction.green{border-top:5px solid #00b894}.adminAction.pink{border-top:5px solid #ec4899}.adminAction.orange{border-top:5px solid #f59e0b}.adminAction.red{border-top:5px solid #ef476f}
+.driverDashCards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.driverDashCard{border:1px solid #dfe5f4;border-radius:20px;padding:18px;background:linear-gradient(145deg,#fff,#f7f9ff);box-shadow:0 10px 25px rgba(50,70,120,.08);cursor:pointer;text-align:left}.driverDashCard b{font-size:32px;display:block;color:#23385f}.driverDashCard span{font-weight:900;color:#6d7b91;font-size:12px}.driverDashCard.active{border-top:5px solid #00b894}.driverDashCard.pending{border-top:5px solid #f59e0b}
+.pageIntro{padding:4px 0 8px}.pageIntro h1{margin-bottom:4px}.pageIntro .sub{margin-bottom:0}
+@media(max-width:650px){.adminSectionGrid{grid-template-columns:1fr 1fr}.driverDashCards{grid-template-columns:1fr 1fr}.adminAction{min-height:100px;padding:14px}.adminAction b{font-size:16px}}
+</style>
+<script>
+/* ===== FINAL STRUCTURE: keep existing features, expose each job separately ===== */
+(function(){
+  const baseShowPage=window.showPage;
+  window.showPage=function(p){
+    page=p;
+    const pages=['dashboard','duty','drivers','open','accepted','all','assignment','rejected','history'];
+    pages.forEach(x=>{
+      const el=document.getElementById('nav-'+x); if(el)el.classList.toggle('active',x===p);
+      const mb=document.getElementById('mb-'+x); if(mb)mb.classList.toggle('active',x===p);
+    });
+    render();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  function addNav(){
+    const side=document.getElementById('sideMenu');
+    if(side && !document.getElementById('side-new-duty')){
+      const html=`
+      <button id="side-new-duty" onclick="showPage('duty');toggleMenu()">🆕 <span>NEW DUTY</span></button>
+      <button onclick="showPage('assignment');toggleMenu()">📋 <span>ASSIGNMENT / TRIP</span></button>
+      <button onclick="showPage('accepted');toggleMenu()">✅ <span>ACCEPTED</span></button>
+      <button onclick="showPage('rejected');toggleMenu()">❌ <span>REJECTED</span></button>`;
+      side.insertAdjacentHTML('beforeend',html);
+    }
+    const nav=document.querySelector('.desktopNav');
+    if(nav && !document.getElementById('nav-assignment')){
+      nav.insertAdjacentHTML('beforeend',`<button id="nav-new-duty" onclick="showPage('duty')">🆕 NEW DUTY</button><button id="nav-assignment" onclick="showPage('assignment')">📋 ASSIGNMENT</button><button id="nav-rejected" onclick="showPage('rejected')">❌ REJECTED</button>`);
+    }
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addNav); else addNav();
+
+  window.renderDashboard=function(){
+    const approved=drivers.filter(d=>driverStatus(d)==='APPROVED').length;
+    const pending=drivers.filter(d=>driverStatus(d)==='PENDING').length;
+    const blocked=drivers.filter(d=>driverStatus(d)==='BLOCKED').length;
+    const open=duties.filter(d=>statusOf(d)==='OPEN').length;
+    const accepted=duties.filter(d=>['ACCEPTED','STARTED'].includes(statusOf(d))).length;
+    const rejected=history.filter(h=>String(h.type||h.status||'').toUpperCase().includes('REJECT')).length;
+    $('app').innerHTML=`
+      <div class="dashboardHero"><h2>🚕 TAXI CLUB OG</h2><p>ADMIN DASHBOARD • Drivers, new duties, assignments & trip history</p></div>
+      <div class="card"><h2>👨‍✈️ DRIVER DASHBOARD</h2>
+        <div class="driverDashCards">
+          <button class="driverDashCard active" onclick="showPage('drivers');driverStatusFilter='APPROVED';renderDrivers()"><b>${approved}</b><span>ACTIVE / APPROVED DRIVERS • VIEW LIST</span></button>
+          <button class="driverDashCard pending" onclick="showPage('drivers');driverStatusFilter='PENDING';renderDrivers()"><b>${pending}</b><span>PENDING DRIVERS • VIEW LIST</span></button>
+        </div>
+        <div class="actions" style="margin-top:12px"><button class="btn primary" onclick="showPage('drivers')">🔎 SEARCH / MANAGE DRIVER</button><button class="btn red" onclick="showPage('drivers');driverStatusFilter='BLOCKED';renderDrivers()">🚫 BLOCKED (${blocked})</button></div>
+      </div>
+      <div class="card"><h2>🚕 DUTY PANEL</h2>
+        <div class="adminSectionGrid">
+          <button class="adminAction blue" onclick="showPage('duty')"><b>🆕 NEW DUTY</b><small>Create a fresh duty manually or use screenshot OCR.</small></button>
+          <button class="adminAction purple" onclick="showPage('assignment')"><b>📋 ASSIGNMENT / TRIP</b><small>See every current duty and who has taken it.</small></button>
+          <button class="adminAction green" onclick="showPage('accepted')"><b>✅ ACCEPTED</b><small>See accepted/started duties with driver details.</small></button>
+          <button class="adminAction red" onclick="showPage('rejected')"><b>❌ REJECTED</b><small>See driver-rejected duty activity separately.</small></button>
+          <button class="adminAction orange" onclick="showPage('open')"><b>🟢 OPEN DUTIES (${open})</b><small>Duties waiting for a driver.</small></button>
+          <button class="adminAction pink" onclick="showPage('history')"><b>📚 FULL HISTORY (${history.length})</b><small>Accepted, rejected, cancelled, completed and deleted.</small></button>
+        </div>
+      </div>`;
+  };
+
+  window.renderDrivers=function(){
+    const approved=drivers.filter(d=>driverStatus(d)==='APPROVED').length;
+    const pending=drivers.filter(d=>driverStatus(d)==='PENDING').length;
+    const blocked=drivers.filter(d=>driverStatus(d)==='BLOCKED').length;
+    const rejected=drivers.filter(d=>driverStatus(d)==='REJECTED').length;
+    const activeList=drivers.filter(d=>driverStatus(d)==='APPROVED');
+    const pendingList=drivers.filter(d=>driverStatus(d)==='PENDING');
+    const selected=driverStatusFilter==='ALL'?drivers:drivers.filter(d=>driverStatus(d)===driverStatusFilter);
+    $('app').innerHTML=`
+      <div class="pageIntro"><h1>👨‍✈️ Driver Dashboard</h1><div class="sub">Search a registered driver and Approve / Reject / Block</div></div>
+      <div class="driverDashCards">
+        <button class="driverDashCard active" onclick="driverStatusFilter='APPROVED';renderDrivers()"><b>${approved}</b><span>ACTIVE / APPROVED</span></button>
+        <button class="driverDashCard pending" onclick="driverStatusFilter='PENDING';renderDrivers()"><b>${pending}</b><span>PENDING</span></button>
+      </div>
+      <div class="statgrid" style="margin-top:12px"><button class="stat clickable" onclick="driverStatusFilter='BLOCKED';renderDrivers()"><b>${blocked}</b><span>BLOCKED</span></button><button class="stat clickable" onclick="driverStatusFilter='REJECTED';renderDrivers()"><b>${rejected}</b><span>REJECTED</span></button></div>
+      <div class="card"><h2>🔎 SEARCH DRIVER</h2>
+        <div class="driver-search"><label>REGISTERED DRIVER MOBILE NUMBER</label><div class="search-row"><input id="driverMobileSearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter driver mobile number" value="${esc(driverMobileSearch)}" oninput="filterDriversByMobile(this.value)"><button class="btn gray" onclick="clearDriverMobileSearch()">CLEAR</button></div><div id="driverSearchCount" class="search-count"></div></div>
+        <div id="driverApprovalList">${selected.length?selected.map(driverCard).join(''):'<div class="empty">No drivers in this list.</div>'}</div>
+      </div>`;
+  };
+
+  window.renderAssignment=function(){
+    const list=[...duties].sort((a,b)=>stampMillis(b.createdAt)-stampMillis(a.createdAt));
+    $('app').innerHTML=`<div class="pageIntro"><h1>📋 Assignment / Trip</h1><div class="sub">Every current duty — OPEN and driver-assigned</div></div>
+      <div class="statgrid"><button class="stat clickable" onclick="showPage('open')"><b>${list.filter(d=>statusOf(d)==='OPEN').length}</b><span>OPEN</span></button><button class="stat clickable" onclick="showPage('accepted')"><b>${list.filter(d=>['ACCEPTED','STARTED'].includes(statusOf(d))).length}</b><span>ASSIGNED / ACCEPTED</span></button><button class="stat clickable" onclick="showPage('rejected')"><b>${history.filter(h=>String(h.type||h.status||'').toUpperCase().includes('REJECT')).length}</b><span>REJECTED</span></button><button class="stat clickable" onclick="showPage('history')"><b>${history.length}</b><span>FULL HISTORY</span></button></div>
+      <div class="card"><h2>📋 CURRENT ASSIGNMENTS (${list.length})</h2>${list.length?list.map(allDutyCard).join(''):'<div class="empty">No current duties.</div>'}</div>`;
+  };
+
+  window.renderRejected=function(){
+    const rows=[...history].filter(h=>String(h.type||h.status||'').toUpperCase().includes('REJECT')).sort((a,b)=>stampMillis(b.historyCreatedAt||b.rejectedAt||b.createdAt)-stampMillis(a.historyCreatedAt||a.rejectedAt||a.createdAt));
+    $('app').innerHTML=`<div class="pageIntro"><h1>❌ Rejected Duties</h1><div class="sub">Drivers who rejected duties</div></div><div class="card"><h2>❌ REJECTED (${rows.length})</h2>${rows.length?rows.map(historyCard).join(''):'<div class="empty">No rejected duty history found.</div>'}</div>`;
+  };
+
+  const oldRender=window.render;
+  window.render=function(){
+    if(page==='dashboard')return renderDashboard();
+    if(page==='drivers')return renderDrivers();
+    if(page==='assignment')return renderAssignment();
+    if(page==='rejected')return renderRejected();
+    return oldRender();
+  };
+})();
 </script>
 </body>
 </html>
