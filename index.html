@@ -232,7 +232,7 @@ function renderDuty(){
         <div class="field"><label>DATE</label><input id="date" type="text" inputmode="numeric" maxlength="10" placeholder="DD/MM/YYYY" oninput="formatDate(this)"></div>
         <div class="field"><label>TIME</label><input id="time" type="time"></div>
         <div class="field"><label>VEHICLE</label>
-          <select id="vehicle"><option>SEDAN</option><option>SUV</option><option>MINI</option></select>
+          <select id="vehicle"><option>SEDAN</option><option>SUV</option><option>MINI</option><option>DZIRE</option><option>ETIOS</option><option>INNOVA CRYSTA</option></select>
         </div>
         <div class="field"><label>KM</label><input id="km" type="number" min="0" placeholder="KM"></div>
         <div class="field"><label>AMOUNT ₹</label><input id="amount" type="number" min="0" placeholder="Amount"></div>
@@ -1056,12 +1056,7 @@ Upload a duty screenshot. OCR fills the fields; you can edit everything before c
 
 <div class="ocrField">
 <label>VEHICLE</label>
-<select id="ocrVehicle">
-<option>SEDAN</option>
-<option>SUV</option>
-<option>MINI</option>
-<option>INNOVA CRYSTA</option>
-</select>
+<input id="ocrVehicle" placeholder="Vehicle / car type">
 </div>
 
 <div class="ocrField">
@@ -1161,22 +1156,71 @@ function cleanOCR(v){
 }
 
 function parseOCRText(t){
-  const raw=t.replace(/\r/g,'');
+  const raw=String(t||'').replace(/\r/g,'');
   const lines=raw.split('\n').map(x=>cleanOCR(x)).filter(Boolean);
   const low=raw.toLowerCase();
 
-  let date=(raw.match(/\b(\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4})\b/)||[])[1]||'';
+  const afterLabel=(labels)=>{
+    for(let i=0;i<lines.length;i++){
+      const line=lines[i];
+      for(const label of labels){
+        const re=new RegExp('^'+label+'\\s*[:=-]?\\s*(.*)$','i');
+        const m=line.match(re);
+        if(m&&m[1]&&m[1].trim())return cleanOCR(m[1]);
+        if(new RegExp('^'+label+'\\s*$','i').test(line)&&lines[i+1])
+          return cleanOCR(lines[i+1]);
+      }
+    }
+    return '';
+  };
 
-  if(date){
-    let a=date.split(/[\/-]/);
-    if(a[2].length===2)a[2]='20'+a[2];
-    date=a.map((x,i)=>i<2?x.padStart(2,'0'):x).join('/');
+  const normalizeOCRDate=(v)=>{
+    const s=cleanOCR(v);
+    let m=s.match(/\b(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})\b/);
+    if(m){
+      const y=m[3].length===2?'20'+m[3]:m[3];
+      return m[1].padStart(2,'0')+'/'+m[2].padStart(2,'0')+'/'+y;
+    }
+    m=s.match(/\b(\d{1,2})\s+(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(\d{4})\b/i);
+    if(m){
+      const months={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+      const key=m[2].slice(0,3).toLowerCase();
+      return m[1].padStart(2,'0')+'/'+String(months[key]).padStart(2,'0')+'/'+m[3];
+    }
+    return '';
+  };
+
+  const normalizeOCRTime=(v)=>{
+    const s=cleanOCR(v);
+    const m=s.match(/\b(\d{1,2}):(\d{2})\s*([AP]M)\b/i);
+    return m ? `${m[1].padStart(2,'0')}:${m[2]} ${m[3].toUpperCase()}` : '';
+  };
+
+  // IMPORTANT: use the labelled Pickup Date first. This avoids taking
+  // today's date or another unrelated date from the screenshot.
+  let date=normalizeOCRDate(afterLabel([
+    'pickup date','pick up date','pickup\\s*date'
+  ]));
+
+  if(!date){
+    let m=raw.match(/\b(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4})\b/);
+    if(m)date=normalizeOCRDate(m[1]);
+    else{
+      m=raw.match(/\b(\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4})\b/i);
+      if(m)date=normalizeOCRDate(m[1]);
+    }
   }
 
-  let time=(raw.match(/\b(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm))\b/)||[])[1]||'';
+  // IMPORTANT: use Reporting Time before any generic time in the image.
+  let time=normalizeOCRTime(afterLabel([
+    'reporting time','pickup time','pick up time','time'
+  ]));
+  if(!time){
+    const m=raw.match(/\b(\d{1,2}:\d{2}\s*(?:AM|PM))\b/i);
+    if(m)time=normalizeOCRTime(m[1]);
+  }
 
   let km=(raw.match(/(?:\bKM\b|kilometer|kilometre)\s*[:=-]?\s*(\d+(?:\.\d+)?)/i)||[])[1]||'';
-
   if(!km){
     const m=raw.match(/(\d+(?:\.\d+)?)\s*KM\b/i);
     if(m)km=m[1];
@@ -1185,18 +1229,23 @@ function parseOCRText(t){
   let amount=(raw.match(/(?:₹|Rs\.?|INR|Amount)\s*[:=-]?\s*([\d,]+)/i)||[])[1]||'';
   amount=amount.replace(/,/g,'');
 
-  let vehicle=
-    low.includes('innova')||low.includes('crysta')
-      ?'INNOVA CRYSTA'
-      :low.includes('suv')
-        ?'SUV'
-        :low.includes('mini')
-          ?'MINI'
-          :low.includes('sedan')
-            ?'SEDAN'
-            :'';
+  // Preserve the actual Car Type text from the screenshot.
+  // Example: "Dzire, Etios or similar".
+  let vehicle=afterLabel([
+    'car type','vehicle type','vehicle','cab type'
+  ]);
+  vehicle=cleanOCR(vehicle).replace(/^[\s:.-]+|[\s:.-]+$/g,'');
 
-  let dutyType=
+  if(!vehicle){
+    if(low.includes('innova')||low.includes('crysta'))vehicle='INNOVA CRYSTA';
+    else if(low.includes('dzire'))vehicle='DZIRE';
+    else if(low.includes('etios'))vehicle='ETIOS';
+    else if(low.includes('suv'))vehicle='SUV';
+    else if(low.includes('mini'))vehicle='MINI';
+    else if(low.includes('sedan'))vehicle='SEDAN';
+  }
+
+  const dutyType=
     low.includes('local rental')||low.includes('local hire')
       ?'LOCAL RENTAL'
       :low.includes('round trip')||low.includes('return trip')
@@ -1204,7 +1253,6 @@ function parseOCRText(t){
         :'ONE WAY';
 
   let hours=(raw.match(/(?:hours?|hrs?)\s*[:=-]?\s*(\d{1,2})/i)||[])[1]||'';
-
   if(!hours){
     const m=raw.match(/(\d{1,2})\s*(?:hours?|hrs?)/i);
     if(m)hours=m[1];
@@ -1215,18 +1263,14 @@ function parseOCRText(t){
   const label=(names)=>{
     for(let i=0;i<lines.length;i++){
       const l=lines[i];
-
       for(const n of names){
         const re=new RegExp('^'+n+'\\s*[:=-]?\\s*(.*)$','i');
         const m=l.match(re);
-
         if(m&&m[1])return m[1];
-
         if(new RegExp('^'+n+'\\s*$','i').test(l)&&lines[i+1])
           return lines[i+1];
       }
     }
-
     return '';
   };
 
@@ -1237,7 +1281,6 @@ function parseOCRText(t){
     const m=raw.match(/pickup\s*[:=-]?\s*([^\n]+)/i);
     if(m)pickup=m[1];
   }
-
   if(!drop){
     const m=raw.match(/drop(?:off)?\s*[:=-]?\s*([^\n]+)/i);
     if(m)drop=m[1];
@@ -1317,7 +1360,7 @@ window.runDutyOCR=async function(){
     $('ocrRaw').style.display='block';
     $('ocrRaw').textContent=text;
 
-    p.textContent='OCR complete. Check/edit the fields, then CREATE DUTY.';
+    p.textContent='OCR complete. Date, reporting time and car type were read from the screenshot. Check/edit, then CREATE DUTY.';
 
   }catch(e){
     console.error(e);
