@@ -6,90 +6,123 @@
 <title>TAXI CLUB OG - Admin Panel</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#172033}
+:root{
+  --ink:#142033;--muted:#6b7890;--line:#e5eaf2;--bg:#f7f9fc;
+  --white:#fff;--green:#08a66a;--green2:#12c987;--lime:#b7df42;
+  --teal:#09b8a5;--purple:#7357e8;--pink:#e94f9a;--orange:#ff9d21;--red:#ed3157;
+}
+body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:
+linear-gradient(145deg,#f8fbff 0%,#f7f7fb 55%,#f5fbf7 100%);color:var(--ink)}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer;border:0}
-.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid #e5e9f0;padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
-.brand{font-size:20px;font-weight:800}.brand small{display:block;font-size:11px;color:#64748b;margin-top:3px}
-.status{font-size:12px;padding:7px 10px;border-radius:20px;background:#e9f8ef;color:#087443;font-weight:700}
-nav{position:sticky;top:71px;z-index:19;background:#fff;border-bottom:1px solid #e5e9f0;display:grid;grid-template-columns:repeat(4,1fr)}
-nav button{padding:13px 4px;background:#fff;color:#526074;font-weight:700;font-size:12px}
-nav button.active{color:#1769e0;border-bottom:3px solid #1769e0;background:#f5f9ff}
-main{max-width:900px;margin:auto;padding:16px 14px 70px}
-h1{margin:6px 0 4px;font-size:28px}.sub{color:#68758a;margin-bottom:18px}
-.card{background:#fff;border:1px solid #e3e8f0;border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 3px 14px #1b31500d}
-.card h2{font-size:18px;margin:0 0 14px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
-.field label{display:block;font-size:12px;font-weight:700;color:#56647a;margin-bottom:5px}
-.field input,.field select,.field textarea{width:100%;padding:12px;border:1px solid #d7dee9;border-radius:11px;background:#fff;outline:none}
-.field textarea{min-height:80px;resize:vertical}
-.full{grid-column:1/-1}
-.btn{padding:11px 14px;border-radius:11px;font-weight:800}
-.primary{background:#1769e0;color:#fff}.green{background:#0b9b62;color:#fff}.red{background:#d92d4a;color:#fff}.orange{background:#e88a00;color:#fff}.gray{background:#edf1f6;color:#25344b}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.actions .btn{flex:1;min-width:110px}
-.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.stat{padding:14px;border-radius:15px;background:#f7f9fc;border:1px solid #e5e9f0}
-.stat b{display:block;font-size:24px}.stat span{font-size:11px;color:#68758a}
-.driver,.duty{border:1px solid #e1e7ef;border-radius:16px;padding:14px;margin:10px 0;background:#fff}
-.row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.name{font-size:19px;font-weight:800}.muted{color:#66758b;font-size:13px;line-height:1.55}
-.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800}
-.approved{background:#e7f8ef;color:#087443}.blocked{background:#ffe8ed;color:#b4233d}.pending{background:#fff3d6;color:#9a6500}.rejected{background:#ffe8ed;color:#b4233d}
-.open{background:#e9f3ff;color:#1769e0}.accepted{background:#eaf8ef;color:#087443}.cancelled{background:#fff0df;color:#a45b00}.completed{background:#e9eafc;color:#4438a8}
-.route{font-size:16px;font-weight:700;margin:10px 0}.route div{padding:4px 0}
-.money{font-size:21px;font-weight:900}.wallet{font-size:24px;font-weight:900}.negative{color:#d92d4a}
-.empty{text-align:center;padding:25px;color:#738097}
-.notice{padding:12px;border-radius:12px;background:#eef6ff;color:#15559b;font-weight:700;margin:10px 0}
-.loading{text-align:center;padding:25px;color:#64748b}
-.hidden{display:none!important}
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(18px);
+border-bottom:1px solid var(--line);padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:21px;font-weight:900;letter-spacing:-.4px}.brand small{display:block;font-size:11px;color:#748097;margin-top:4px;letter-spacing:1.2px}
+.status{font-size:11px;padding:9px 12px;border-radius:999px;background:#e8fbf3;color:#07865a;font-weight:900}
+nav{position:sticky;top:70px;z-index:19;background:rgba(255,255,255,.96);backdrop-filter:blur(15px);
+border-bottom:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr)}
+nav button{padding:15px 4px;background:transparent;color:#667287;font-weight:900;font-size:12px;transition:.2s}
+nav button.active{color:#087d59;border-bottom:3px solid var(--green);background:linear-gradient(#f6fff9,#fff)}
+main{max-width:980px;margin:auto;padding:20px 15px 80px}
+h1{margin:4px 0 3px;font-size:31px;letter-spacing:-1px}.sub{color:var(--muted);margin-bottom:20px;font-size:15px}
+.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:22px;padding:18px;margin:14px 0;
+box-shadow:0 10px 30px rgba(32,49,78,.07)}
+.card h2{font-size:19px;margin:0 0 16px;letter-spacing:-.3px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+.field label{display:block;font-size:11px;font-weight:900;color:#667287;margin-bottom:7px;letter-spacing:.5px}
+.field input,.field select,.field textarea{width:100%;padding:14px;border:1px solid #dbe2ec;border-radius:14px;
+background:#fff;outline:none;color:var(--ink);transition:.2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#72cfae;box-shadow:0 0 0 4px #08a66a12}
+.field textarea{min-height:82px;resize:vertical}.full{grid-column:1/-1}
+.btn{padding:12px 15px;border-radius:13px;font-weight:900;box-shadow:0 5px 14px rgba(20,32,51,.08)}
+.primary{background:linear-gradient(135deg,#0aa66c,#0bcf8a);color:#fff}
+.green{background:linear-gradient(135deg,#0a9e66,#15c986);color:#fff}
+.red{background:linear-gradient(135deg,#eb3156,#ff5275);color:#fff}
+.orange{background:linear-gradient(135deg,#ff9717,#ffb52e);color:#fff}
+.gray{background:#eef2f7;color:#26354d}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.actions .btn{flex:1;min-width:110px}
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{padding:17px;border-radius:19px;background:linear-gradient(145deg,#fff,#f8fafc);border:1px solid var(--line);
+box-shadow:0 8px 22px rgba(32,49,78,.05);position:relative;overflow:hidden}
+.stat:after{content:"";position:absolute;right:-25px;top:-25px;width:75px;height:75px;border-radius:50%;background:#08a66a0c}
+.stat b{display:block;font-size:28px}.stat span{font-size:10px;color:#718096;font-weight:800;letter-spacing:.5px}
+.driver,.duty{border:1px solid var(--line);border-radius:18px;padding:15px;margin:11px 0;background:#fff;box-shadow:0 6px 20px rgba(32,49,78,.045)}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.name{font-size:19px;font-weight:900}.muted{color:#66758b;font-size:13px;line-height:1.55}
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;font-size:10px;font-weight:900}
+.approved{background:#e8fbf2;color:#087b56}.blocked{background:#ffe8ed;color:#b4233d}.pending{background:#fff4da;color:#9a6500}.rejected{background:#ffe8ed;color:#b4233d}
+.open{background:#e8f7ff;color:#0879b7}.accepted{background:#eaf9f0;color:#087b56}.cancelled{background:#fff0df;color:#a45b00}.completed{background:#eeeaff;color:#5c47c5}
+.route{font-size:16px;font-weight:800;margin:11px 0}.route div{padding:4px 0}.money{font-size:22px;font-weight:950}.wallet{font-size:25px;font-weight:950}.negative{color:var(--red)}
+.empty{text-align:center;padding:30px;color:#738097}.notice{padding:13px;border-radius:14px;background:#eef8ff;color:#155b91;font-weight:800;margin:10px 0}
+.loading{text-align:center;padding:30px;color:#64748b}.hidden{display:none!important}
+.driver-search{margin:12px 0;padding:14px;border:1px solid #dfe6ef;border-radius:16px;background:#f8fbff}
+.driver-search label{display:block;font-size:11px;font-weight:900;color:#56647a;margin-bottom:7px}.search-row{display:flex;gap:8px}
+.search-row input{flex:1;min-width:0;padding:13px;border:1px solid #d7dee9;border-radius:12px;outline:none;background:#fff}
+.search-count{margin-top:7px;font-size:12px;color:#64748b;font-weight:700}
+#ocrFab{position:fixed;right:16px;bottom:78px;z-index:50;border-radius:999px;padding:14px 18px;
+background:linear-gradient(135deg,#08a66a,#7357e8,#e94f9a);color:#fff;font-weight:950;box-shadow:0 12px 30px #7357e844}
+#ocrOverlay{position:fixed;inset:0;background:#0b1228aa;z-index:100;display:none;align-items:center;justify-content:center;padding:12px}
+#ocrModal{width:min(720px,100%);max-height:94vh;overflow:auto;background:#fff;border-radius:24px;padding:18px;box-shadow:0 24px 70px #0005}
+#ocrModal h2{margin:0 0 5px}.ocrSub{color:#64748b;font-size:13px;margin-bottom:12px}
+.ocrPreview{max-width:100%;max-height:220px;display:block;margin:10px auto;border-radius:12px;border:1px solid #d7dee9}
+.ocrGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ocrGrid .full{grid-column:1/-1}
+.ocrField label{display:block;font-size:11px;font-weight:900;color:#56647a;margin-bottom:4px}
+.ocrField input,.ocrField select,.ocrField textarea{width:100%;padding:12px;border:1px solid #d7dee9;border-radius:12px}
+.ocrField textarea{min-height:65px}.ocrActions{display:flex;gap:8px;margin-top:12px}
+.ocrActions button{flex:1;padding:13px;border-radius:12px;font-weight:900}.ocrClose{background:#edf1f6}.ocrScan{background:#7357e8;color:#fff}.ocrCreate{background:#0ba86c;color:#fff}
+.ocrProgress{font-size:12px;color:#1769e0;font-weight:800;margin:8px 0}
+#loginGate{position:fixed;inset:0;z-index:9999;background:linear-gradient(145deg,#f7fbff,#eef9f4);display:flex;align-items:center;justify-content:center;padding:20px}
+.loginBox{width:min(420px,100%);background:#fff;border:1px solid #e1e8ef;border-radius:28px;padding:26px;
+box-shadow:0 25px 70px rgba(20,32,51,.14)}
+.loginLogo{width:72px;height:72px;border-radius:22px;background:linear-gradient(145deg,#0aa66c,#b7df42);
+display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 15px;box-shadow:0 12px 30px #08a66a33}
+.loginBox h2{text-align:center;margin:0;font-size:25px}.loginBox p{text-align:center;color:#718096;font-size:13px;margin:7px 0 20px}
+.loginBox label{display:block;font-size:11px;font-weight:900;color:#56647a;margin:12px 0 6px}
+.loginBox input{width:100%;padding:14px;border:1px solid #d7dee9;border-radius:13px;outline:none}
+.loginBox input:focus{border-color:#0aa66c;box-shadow:0 0 0 4px #0aa66c12}
+.loginBtn{width:100%;margin-top:16px;padding:14px;border-radius:14px;background:linear-gradient(135deg,#08a66a,#0bcf8a);color:#fff;font-weight:950}
+.loginError{display:none;color:#c72848;background:#fff0f3;border-radius:11px;padding:10px;margin-top:10px;font-size:12px;font-weight:800;text-align:center}
+.loginHint{font-size:10px!important;color:#9aa4b5!important;margin-top:14px!important}
 
-/* ===== DRIVER MOBILE NUMBER SEARCH ===== */
-.driver-search{
-  margin:12px 0;
-  padding:14px;
-  border:1px solid #dfe6ef;
-  border-radius:14px;
-  background:#f8fbff;
-}
-.driver-search label{
-  display:block;
-  font-size:12px;
-  font-weight:800;
-  color:#56647a;
-  margin-bottom:7px;
-}
-.search-row{
-  display:flex;
-  gap:8px;
-}
-.search-row input{
-  flex:1;
-  min-width:0;
-  padding:12px;
-  border:1px solid #d7dee9;
-  border-radius:11px;
-  outline:none;
-  background:#fff;
-}
-.search-count{
-  margin-top:7px;
-  font-size:12px;
-  color:#64748b;
-  font-weight:700;
-}
+/* ===== DRIVER DOCUMENT VIEWER ===== */
+#driverDocOverlay{position:fixed;inset:0;z-index:200;background:#07111dcc;display:none;align-items:center;justify-content:center;padding:12px}
+#driverDocModal{width:min(760px,100%);max-height:94vh;overflow:auto;background:#fff;border-radius:26px;padding:18px;box-shadow:0 25px 80px #0007}
+.docHeader{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.docHeader h2{margin:0;font-size:22px}.docSub{color:#718096;font-size:12px;margin-top:4px}
+.docGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.docCard{border:1px solid var(--line);border-radius:16px;padding:10px;background:#f8fafc}
+.docCard h3{margin:0 0 8px;font-size:13px}.docImage{width:100%;height:220px;object-fit:contain;background:#eef2f7;border-radius:12px;display:block}
+.docMissing{height:220px;border-radius:12px;background:#eef2f7;display:flex;align-items:center;justify-content:center;color:#718096;font-size:12px;font-weight:800}
+.docOpen{display:block;margin-top:8px;text-align:center;padding:9px;border-radius:10px;background:#edf8f3;color:#087b56;font-weight:900;text-decoration:none}
+.historyFilters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.historyFilters button{padding:9px 12px;border-radius:999px;background:#eef2f7;color:#425169;font-weight:900;font-size:11px}
+.historyFilters button.active{background:#0aa66c;color:#fff}
+@media(max-width:650px){.docGrid{grid-template-columns:1fr}.docImage,.docMissing{height:190px}}
 
 @media(max-width:650px){
-  .grid{grid-template-columns:1fr}
-  .statgrid{grid-template-columns:repeat(2,1fr)}
-  h1{font-size:24px}
-  .top{padding:12px}
-  .brand{font-size:18px}
-  .search-row{flex-direction:column}
+  .grid,.ocrGrid{grid-template-columns:1fr}.ocrGrid .full{grid-column:auto}
+  .statgrid{grid-template-columns:repeat(2,1fr)}h1{font-size:27px}.top{padding:12px}
+  .brand{font-size:19px}.search-row{flex-direction:column}
 }
 </style>
 </head>
 <body>
+
+<div id="loginGate">
+  <div class="loginBox">
+    <div class="loginLogo">🚕</div>
+    <h2>TAXI CLUB OG</h2>
+    <p>ADMIN PANEL • Secure Login</p>
+    <label>ADMIN ID</label>
+    <input id="loginId" type="text" autocomplete="username" placeholder="Enter Admin ID">
+    <label>PASSWORD</label>
+    <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter Password"
+           onkeydown="if(event.key==='Enter')adminLogin()">
+    <button class="loginBtn" onclick="adminLogin()">🔐 LOGIN TO ADMIN PANEL</button>
+    <div id="loginError" class="loginError">Invalid Admin ID or Password</div>
+    <p class="loginHint">Admin access only</p>
+  </div>
+</div>
+
 
 <header class="top">
   <div class="brand">🚕 TAXI CLUB OG<small>ADMIN PANEL</small></div>
@@ -103,7 +136,29 @@ h1{margin:6px 0 4px;font-size:28px}.sub{color:#68758a;margin-bottom:18px}
   <button id="nav-history" onclick="showPage('history')">📋 HISTORY</button>
 </nav>
 
-<main id="app"><div class="loading">Loading...</div></main>
+<main id="app" class="hidden"><div class="loading">Loading...</div></main>
+
+
+<script>
+/* ===== ADMIN LOGIN =====
+   Change these two values to the same Admin ID / Password you already use. */
+const ADMIN_ID = "7708988625";
+const ADMIN_PASSWORD = "vijay8978";
+
+window.adminLogin = function(){
+  const id = document.getElementById("loginId").value.trim();
+  const pw = document.getElementById("loginPassword").value;
+  const err = document.getElementById("loginError");
+  if(id === ADMIN_ID && pw === ADMIN_PASSWORD){
+    document.getElementById("loginGate").style.display="none";
+    document.getElementById("app").classList.remove("hidden");
+    err.style.display="none";
+  }else{
+    err.style.display="block";
+    document.getElementById("loginPassword").value="";
+  }
+};
+</script>
 
 <script type="module">
 import {initializeApp}
@@ -227,20 +282,24 @@ function renderDuty(){
     <div class="card">
       <h2>➕ CREATE DUTY</h2>
       <div class="grid">
+        <div class="field"><label>DUTY CATEGORY</label>
+          <select id="dutyType">
+            <option>ONE WAY</option><option>ROUND TRIP</option><option>OUTSTATION</option><option>LOCAL RENTAL</option>
+          </select>
+        </div>
+        <div class="field"><label>CAR</label>
+          <select id="vehicle"><option>SEDAN</option><option>SUV</option><option>MINI</option><option>INNOVA CRYSTA</option></select>
+        </div>
         <div class="field"><label>PICKUP</label><input id="pickup" placeholder="Pickup location"></div>
         <div class="field"><label>DROP</label><input id="drop" placeholder="Drop location"></div>
         <div class="field"><label>DATE</label><input id="date" type="text" inputmode="numeric" maxlength="10" placeholder="DD/MM/YYYY" oninput="formatDate(this)"></div>
         <div class="field"><label>TIME</label><input id="time" type="time"></div>
-        <div class="field"><label>VEHICLE</label>
-          <select id="vehicle"><option>SEDAN</option><option>SUV</option><option>MINI</option><option>DZIRE</option><option>ETIOS</option><option>INNOVA CRYSTA</option></select>
-        </div>
         <div class="field"><label>KM</label><input id="km" type="number" min="0" placeholder="KM"></div>
         <div class="field"><label>AMOUNT ₹</label><input id="amount" type="number" min="0" placeholder="Amount"></div>
-        <div class="field"><label>NOTE</label><input id="note" placeholder="Toll / parking / extra note"></div>
+        <div class="field"><label>LOCAL RENTAL HOURS</label><input id="rentalHours" type="number" min="1" placeholder="Only for Local Rental"></div>
+        <div class="field"><label>SPECIAL SERVICE / NOTE</label><input id="specialService" placeholder="Optional — shown to driver"></div>
       </div>
-      <div class="actions">
-        <button class="btn primary" onclick="createDuty()">CREATE DUTY</button>
-      </div>
+      <div class="actions"><button class="btn primary" onclick="createDuty()">✅ CREATE DUTY</button></div>
     </div>
 
     <div class="card">
@@ -367,6 +426,7 @@ function driverCard(d){
     </div>
 
     <div class="actions">
+      <button class="btn primary" onclick="viewDriverDocuments('${esc(d.id)}')">📄 VIEW DOCUMENTS</button>
       ${s!=="APPROVED"?`<button class="btn green" onclick="approveDriver('${esc(d.id)}')">✓ APPROVE</button>`:""}
       ${s!=="REJECTED"?`<button class="btn orange" onclick="rejectDriver('${esc(d.id)}')">✕ REJECT</button>`:""}
       ${s!=="BLOCKED"?`<button class="btn red" onclick="blockDriver('${esc(d.id)}')">⛔ BLOCK</button>`:
@@ -408,7 +468,7 @@ function openDutyCard(d){
     <div class="muted">📅 ${esc(d.date||"-")} &nbsp; ⏰ ${esc(d.time||"-")}<br>
     🚕 ${esc(d.vehicle||"-")} &nbsp; 📏 ${Number(d.km||0)} KM</div>
     <div class="money">₹${Number(d.amount||0)}</div>
-    ${d.note?`<div class="notice">📝 ${esc(d.note)}</div>`:""}
+    ${(d.specialService||d.note)?`<div class="notice">⭐ ${esc(d.specialService||d.note)}</div>`:""}
     <div class="actions">
       <button class="btn orange" onclick="cancelDuty('${esc(d.id)}')">✕ CANCEL</button>
       <button class="btn red" onclick="deleteDuty('${esc(d.id)}')">🗑 DELETE</button>
@@ -452,17 +512,25 @@ function acceptedCard(d){
   </div>`;
 }
 
+let historyFilter="ALL";
+
 function renderHistory(){
-  const rows=[...history].sort((a,b)=>stampMillis(b.createdAt)-stampMillis(a.createdAt));
+  const all=[...history].sort((a,b)=>stampMillis(b.historyCreatedAt||b.createdAt||b.completedAt||b.cancelledAt||b.rejectedAt||b.acceptedAt)-stampMillis(a.historyCreatedAt||a.createdAt||a.completedAt||a.cancelledAt||a.rejectedAt||a.acceptedAt));
+  const rows=historyFilter==="ALL"?all:all.filter(h=>String(h.type||h.status||"").toUpperCase().includes(historyFilter));
 
   $("app").innerHTML=`
     <h1>📋 Trip History</h1>
-    <div class="sub">Completed / Cancelled / Rejected / Deleted — all drivers</div>
+    <div class="sub">Every duty action — accepted, rejected, cancelled, completed and deleted</div>
     <div class="card">
-      <h2>ALL ACTIVITY (${rows.length})</h2>
-      ${rows.length?rows.map(historyCard).join(""):`<div class="empty">No history yet.</div>`}
+      <div class="historyFilters">
+        ${["ALL","ACCEPTED","REJECT","CANCEL","COMPLETE","DELETE"].map(f=>`<button class="${historyFilter===f?"active":""}" onclick="setHistoryFilter('${f}')">${f}</button>`).join("")}
+      </div>
+      <h2>${historyFilter} ACTIVITY (${rows.length})</h2>
+      ${rows.length?rows.map(historyCard).join(""):`<div class="empty">No ${historyFilter.toLowerCase()} history yet.</div>`}
     </div>`;
 }
+
+window.setHistoryFilter=function(f){historyFilter=f;renderHistory();};
 
 function historyCard(h){
   const type=String(h.type||h.status||"").toUpperCase();
@@ -476,10 +544,15 @@ function historyCard(h){
     <div class="route"><div>📍 ${esc(h.pickup||"-")}</div><div>🏁 ${esc(h.drop||"-")}</div></div>
     <div class="muted">📱 ${esc(h.driverMobile||h.mobile||"-")}<br>
     📅 ${esc(h.date||"-")} &nbsp; ⏰ ${esc(h.time||"-")}<br>
-    📏 ${Number(h.km||0)} KM</div>
+    🚕 ${esc(h.vehicle||"-")} &nbsp; 📏 ${Number(h.km||0)} KM</div>
     <div class="money">₹${Number(h.amount||0)}</div>
-    ${h.cancellationDeduction?`<div class="notice">Wallet deduction: ₹${Number(h.cancellationDeduction)}</div>`:""}
-    <div class="muted">${formatStamp(h.createdAt)}</div>
+    ${h.acceptedBy?`<div class="muted">👤 Accepted by: <b>${esc(h.acceptedBy)}</b></div>`:""}
+    ${h.rejectedBy?`<div class="muted">❌ Rejected by: <b>${esc(h.rejectedBy)}</b></div>`:""}
+    ${h.cancelledBy?`<div class="muted">✕ Cancelled by: <b>${esc(h.cancelledBy)}</b></div>`:""}
+    ${h.completedBy?`<div class="muted">✓ Completed by: <b>${esc(h.completedBy)}</b></div>`:""}
+    ${h.deletedBy?`<div class="muted">🗑 Deleted by: <b>${esc(h.deletedBy)}</b></div>`:""}
+    ${h.cancellationDeduction||h.walletDeduction?`<div class="notice">Wallet deduction: ₹${Number(h.cancellationDeduction||h.walletDeduction)}</div>`:""}
+    <div class="muted">${formatStamp(h.historyCreatedAt||h.createdAt||h.completedAt||h.cancelledAt||h.rejectedAt||h.acceptedAt)}</div>
   </div>`;
 }
 
@@ -490,40 +563,35 @@ async function createDuty(){
     const date=normalizeDate($("date").value.trim());
     const time=$("time").value;
     const vehicle=$("vehicle").value;
+    const dutyType=$("dutyType").value;
     const km=Number($("km").value);
     const amount=Number($("amount").value);
-    const note=$("note").value.trim();
+    const rentalHours=Number($("rentalHours").value||0);
+    const specialService=$("specialService").value.trim();
 
     if(!pickup||!drop||!date||!time||!km||amount<0){
       alert("Pickup, Drop, Date, Time, KM and Amount enter pannunga.");
       return;
     }
+    if(dutyType==="LOCAL RENTAL" && rentalHours<1){
+      alert("LOCAL RENTAL-ku hours enter pannunga.");
+      return;
+    }
 
     await addDoc(collection(db,"duties"),{
-      pickup,drop,date,time,vehicle,km,amount,note,
-      status:"OPEN",
-      acceptedBy:"",
-      acceptedDriverId:"",
-      acceptedByUid:"",
-      driverId:"",
-      driverName:"",
-      driverMobile:"",
-      rejectedBy:"",
-      rejectedByUid:"",
-      rejectedDriverId:"",
-      cancelledBy:"",
-      cancelledByUid:"",
-      cancelledDriverId:"",
-      cancellationDeduction:0,
-      createdAt:serverTimestamp(),
-      updatedAt:serverTimestamp()
+      dutyType, rentalHours:dutyType==="LOCAL RENTAL"?rentalHours:0,
+      pickup,drop,date,time,vehicle,km,amount,specialService,
+      note:specialService,status:"OPEN",
+      acceptedBy:"",acceptedDriverId:"",acceptedByUid:"",
+      driverId:"",driverName:"",driverMobile:"",
+      rejectedBy:"",rejectedByUid:"",rejectedDriverId:"",
+      cancelledBy:"",cancelledByUid:"",cancelledDriverId:"",
+      cancellationDeduction:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp()
     });
-
     alert("Duty created successfully.");
     showPage("open");
   }catch(e){
-    console.error(e);
-    alert("Duty create failed: "+e.message);
+    console.error(e); alert("Duty create failed: "+e.message);
   }
 }
 
@@ -685,6 +753,7 @@ async function deleteDuty(id){
       ...historySafe(d),
       type:"DUTY_DELETED",
       status:"DELETED",
+      deletedBy:"ADMIN",
       deletedAt:serverTimestamp(),
       createdAt:serverTimestamp()
     });
@@ -843,7 +912,7 @@ function historySafe(d){
     vehicle:d.vehicle||"",
     km:Number(d.km||0),
     amount:Number(d.amount||0),
-    note:d.note||"",
+    specialService:d.specialService||d.note||"",
     driverId:d.driverId||d.acceptedDriverId||"",
     acceptedDriverId:d.acceptedDriverId||"",
     acceptedByUid:d.acceptedByUid||"",
@@ -852,7 +921,16 @@ function historySafe(d){
     acceptedBy:d.acceptedBy||"",
     rejectedBy:d.rejectedBy||"",
     rejectedByUid:d.rejectedByUid||"",
-    cancelledBy:d.cancelledBy||""
+    rejectedDriverId:d.rejectedDriverId||"",
+    rejectedAt:d.rejectedAt||"",
+    cancelledBy:d.cancelledBy||"",
+    cancelledByUid:d.cancelledByUid||"",
+    cancelledDriverId:d.cancelledDriverId||"",
+    cancelledAt:d.cancelledAt||"",
+    completedBy:d.completedBy||"",
+    completedByUid:d.completedByUid||"",
+    completedAt:d.completedAt||"",
+    acceptedAt:d.acceptedAt||""
   };
 }
 
@@ -869,6 +947,42 @@ function formatStamp(v){
   return n?new Date(n).toLocaleString("en-IN"):"";
 }
 
+function docUrl(d,key){
+  const docs=d.documents||d.docs||{};
+  return d[key] || docs[key.replace("Url","")] || docs[key] || "";
+}
+
+window.viewDriverDocuments=function(id){
+  const d=drivers.find(x=>x.id===id);
+  if(!d)return;
+  const name=d.name||d.driverName||"Driver";
+  const mobile=d.mobile||d.phone||"";
+  const items=[
+    ["LICENSE","licenseUrl"],
+    ["RC","rcUrl"],
+    ["INSURANCE","insuranceUrl"],
+    ["PERMIT","permitUrl"]
+  ];
+  let modal=document.getElementById("driverDocOverlay");
+  if(!modal){
+    modal=document.createElement("div");
+    modal.id="driverDocOverlay";
+    modal.innerHTML=`<div id="driverDocModal"></div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener("click",e=>{if(e.target===modal)modal.style.display="none";});
+  }
+  const box=modal.querySelector("#driverDocModal");
+  box.innerHTML=`
+    <div class="docHeader">
+      <div><h2>📄 Driver Documents</h2><div class="docSub">👨‍✈️ ${esc(name)} &nbsp; • &nbsp; 📱 ${esc(mobile)}</div></div>
+      <button class="btn gray" onclick="document.getElementById('driverDocOverlay').style.display='none'">CLOSE</button>
+    </div>
+    <div class="docGrid">
+      ${items.map(([label,key])=>{const url=docUrl(d,key); return `<div class="docCard"><h3>${label}</h3>${url?`<img class="docImage" src="${esc(url)}" alt="${label}"><a class="docOpen" href="${esc(url)}" target="_blank" rel="noopener">OPEN FULL IMAGE ↗</a>`:`<div class="docMissing">NOT UPLOADED</div>`}</div>`;}).join("")}
+    </div>`;
+  modal.style.display="flex";
+};
+
 function startListeners(){
   unDrivers=onSnapshot(collection(db,"drivers"),snap=>{
     drivers=snap.docs.map(x=>({id:x.id,...x.data()}));
@@ -882,6 +996,42 @@ function startListeners(){
 
   unDuties=onSnapshot(collection(db,"duties"),snap=>{
     duties=snap.docs.map(x=>({id:x.id,...x.data()}));
+
+    // ADMIN-ONLY HISTORY CAPTURE:
+    // Build 22 driver app already writes accepted/rejected fields on the duty.
+    // Capture those events here with deterministic history IDs, without changing the driver app.
+    snap.docs.forEach(async docSnap=>{
+      const d={id:docSnap.id,...docSnap.data()};
+      try{
+        if(d.acceptedByUid || d.acceptedDriverId){
+          const driverKey=String(d.acceptedByUid||d.acceptedDriverId).replace(/[^a-zA-Z0-9_-]/g,"_");
+          await setDoc(doc(db,"duty_history",`admin_accept_${d.id}_${driverKey}`),{
+            ...historySafe(d),
+            type:"DUTY_ACCEPTED",
+            status:"ACCEPTED",
+            acceptedBy:d.acceptedBy||d.driverName||"Driver",
+            acceptedByUid:d.acceptedByUid||d.acceptedDriverId||"",
+            acceptedAt:d.acceptedAt||new Date().toISOString(),
+            historyCreatedAt:d.acceptedAt||new Date().toISOString(),
+            adminCaptured:true
+          },{merge:true});
+        }
+        if(d.rejectedByUid || d.rejectedDriverId){
+          const driverKey=String(d.rejectedByUid||d.rejectedDriverId).replace(/[^a-zA-Z0-9_-]/g,"_");
+          await setDoc(doc(db,"duty_history",`admin_reject_${d.id}_${driverKey}`),{
+            ...historySafe(d),
+            type:"DUTY_REJECTED",
+            status:"REJECTED",
+            rejectedBy:d.rejectedBy||"Driver",
+            rejectedByUid:d.rejectedByUid||d.rejectedDriverId||"",
+            rejectedAt:d.rejectedAt||new Date().toISOString(),
+            historyCreatedAt:d.rejectedAt||new Date().toISOString(),
+            adminCaptured:true
+          },{merge:true});
+        }
+      }catch(e){ console.error("Admin history capture failed:",e); }
+    });
+
     setConnected(true);
     render();
   },err=>{
@@ -1029,7 +1179,7 @@ ov.innerHTML=`
 <div id="ocrModal">
 <h2>📷 DUTY SCREENSHOT OCR</h2>
 <div class="ocrSub">
-Upload a duty screenshot. OCR fills the fields; you can edit everything before creating the duty.
+Upload a duty screenshot. OCR reads the useful duty details; check them and create the duty.
 </div>
 
 <input id="ocrFile" type="file" accept="image/*">
@@ -1048,15 +1198,18 @@ Upload a duty screenshot. OCR fills the fields; you can edit everything before c
 <div class="ocrField">
 <label>DUTY TYPE</label>
 <select id="ocrDutyType">
-<option>ONE WAY</option>
-<option>ROUND TRIP</option>
-<option>LOCAL RENTAL</option>
+<option>ONE WAY</option><option>ROUND TRIP</option><option>OUTSTATION</option><option>LOCAL RENTAL</option>
 </select>
 </div>
 
 <div class="ocrField">
 <label>VEHICLE</label>
-<input id="ocrVehicle" placeholder="Vehicle / car type">
+<select id="ocrVehicle">
+<option>SEDAN</option>
+<option>SUV</option>
+<option>MINI</option>
+<option>INNOVA CRYSTA</option>
+</select>
 </div>
 
 <div class="ocrField">
@@ -1083,12 +1236,6 @@ Upload a duty screenshot. OCR fills the fields; you can edit everything before c
 <label>RENTAL HOURS</label>
 <input id="ocrHours" type="number" min="1" max="12" placeholder="For LOCAL RENTAL">
 </div>
-
-<div class="ocrField">
-<label>PERSONS</label>
-<input id="ocrPersons" type="number" min="1" placeholder="For LOCAL RENTAL">
-</div>
-
 <div class="ocrField full">
 <label>PICKUP</label>
 <input id="ocrPickup">
@@ -1100,23 +1247,10 @@ Upload a duty screenshot. OCR fills the fields; you can edit everything before c
 </div>
 
 <div class="ocrField">
-<label>SPECIAL SERVICE</label>
-<input id="ocrSpecial">
+<label>SPECIAL SERVICE / NOTE</label>
+<input id="ocrSpecial" placeholder="Optional — shown to driver">
 </div>
-
-<div class="ocrField">
-<label>PARTICULAR</label>
-<input id="ocrParticular">
 </div>
-
-<div class="ocrField full">
-<label>NOTE</label>
-<textarea id="ocrNote"></textarea>
-</div>
-
-</div>
-
-<div id="ocrRaw" class="ocrText" style="display:none"></div>
 
 <div class="ocrActions">
 <button class="ocrCreate" onclick="createDutyFromOCR()">✅ CREATE DUTY</button>
@@ -1160,147 +1294,116 @@ function parseOCRText(t){
   const lines=raw.split('\n').map(x=>cleanOCR(x)).filter(Boolean);
   const low=raw.toLowerCase();
 
-  const afterLabel=(labels)=>{
+  const monthMap={jan:'01',january:'01',feb:'02',february:'02',mar:'03',march:'03',apr:'04',april:'04',may:'05',jun:'06',june:'06',jul:'07',july:'07',aug:'08',august:'08',sep:'09',sept:'09',september:'09',oct:'10',october:'10',nov:'11',november:'11',dec:'12',december:'12'};
+
+  function normalizeOCRDate(v){
+    v=cleanOCR(v);
+    let m=v.match(/\b(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})\b/);
+    if(m){
+      let y=m[3].length===2?'20'+m[3]:m[3];
+      return m[1].padStart(2,'0')+'/'+m[2].padStart(2,'0')+'/'+y;
+    }
+    m=v.match(/\b(\d{1,2})\s+([A-Za-z]{3,9})[\s,\/-]+(\d{4})\b/i);
+    if(m){
+      const mo=monthMap[m[2].toLowerCase()];
+      if(mo)return m[1].padStart(2,'0')+'/'+mo+'/'+m[3];
+    }
+    return '';
+  }
+
+  function findAfterLabel(labelRegexes){
     for(let i=0;i<lines.length;i++){
       const line=lines[i];
-      for(const label of labels){
-        const re=new RegExp('^'+label+'\\s*[:=-]?\\s*(.*)$','i');
+      for(const re of labelRegexes){
         const m=line.match(re);
-        if(m&&m[1]&&m[1].trim())return cleanOCR(m[1]);
-        if(new RegExp('^'+label+'\\s*$','i').test(line)&&lines[i+1])
-          return cleanOCR(lines[i+1]);
+        if(m && m[1]) return cleanOCR(m[1]);
+        if(m && lines[i+1]) return cleanOCR(lines[i+1]);
       }
     }
     return '';
-  };
-
-  const normalizeOCRDate=(v)=>{
-    const s=cleanOCR(v);
-    let m=s.match(/\b(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})\b/);
-    if(m){
-      const y=m[3].length===2?'20'+m[3]:m[3];
-      return m[1].padStart(2,'0')+'/'+m[2].padStart(2,'0')+'/'+y;
-    }
-    m=s.match(/\b(\d{1,2})\s+(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(\d{4})\b/i);
-    if(m){
-      const months={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
-      const key=m[2].slice(0,3).toLowerCase();
-      return m[1].padStart(2,'0')+'/'+String(months[key]).padStart(2,'0')+'/'+m[3];
-    }
-    return '';
-  };
-
-  const normalizeOCRTime=(v)=>{
-    const s=cleanOCR(v);
-    const m=s.match(/\b(\d{1,2}):(\d{2})\s*([AP]M)\b/i);
-    return m ? `${m[1].padStart(2,'0')}:${m[2]} ${m[3].toUpperCase()}` : '';
-  };
-
-  // IMPORTANT: use the labelled Pickup Date first. This avoids taking
-  // today's date or another unrelated date from the screenshot.
-  let date=normalizeOCRDate(afterLabel([
-    'pickup date','pick up date','pickup\\s*date'
-  ]));
-
-  if(!date){
-    let m=raw.match(/\b(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4})\b/);
-    if(m)date=normalizeOCRDate(m[1]);
-    else{
-      m=raw.match(/\b(\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4})\b/i);
-      if(m)date=normalizeOCRDate(m[1]);
-    }
   }
 
-  // IMPORTANT: use Reporting Time before any generic time in the image.
-  let time=normalizeOCRTime(afterLabel([
-    'reporting time','pickup time','pick up time','time'
-  ]));
+  let date='';
+  const dateLabel=raw.match(/(?:pickup\s*date|date)\s*[:=-]?\s*([^\n]+)/i);
+  if(dateLabel) date=normalizeOCRDate(dateLabel[1]);
+  if(!date){
+    const m=raw.match(/\b\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}\b/);
+    if(m) date=normalizeOCRDate(m[0]);
+  }
+  if(!date){
+    const m=raw.match(/\b\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}\b/i);
+    if(m) date=normalizeOCRDate(m[0]);
+  }
+
+  let time='';
+  const timeLabel=raw.match(/(?:reporting\s*time|pickup\s*time|time)\s*[:=-]?\s*(\d{1,2}:\d{2}\s*(?:AM|PM)?)/i);
+  if(timeLabel) time=cleanOCR(timeLabel[1]);
+  if(time && !/am|pm/i.test(time)){
+    const context=raw.match(new RegExp(time.replace(':','\\:')+'\\s*(AM|PM)','i'));
+    if(context) time=cleanOCR(context[0]);
+  }
   if(!time){
     const m=raw.match(/\b(\d{1,2}:\d{2}\s*(?:AM|PM))\b/i);
-    if(m)time=normalizeOCRTime(m[1]);
+    if(m) time=cleanOCR(m[1]);
   }
 
-  let km=(raw.match(/(?:\bKM\b|kilometer|kilometre)\s*[:=-]?\s*(\d+(?:\.\d+)?)/i)||[])[1]||'';
+  let km=(raw.match(/(?:KM\s*Limit|KM\s*limit|kilometers?|kilometres?)\s*[:=-]?\s*(\d+(?:\.\d+)?)/i)||[])[1]||'';
   if(!km){
     const m=raw.match(/(\d+(?:\.\d+)?)\s*KM\b/i);
     if(m)km=m[1];
   }
 
-  let amount=(raw.match(/(?:₹|Rs\.?|INR|Amount)\s*[:=-]?\s*([\d,]+)/i)||[])[1]||'';
+  let amount=(raw.match(/(?:confirm|amount|fare|price)\s*[@₹:]?\s*([\d,]+(?:\.\d+)?)/i)||[])[1]||'';
+  if(!amount){
+    const m=raw.match(/(?:₹|Rs\.?|INR|@)\s*([\d,]+(?:\.\d+)?)/i);
+    if(m)amount=m[1];
+  }
   amount=amount.replace(/,/g,'');
 
-  // Preserve the actual Car Type text from the screenshot.
-  // Example: "Dzire, Etios or similar".
-  let vehicle=afterLabel([
-    'car type','vehicle type','vehicle','cab type'
-  ]);
-  vehicle=cleanOCR(vehicle).replace(/^[\s:.-]+|[\s:.-]+$/g,'');
+  let vehicle='';
+  if(/innova\s*crysta|crysta/i.test(low)) vehicle='INNOVA CRYSTA';
+  else if(/suv/i.test(low)) vehicle='SUV';
+  else if(/sedan/i.test(low)) vehicle='SEDAN';
+  else if(/wagon\s*r|swift|dzire|etios|honda\s*city|verna|aura|xcent/i.test(low)) vehicle='SEDAN';
+  else if(/mini/i.test(low)) vehicle='MINI';
 
-  if(!vehicle){
-    if(low.includes('innova')||low.includes('crysta'))vehicle='INNOVA CRYSTA';
-    else if(low.includes('dzire'))vehicle='DZIRE';
-    else if(low.includes('etios'))vehicle='ETIOS';
-    else if(low.includes('suv'))vehicle='SUV';
-    else if(low.includes('mini'))vehicle='MINI';
-    else if(low.includes('sedan'))vehicle='SEDAN';
-  }
+  let dutyType='ONE WAY';
+  if(/local\s*rental|local\s*hire|local\s*\(/i.test(low)) dutyType='LOCAL RENTAL';
+  else if(/round\s*trip|return\s*trip/i.test(low)) dutyType='ROUND TRIP';
+  else if(/outstation/i.test(low)) dutyType='OUTSTATION';
 
-  const dutyType=
-    low.includes('local rental')||low.includes('local hire')
-      ?'LOCAL RENTAL'
-      :low.includes('round trip')||low.includes('return trip')
-        ?'ROUND TRIP'
-        :'ONE WAY';
-
-  let hours=(raw.match(/(?:hours?|hrs?)\s*[:=-]?\s*(\d{1,2})/i)||[])[1]||'';
+  let hours=(raw.match(/(?:rental\s*hours?|hours?|hrs?)\s*[:=-]?\s*(\d{1,2})/i)||[])[1]||'';
   if(!hours){
-    const m=raw.match(/(\d{1,2})\s*(?:hours?|hrs?)/i);
+    const m=raw.match(/(?:local[^\n]*?)\b(\d{1,2})\s*h\b/i);
     if(m)hours=m[1];
   }
 
-  let persons=(raw.match(/(?:persons?|pax|passengers?)\s*[:=-]?\s*(\d+)/i)||[])[1]||'';
+  let pickup=findAfterLabel([/^(?:pickup\s*address|pick\s*address|pickup)\s*[:=-]?\s*(.*)$/i,/pickup\s*address\s*[:=-]?\s*(.*)/i]);
+  let drop=findAfterLabel([/^(?:drop\s*address|drop\s*location|drop|dropoff|drop\s*off)\s*[:=-]?\s*(.*)$/i,/drop\s*address\s*[:=-]?\s*(.*)/i]);
 
-  const label=(names)=>{
-    for(let i=0;i<lines.length;i++){
-      const l=lines[i];
-      for(const n of names){
-        const re=new RegExp('^'+n+'\\s*[:=-]?\\s*(.*)$','i');
-        const m=l.match(re);
-        if(m&&m[1])return m[1];
-        if(new RegExp('^'+n+'\\s*$','i').test(l)&&lines[i+1])
-          return lines[i+1];
-      }
+  // If OCR splits the address across several lines, keep only the address block.
+  function addressBlock(kind){
+    const idx=lines.findIndex(l=>new RegExp(kind,'i').test(l));
+    if(idx<0)return '';
+    let first=lines[idx].replace(new RegExp('^.*?'+kind+'\\s*[:=-]?\\s*','i'),'').trim();
+    const out=[]; if(first)out.push(first);
+    const stop=/^(pickup\s*date|reporting\s*time|trip\s*type|car\s*type|km\s*limit|drop\s*address|drop\s*location|drop|special\s*services?|extras?|extra\s*km|extra\s*night|extra\s*hour|confirm|give\s*your\s*price|inclusions?|exclusions?)/i;
+    for(let j=idx+1;j<lines.length;j++){
+      if(stop.test(lines[j]))break;
+      if(/^(address|pickup|pick\s*up)\s*$/i.test(lines[j]))continue;
+      out.push(lines[j]);
+      if(out.length>=4)break;
     }
-    return '';
-  };
-
-  let pickup=label(['pickup','pick up','from']);
-  let drop=label(['drop','dropoff','drop off','to']);
-
-  if(!pickup){
-    const m=raw.match(/pickup\s*[:=-]?\s*([^\n]+)/i);
-    if(m)pickup=m[1];
+    return cleanOCR(out.join(' '));
   }
-  if(!drop){
-    const m=raw.match(/drop(?:off)?\s*[:=-]?\s*([^\n]+)/i);
-    if(m)drop=m[1];
-  }
+  if(!pickup) pickup=addressBlock('pickup(?:\\s+address)?');
+  if(!drop) drop=addressBlock('drop(?:\\s+address|\\s+location)?');
 
-  return {
-    date,
-    time,
-    km,
-    amount,
-    vehicle,
-    dutyType,
-    hours,
-    persons,
-    pickup:cleanOCR(pickup),
-    drop:cleanOCR(drop),
-    special:label(['special service']),
-    particular:label(['particular']),
-    note:label(['note','remarks'])
-  };
+  // Special Service is the only optional note we keep.
+  let special=findAfterLabel([/^(?:special\s*service|special\s*services?)\s*[:=-]?\s*(.*)$/i,/special\s*service\s*[:=-]?\s*(.*)/i]);
+  if(/^special\s*services?$/i.test(special)) special='';
+
+  return {date,time,km,amount,vehicle,dutyType,hours,pickup:cleanOCR(pickup),drop:cleanOCR(drop),special:cleanOCR(special)};
 }
 
 window.runDutyOCR=async function(){
@@ -1346,10 +1449,7 @@ window.runDutyOCR=async function(){
     ocrSet('ocrPickup',x.pickup);
     ocrSet('ocrDrop',x.drop);
     ocrSet('ocrHours',x.hours);
-    ocrSet('ocrPersons',x.persons);
     ocrSet('ocrSpecial',x.special);
-    ocrSet('ocrParticular',x.particular);
-    ocrSet('ocrNote',x.note);
 
     if(x.vehicle)
       $('ocrVehicle').value=x.vehicle;
@@ -1357,10 +1457,8 @@ window.runDutyOCR=async function(){
     if(x.dutyType)
       $('ocrDutyType').value=x.dutyType;
 
-    $('ocrRaw').style.display='block';
-    $('ocrRaw').textContent=text;
 
-    p.textContent='OCR complete. Date, reporting time and car type were read from the screenshot. Check/edit, then CREATE DUTY.';
+    p.textContent='OCR complete. Check/edit the fields, then CREATE DUTY.';
 
   }catch(e){
     console.error(e);
@@ -1380,13 +1478,10 @@ window.createDutyFromOCR=async function(){
     const amount=Number($('ocrAmount').value);
     const dutyType=$('ocrDutyType').value;
     const rentalHours=Number($('ocrHours').value||0);
-    const persons=Number($('ocrPersons').value||0);
     const specialService=$('ocrSpecial').value.trim();
-    const particular=$('ocrParticular').value.trim();
-    const note=$('ocrNote').value.trim();
 
-    if(!pickup||!drop||!date||!time||!km||amount<0){
-      alert('Pickup, Drop, Date, Time, KM and Amount check pannunga.');
+    if(!pickup||!date||!time||!km||amount<=0 || (dutyType!=='LOCAL RENTAL'&&!drop)){
+      alert(dutyType==='LOCAL RENTAL' ? 'Pickup, Date, Time, KM and Amount check pannunga.' : 'Pickup, Drop, Date, Time, KM and Amount check pannunga.');
       return;
     }
 
@@ -1395,15 +1490,11 @@ window.createDutyFromOCR=async function(){
       return;
     }
 
-    if(dutyType==='LOCAL RENTAL'&&persons<1){
-      alert('LOCAL RENTAL persons enter pannunga.');
-      return;
-    }
+
 
     await addDoc(collection(db,'duties'),{
       dutyType,
       rentalHours:dutyType==='LOCAL RENTAL'?rentalHours:0,
-      persons:dutyType==='LOCAL RENTAL'?persons:0,
       pickup,
       drop,
       date,
@@ -1412,8 +1503,7 @@ window.createDutyFromOCR=async function(){
       km,
       amount,
       specialService,
-      particular,
-      note,
+      note:specialService,
       status:'OPEN',
       acceptedBy:'',
       acceptedDriverId:'',
