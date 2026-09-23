@@ -305,7 +305,7 @@ function renderDuty(){
       <div class="grid">
         <div class="field"><label>DUTY CATEGORY</label>
           <select id="dutyType">
-            <option>ONE WAY</option><option>ROUND TRIP</option><option>OUTSTATION</option><option>LOCAL RENTAL</option>
+            <option>AIRPORT PICKUP / DROP</option><option>ONE WAY</option><option>ROUND TRIP</option><option>LOCAL RENTAL</option><option>OUTSTATION</option>
           </select>
         </div>
         <div class="field"><label>CAR</label>
@@ -1269,7 +1269,7 @@ Upload a duty screenshot. OCR reads the useful duty details; check them and crea
 <div class="ocrField">
 <label>DUTY TYPE</label>
 <select id="ocrDutyType">
-<option>ONE WAY</option><option>ROUND TRIP</option><option>OUTSTATION</option><option>LOCAL RENTAL</option>
+<option>AIRPORT PICKUP / DROP</option><option>ONE WAY</option><option>ROUND TRIP</option><option>LOCAL RENTAL</option><option>OUTSTATION</option>
 </select>
 </div>
 
@@ -1445,6 +1445,7 @@ function parseOCRText(t){
   let dutyType='ONE WAY';
   if(/local\s*rental|local\s*hire|local\s*\(/i.test(low)) dutyType='LOCAL RENTAL';
   else if(/round\s*trip|return\s*trip/i.test(low)) dutyType='ROUND TRIP';
+  else if(/airport|air\s*port|pickup\s*drop/i.test(low)) dutyType='AIRPORT PICKUP / DROP';
   else if(/outstation/i.test(low)) dutyType='OUTSTATION';
 
   let hours=(raw.match(/(?:rental\s*hours?|hours?|hrs?)\s*[:=-]?\s*(\d{1,2})/i)||[])[1]||'';
