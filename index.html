@@ -246,6 +246,18 @@ window.formatDate=function(input){
 
 function statusOf(d){return String(d.status||"OPEN").toUpperCase();}
 
+function dutySortKey(d){
+  const raw=String(d.date||d.dutyDate||"").trim();
+  let y=0,m=0,day=0,match=raw.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if(match){day=+match[1];m=+match[2];y=+match[3];}
+  else {match=raw.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);if(match){y=+match[1];m=+match[2];day=+match[3];}}
+  const t=String(d.time||d.dutyTime||"").trim();
+  let hh=0,mm=0; const tm=t.match(/^(\d{1,2}):(\d{2})(?:\s*(AM|PM))?$/i);
+  if(tm){hh=+tm[1];mm=+tm[2];if(tm[3]){if(tm[3].toUpperCase()==="PM"&&hh<12)hh+=12;if(tm[3].toUpperCase()==="AM"&&hh===12)hh=0;}}
+  return y&&m&&day?new Date(y,m-1,day,hh,mm).getTime():stampMillis(d.createdAt);
+}
+
+
 function driverForDuty(d){
   const keys=[
     ["acceptedByUid",d.acceptedByUid],
@@ -483,6 +495,12 @@ function renderDrivers(){
     <div class="card"><h2>🔎 SEARCH DRIVER</h2>
       <div class="driver-search"><label>SEARCH BY MOBILE NUMBER</label><div class="search-row"><input id="driverMobileSearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter driver mobile number" value="${esc(driverMobileSearch)}" oninput="filterDriversByMobile(this.value)"><button class="btn gray" onclick="clearDriverMobileSearch()">CLEAR</button></div><div id="driverSearchCount" class="search-count"></div></div>
       <div id="driverApprovalList">${renderDriverApprovalList(driverStatusFilter)}</div>
+    </div>
+    <div class="card"><h2>🔓 UNBLOCK DRIVER BY MOBILE</h2>
+      <div class="driver-search"><label>BLOCKED DRIVER MOBILE NUMBER</label>
+        <div class="search-row"><input id="unblockMobileInput" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter registered mobile number"><button class="btn green" onclick="unblockDriverByMobile()">UNBLOCK</button></div>
+        <div class="muted">Enter the registered mobile number to find and unblock that driver.</div>
+      </div>
     </div>`;
 }
 
@@ -547,7 +565,7 @@ function openDutyCard(d){
 }
 
 function renderAccepted(){
-  const list=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d)));
+  const list=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d))).sort((a,b)=>dutySortKey(a)-dutySortKey(b));
 
   $("app").innerHTML=`
     <h1>✅ Accepted Duties</h1>
@@ -717,6 +735,18 @@ async function unblockDriver(id){
     alert("Driver UNBLOCKED.");
   }catch(e){console.error(e);alert("Unblock failed: "+e.message);}
 }
+
+window.unblockDriverByMobile=async function(){
+  const input=$("unblockMobileInput");
+  const mobile=String(input?.value||"").replace(/\\D/g,"");
+  if(!mobile){alert("Enter driver mobile number.");return;}
+  const matches=drivers.filter(d=>String(d.mobile||d.phone||d.driverMobile||"").replace(/\\D/g,"")===mobile);
+  if(matches.length!==1){alert(matches.length?"More than one driver matched. Use the driver list to select the correct driver.":"No driver found for this mobile number.");return;}
+  const driver=matches[0];
+  if(driverStatus(driver)!=="BLOCKED"&&!driver.blocked){alert("This driver is not blocked.");return;}
+  if(!confirm("Unblock driver "+(driver.name||driver.driverName||"")+" ("+mobile+")?"))return;
+  await unblockDriver(driver.id);
+};
 
 async function deleteDriver(id){
   const d=drivers.find(x=>x.id===id);
@@ -1018,8 +1048,16 @@ function formatStamp(v){
 }
 
 function docUrl(d,key){
-  const docs=d.documents||d.docs||{};
-  return d[key] || docs[key.replace("Url","")] || docs[key] || "";
+  const docs=d.documents||d.docs||d.documentsData||{};
+  const aliases={
+    licenseUrl:["licenseUrl","licenseImageUrl","licensePhotoUrl","drivingLicenseUrl","dlUrl","license","drivingLicense","licenseImage","licensePhoto"],
+    rcUrl:["rcUrl","rcImageUrl","rcPhotoUrl","rc","rcImage","rcPhoto"],
+    insuranceUrl:["insuranceUrl","insuranceImageUrl","insurancePhotoUrl","insurance","insuranceImage","insurancePhoto"],
+    permitUrl:["permitUrl","permitImageUrl","permitPhotoUrl","permit","permitImage","permitPhoto"],
+    selfieUrl:["selfieUrl","selfiePhotoUrl","selfieImageUrl","profilePhotoUrl","profileImageUrl","photoUrl","photo","selfie","profilePhoto","profileImage"]
+  };
+  for(const k of (aliases[key]||[key])){const value=d[k]||docs[k];if(typeof value==="string"&&value.trim())return value.trim();}
+  return "";
 }
 
 window.viewDriverDocuments=function(id){
@@ -1028,6 +1066,7 @@ window.viewDriverDocuments=function(id){
   const name=d.name||d.driverName||"Driver";
   const mobile=d.mobile||d.phone||"";
   const items=[
+    ["SELFIE / PROFILE PHOTO","selfieUrl"],
     ["LICENSE","licenseUrl"],
     ["RC","rcUrl"],
     ["INSURANCE","insuranceUrl"],
@@ -1640,7 +1679,7 @@ window.createDutyFromOCR=async function(){
   const baseShowPage=window.showPage;
   window.showPage=function(p){
     page=p;
-    const pages=['dashboard','duty','drivers','open','accepted','all','assignment','rejected','history'];
+    const pages=['dashboard','duty','drivers','open','accepted','all','assignment','rejected','driverActivity','history'];
     pages.forEach(x=>{
       const el=document.getElementById('nav-'+x); if(el)el.classList.toggle('active',x===p);
       const mb=document.getElementById('mb-'+x); if(mb)mb.classList.toggle('active',x===p);
@@ -1656,12 +1695,13 @@ window.createDutyFromOCR=async function(){
       <button id="side-new-duty" onclick="showPage('duty');toggleMenu()">🆕 <span>NEW DUTY</span></button>
       <button onclick="showPage('assignment');toggleMenu()">📋 <span>ASSIGNMENT / TRIP</span></button>
       <button onclick="showPage('accepted');toggleMenu()">✅ <span>ACCEPTED</span></button>
-      <button onclick="showPage('rejected');toggleMenu()">❌ <span>REJECTED</span></button>`;
+      <button onclick="showPage('rejected');toggleMenu()">❌ <span>REJECTED</span></button>
+      <button onclick="showPage('driverActivity');toggleMenu()">📊 <span>DRIVER ACTIVITY</span></button>`;
       side.insertAdjacentHTML('beforeend',html);
     }
     const nav=document.querySelector('.desktopNav');
     if(nav && !document.getElementById('nav-assignment')){
-      nav.insertAdjacentHTML('beforeend',`<button id="nav-new-duty" onclick="showPage('duty')">🆕 NEW DUTY</button><button id="nav-assignment" onclick="showPage('assignment')">📋 ASSIGNMENT</button><button id="nav-rejected" onclick="showPage('rejected')">❌ REJECTED</button>`);
+      nav.insertAdjacentHTML('beforeend',`<button id="nav-new-duty" onclick="showPage('duty')">🆕 NEW DUTY</button><button id="nav-assignment" onclick="showPage('assignment')">📋 ASSIGNMENT</button><button id="nav-rejected" onclick="showPage('rejected')">❌ REJECTED</button><button id="nav-driverActivity" onclick="showPage('driverActivity')">📊 DRIVER ACTIVITY</button>`);
     }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addNav); else addNav();
@@ -1690,6 +1730,7 @@ window.createDutyFromOCR=async function(){
           <button class="adminAction red" onclick="showPage('rejected')"><b>❌ REJECTED</b><small>See driver-rejected duty activity separately.</small></button>
           <button class="adminAction orange" onclick="showPage('open')"><b>🟢 OPEN DUTIES (${open})</b><small>Duties waiting for a driver.</small></button>
           <button class="adminAction pink" onclick="showPage('history')"><b>📚 FULL HISTORY (${history.length})</b><small>Accepted, rejected, cancelled, completed and deleted.</small></button>
+          <button class="adminAction blue" onclick="showPage('driverActivity')"><b>📊 DRIVER ACTIVITY</b><small>Search a driver by mobile and view active, completed, cancelled and rejected duties.</small></button>
         </div>
       </div>`;
   };
@@ -1727,12 +1768,73 @@ window.createDutyFromOCR=async function(){
     $('app').innerHTML=`<div class="pageIntro"><h1>❌ Rejected Duties</h1><div class="sub">Drivers who rejected duties</div></div><div class="card"><h2>❌ REJECTED (${rows.length})</h2>${rows.length?rows.map(historyCard).join(''):'<div class="empty">No rejected duty history found.</div>'}</div>`;
   };
 
+
+  let driverActivityQuery='';
+  window.renderDriverActivity=function(){
+    const q=String(driverActivityQuery||'').replace(/\D/g,'');
+    const matchingDrivers=q?drivers.filter(d=>String(d.mobile||d.phone||d.driverMobile||'').replace(/\D/g,'').includes(q)):[];
+    const driver=matchingDrivers.length===1?matchingDrivers[0]:null;
+    const ids=new Set();
+    const mobiles=new Set();
+    const names=new Set();
+    if(driver){
+      [driver.id,driver.uid,driver.driverId].filter(Boolean).forEach(v=>ids.add(String(v)));
+      [driver.mobile,driver.phone,driver.driverMobile].filter(Boolean).forEach(v=>mobiles.add(String(v).replace(/\D/g,'')));
+      [driver.name,driver.driverName].filter(Boolean).forEach(v=>names.add(String(v).toLowerCase()));
+    }
+    const belongs=(item)=>{
+      const itemMob=String(item.driverMobile||item.mobile||item.phone||'').replace(/\D/g,'');
+      const itemIds=[item.acceptedByUid,item.acceptedDriverId,item.driverId,item.rejectedByUid,item.rejectedDriverId,item.uid].filter(Boolean).map(String);
+      const itemNames=[item.driverName,item.acceptedBy,item.rejectedBy,item.completedBy,item.cancelledBy].filter(Boolean).map(v=>String(v).toLowerCase());
+      return (itemMob&&mobiles.has(itemMob)) || itemIds.some(v=>ids.has(v)) || itemNames.some(v=>names.has(v));
+    };
+    const active=driver?duties.filter(d=>belongs(d)&&['OPEN','ACCEPTED','STARTED'].includes(statusOf(d))):[];
+    const completed=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('COMPLETE')):[];
+    const cancelled=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('CANCEL')):[];
+    const rejected=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('REJECT')):[];
+    const all=[...active.map(d=>({...d,__activityStatus:statusOf(d)})),
+      ...completed.map(h=>({...h,__activityStatus:'COMPLETED'})),
+      ...cancelled.map(h=>({...h,__activityStatus:'CANCELLED'})),
+      ...rejected.map(h=>({...h,__activityStatus:'REJECTED'}))]
+      .sort((a,b)=>stampMillis(b.historyCreatedAt||b.completedAt||b.cancelledAt||b.rejectedAt||b.createdAt||b.acceptedAt)-stampMillis(a.historyCreatedAt||a.completedAt||a.cancelledAt||a.rejectedAt||a.createdAt||a.acceptedAt));
+    $('app').innerHTML=`
+      <div class="pageIntro"><h1>📊 Driver Activity Report</h1><div class="sub">Search a registered driver by mobile number and view their duty activity.</div></div>
+      <div class="card">
+        <h2>🔎 SEARCH DRIVER</h2>
+        <div class="driver-search">
+          <label>DRIVER MOBILE NUMBER</label>
+          <div class="search-row">
+            <input id="driverActivitySearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter registered mobile number" value="${esc(driverActivityQuery)}" oninput="driverActivityQuery=this.value;renderDriverActivity()">
+            <button class="btn gray" onclick="driverActivityQuery='';renderDriverActivity()">CLEAR</button>
+          </div>
+          <div class="search-count">${!q?'Enter a mobile number to view activity.':matchingDrivers.length===0?'No registered driver found.':matchingDrivers.length>1?'More than one matching driver; enter the full mobile number.':'Driver: '+esc(driver.name||driver.driverName||'Driver')+' • '+esc(driver.mobile||driver.phone||'')}</div>
+        </div>
+        ${driver?`
+          <div class="statgrid">
+            <div class="stat"><b>${active.length}</b><span>ACTIVE DUTIES</span></div>
+            <div class="stat"><b>${completed.length}</b><span>COMPLETED</span></div>
+            <div class="stat"><b>${cancelled.length}</b><span>CANCELLED</span></div>
+            <div class="stat"><b>${rejected.length}</b><span>REJECTED</span></div>
+          </div>
+          <div class="card"><h2>📋 DRIVER DUTY ACTIVITY (${all.length})</h2>
+            ${all.length?all.map(x=>`<div class="duty">
+              <div class="row"><b>${esc(x.__activityStatus)}</b><span class="badge ${x.__activityStatus==='COMPLETED'?'completed':x.__activityStatus==='CANCELLED'?'cancelled':x.__activityStatus==='REJECTED'?'rejected':x.__activityStatus==='OPEN'?'open':'accepted'}">${esc(x.__activityStatus)}</span></div>
+              <div class="route"><div>📍 ${esc(x.pickup||'-')}</div><div>🏁 ${esc(x.drop||'-')}</div></div>
+              <div class="muted">📅 ${esc(x.date||'-')} &nbsp; ⏰ ${esc(x.time||'-')}<br>🚘 ${esc(x.vehicle||'-')} &nbsp; 📏 ${Number(x.km||0)} KM</div>
+              <div class="money">₹${Number(x.amount||0)}</div>
+              <div class="muted">${formatStamp(x.historyCreatedAt||x.completedAt||x.cancelledAt||x.rejectedAt||x.createdAt||x.acceptedAt)}</div>
+            </div>`).join(''):'<div class="empty">No duty activity found for this driver.</div>'}
+          </div>`:''}
+      </div>`;
+  };
+
   const oldRender=window.render;
   window.render=function(){
     if(page==='dashboard')return renderDashboard();
     if(page==='drivers')return renderDrivers();
     if(page==='assignment')return renderAssignment();
     if(page==='rejected')return renderRejected();
+    if(page==='driverActivity')return renderDriverActivity();
     return oldRender();
   };
 })();
