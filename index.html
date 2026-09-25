@@ -537,7 +537,8 @@ function allDutyCard(d){
 }
 
 function renderOpen(){
-  const list=duties.filter(d=>statusOf(d)==="OPEN");
+  // Show open duties by scheduled pickup date/time, earliest first.
+  const list=duties.filter(d=>statusOf(d)==="OPEN").sort((a,b)=>dutySortKey(a)-dutySortKey(b));
 
   $("app").innerHTML=`
     <h1>🟢 Open Duties</h1>
