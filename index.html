@@ -295,6 +295,8 @@ function render(){
 
 function renderDashboard(){const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;const pending=drivers.filter(d=>driverStatus(d)==="PENDING").length;const open=duties.filter(d=>statusOf(d)==="OPEN").length;const accepted=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d))).length;$("app").innerHTML=`<div class="dashboardHero"><h2>🚕 TAXI CLUB OG</h2><p>Luxury Admin Dashboard • Manage duties, drivers and trip activity</p></div><div class="statgrid"><button class="stat clickable" onclick="showPage('drivers')"><b>${approved}</b><span>APPROVED DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="filterDriverStatus('PENDING')"><b>${pending}</b><span>PENDING DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('open')"><b>${open}</b><span>OPEN DUTIES • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('accepted')"><b>${accepted}</b><span>ACCEPTED • VIEW ALL</span></button></div><div class="card"><h2>⚡ QUICK MENU</h2><div class="quickGrid"><button class="quickBtn" onclick="showPage('duty')"><b>🚕</b>CREATE DUTY<small>Create a new driver duty</small></button><button class="quickBtn" onclick="showPage('open')"><b>🟢</b>OPEN DUTIES<small>View duties waiting for drivers</small></button><button class="quickBtn" onclick="showPage('accepted')"><b>✅</b>ACCEPTED<small>See driver assignments</small></button><button class="quickBtn" onclick="showPage('history')"><b>📋</b>HISTORY<small>Track all duty actions</small></button></div></div><div class="card"><h2>👨‍✈️ DRIVER PANEL</h2><div class="notice">Driver approval, ₹400 registration verification, documents and wallet controls are available inside Duty Management.</div><button class="btn primary" onclick="showPage('duty')">OPEN DRIVER MANAGEMENT →</button></div>`;}
 
+let editingDutyId=null;
+
 function renderDuty(){
   const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;
   const pending=drivers.filter(d=>driverStatus(d)==="PENDING").length;
@@ -321,7 +323,7 @@ function renderDuty(){
           </select>
         </div>
         <div class="field"><label>CAR</label>
-          <select id="vehicle"><option>SEDAN</option><option>SUV</option><option>MINI</option><option>INNOVA CRYSTA</option></select>
+          <select id="vehicle"><option>MINI /SEDAN</option><option>SEDAN</option><option>SUV</option><option>INNOVA</option><option>INNOVA CRISTA</option></select>
         </div>
         <div class="field"><label>PICKUP</label><input id="pickup" placeholder="Pickup location"></div>
         <div class="field"><label>DROP</label><input id="drop" placeholder="Drop location"></div>
@@ -544,6 +546,7 @@ function renderOpen(){
     <h1>🟢 Open Duties</h1>
     <div class="sub">Only duties waiting for a driver</div>
     <div class="notice">Accepted / Cancelled / Completed / Deleted duties will NOT appear here.</div>
+    <div class="notice">✏️ EDIT DUTY updates the same Duty ID. Driver App live data will receive the changed details automatically.</div>
     <div class="card">
       <h2>🚕 OPEN DUTIES (${list.length})</h2>
       ${list.length?list.map(openDutyCard).join(""):`<div class="empty">No open duties.</div>`}
@@ -559,11 +562,54 @@ function openDutyCard(d){
     <div class="money">₹${Number(d.amount||0)}</div>
     ${(d.specialService||d.note)?`<div class="notice">⭐ ${esc(d.specialService||d.note)}</div>`:""}
     <div class="actions">
+      <button class="btn primary" onclick="editDuty('${esc(d.id)}')">✏️ EDIT DUTY</button>
       <button class="btn orange" onclick="cancelDuty('${esc(d.id)}')">✕ CANCEL</button>
-      <button class="btn red" onclick="deleteDuty('${esc(d.id)}')">🗑 DELETE</button>
     </div>
   </div>`;
 }
+
+window.editDuty=async function(id){
+  const d=duties.find(x=>x.id===id);
+  if(!d)return;
+  if(statusOf(d)!=="OPEN"){
+    alert("Only OPEN duties can be edited.");
+    return;
+  }
+
+  const pickup=prompt("Pickup location:",d.pickup||""); if(pickup===null)return;
+  const drop=prompt("Drop location:",d.drop||""); if(drop===null)return;
+  const date=prompt("Date (DD/MM/YYYY):",d.date||""); if(date===null)return;
+  const time=prompt("Time:",d.time||""); if(time===null)return;
+  const vehicle=prompt("Vehicle (MINI /SEDAN / SEDAN / SUV / INNOVA / INNOVA CRISTA):",d.vehicle||""); if(vehicle===null)return;
+  const km=Number(prompt("KM:",d.km||0)); if(!Number.isFinite(km)||km<0){alert("Invalid KM");return;}
+  const amount=Number(prompt("Amount ₹:",d.amount||0)); if(!Number.isFinite(amount)||amount<0){alert("Invalid amount");return;}
+  const specialService=prompt("Special Service / Note:",d.specialService||d.note||""); if(specialService===null)return;
+
+  if(!pickup.trim()||!date.trim()||!time.trim()||!km){alert("Pickup, Date, Time and KM are required.");return;}
+
+  try{
+    await updateDoc(doc(db,"duties",id),{
+      pickup:pickup.trim(),
+      drop:drop.trim(),
+      date:normalizeDate(date.trim()),
+      time:time.trim(),
+      vehicle:vehicle.trim(),
+      km,
+      amount,
+      specialService:specialService.trim(),
+      note:specialService.trim(),
+      updatedAt:serverTimestamp(),
+      dutyUpdatedAt:serverTimestamp(),
+      notificationType:"DUTY_UPDATED",
+      notificationAt:serverTimestamp(),
+      updateVersion:Date.now()
+    });
+    alert("Duty updated successfully. Same Duty ID updated; no duplicate duty created.");
+  }catch(e){
+    console.error(e);
+    alert("DUTY UPDATE FAILED:\n"+e.message);
+  }
+};
 
 function renderAccepted(){
   const list=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d))).sort((a,b)=>dutySortKey(a)-dutySortKey(b));
@@ -1316,10 +1362,11 @@ Upload a duty screenshot. OCR reads the useful duty details; check them and crea
 <div class="ocrField">
 <label>VEHICLE</label>
 <select id="ocrVehicle">
+<option>MINI /SEDAN</option>
 <option>SEDAN</option>
 <option>SUV</option>
-<option>MINI</option>
-<option>INNOVA CRYSTA</option>
+<option>INNOVA</option>
+<option>INNOVA CRISTA</option>
 </select>
 </div>
 
