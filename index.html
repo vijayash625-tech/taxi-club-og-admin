@@ -241,6 +241,21 @@ function normalizeDate(v){
   return v||"";
 }
 
+// Convert stored duty time (HH:MM, h:MM AM/PM, etc.) to the value
+// required by <input type="time"> so Edit Duty never loses the saved time.
+function normalizeTimeInput(v){
+  const raw=String(v||"").trim();
+  if(!raw)return "";
+  let m=raw.match(/^(\d{1,2}):(\d{2})(?:\s*([AP]M))?$/i);
+  if(!m)return raw;
+  let hh=Number(m[1]), mm=Number(m[2]);
+  const ap=(m[3]||"").toUpperCase();
+  if(ap==="PM" && hh<12)hh+=12;
+  if(ap==="AM" && hh===12)hh=0;
+  if(hh<0||hh>23||mm<0||mm>59)return "";
+  return String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0");
+}
+
 window.formatDate=function(input){
   input.value=normalizeDate(input.value);
 };
@@ -341,7 +356,7 @@ function renderDuty(){
         <div class="field"><label>PICKUP</label><input id="pickup" placeholder="Pickup location" value="${esc(editing?.pickup||"")}"></div>
         <div class="field"><label>DROP</label><input id="drop" placeholder="Drop location" value="${esc(editing?.drop||"")}"></div>
         <div class="field"><label>DATE</label><input id="date" type="text" inputmode="numeric" maxlength="10" placeholder="DD/MM/YYYY" value="${esc(editing?.date||"")}" oninput="formatDate(this)"></div>
-        <div class="field"><label>TIME</label><input id="time" type="time" value="${esc(editing?.time||"")}"></div>
+        <div class="field"><label>TIME</label><input id="time" type="time" value="${esc(normalizeTimeInput(editing?.time||editing?.dutyTime||""))}"></div>
         <div class="field"><label>KM</label><input id="km" type="number" min="0" placeholder="KM" value="${editing?.km??""}"></div>
         <div class="field"><label>AMOUNT ₹</label><input id="amount" type="number" min="0" placeholder="Amount" value="${editing?.amount??""}"></div>
         <div class="field"><label>LOCAL RENTAL HOURS</label><input id="rentalHours" type="number" min="1" placeholder="Only for Local Rental" value="${editing?.rentalHours||""}"></div>
@@ -699,7 +714,9 @@ async function updateDuty(){
     const pickup=$("pickup").value.trim();
     const drop=$("drop").value.trim();
     const date=normalizeDate($("date").value.trim());
-    const time=$("time").value;
+    // Keep the existing saved time if the browser cannot populate the time input.
+    const enteredTime=$("time").value.trim();
+    const time=enteredTime || normalizeTimeInput(existing.time||existing.dutyTime||"") || String(existing.time||existing.dutyTime||"").trim();
     const vehicle=$("vehicle").value;
     const dutyType=$("dutyType").value;
     const km=Number($("km").value);
@@ -1136,32 +1153,43 @@ async function completeDuty(id){
 }
 
 function historySafe(d){
+  // Older Driver App duty records may not copy the driver's mobile/name onto
+  // the duty. Resolve the driver here so Driver Activity can find the same
+  // person by mobile, Driver ID or UID even after the duty moves to history.
+  const resolved=driverForDuty(d);
+  const driverId=resolved?.id||d.driverId||d.acceptedDriverId||d.rejectedDriverId||d.cancelledDriverId||"";
+  const driverUid=resolved?.uid||d.acceptedByUid||d.rejectedByUid||d.cancelledByUid||d.completedByUid||"";
+  const driverName=resolved?.name||resolved?.driverName||d.driverName||d.acceptedBy||d.rejectedBy||d.completedBy||d.cancelledBy||"";
+  const driverMobile=resolved?.mobile||resolved?.phone||resolved?.driverMobile||d.driverMobile||d.mobile||d.phone||"";
+  const resolvedDriverId=resolved?.driverId||d.driverId||d.acceptedDriverId||d.rejectedDriverId||d.cancelledDriverId||"";
   return {
     dutyId:d.id||"",
     pickup:d.pickup||"",
     drop:d.drop||"",
-    date:d.date||"",
-    time:d.time||"",
-    vehicle:d.vehicle||"",
+    date:d.date||d.dutyDate||"",
+    time:d.time||d.dutyTime||"",
+    vehicle:d.vehicle||d.vehicleNumber||"",
     km:Number(d.km||0),
     amount:Number(d.amount||0),
     specialService:d.specialService||d.note||"",
-    driverId:d.driverId||d.acceptedDriverId||"",
-    acceptedDriverId:d.acceptedDriverId||"",
-    acceptedByUid:d.acceptedByUid||"",
-    driverName:d.driverName||d.acceptedBy||"",
-    driverMobile:d.driverMobile||"",
-    acceptedBy:d.acceptedBy||"",
+    driverId:driverId,
+    driverUid:driverUid,
+    driverIdNumber:resolvedDriverId,
+    acceptedDriverId:d.acceptedDriverId||resolvedDriverId||"",
+    acceptedByUid:d.acceptedByUid||driverUid||"",
+    driverName:driverName,
+    driverMobile:driverMobile,
+    acceptedBy:d.acceptedBy||driverName||"",
     rejectedBy:d.rejectedBy||"",
-    rejectedByUid:d.rejectedByUid||"",
-    rejectedDriverId:d.rejectedDriverId||"",
+    rejectedByUid:d.rejectedByUid||driverUid||"",
+    rejectedDriverId:d.rejectedDriverId||resolvedDriverId||"",
     rejectedAt:d.rejectedAt||"",
     cancelledBy:d.cancelledBy||"",
-    cancelledByUid:d.cancelledByUid||"",
-    cancelledDriverId:d.cancelledDriverId||"",
+    cancelledByUid:d.cancelledByUid||driverUid||"",
+    cancelledDriverId:d.cancelledDriverId||resolvedDriverId||"",
     cancelledAt:d.cancelledAt||"",
-    completedBy:d.completedBy||"",
-    completedByUid:d.completedByUid||"",
+    completedBy:d.completedBy||driverName||"",
+    completedByUid:d.completedByUid||driverUid||"",
     completedAt:d.completedAt||"",
     acceptedAt:d.acceptedAt||""
   };
@@ -1937,7 +1965,7 @@ window.createDutyFromOCR=async function(){
     const belongs=(item)=>{
       const itemMob=String(item.driverMobile||item.mobile||item.phone||'').replace(/\D/g,'');
       const itemIds=[
-        item.acceptedByUid,item.acceptedDriverId,item.driverId,
+        item.acceptedByUid,item.acceptedDriverId,item.driverId,item.driverUid,item.driverIdNumber,
         item.rejectedByUid,item.rejectedDriverId,
         item.cancelledByUid,item.cancelledDriverId,
         item.completedByUid,item.uid
