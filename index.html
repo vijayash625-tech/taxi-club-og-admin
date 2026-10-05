@@ -260,6 +260,8 @@ let unDuties=null;
 
 /* ===== DRIVER MOBILE SEARCH STATE ===== */
 let driverMobileSearch="";
+let driverActivityQuery="";
+let driverActivityCar="";
 
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
@@ -559,10 +561,6 @@ function renderDrivers(){
     <h1>👨‍✈️ Driver List</h1>
     <div class="sub">Approval, documents and wallet management</div>
     <div class="statgrid"><div class="stat"><b>${drivers.length}</b><span>TOTAL DRIVERS</span></div><div class="stat"><b>${approved}</b><span>APPROVED</span></div><div class="stat"><b>${pending}</b><span>PENDING</span></div><div class="stat"><b>₹400</b><span>REGISTRATION FEE</span></div></div>
-    <div class="card"><h2>🔎 SEARCH DRIVER</h2>
-      <div class="driver-search"><label>SEARCH BY MOBILE NUMBER</label><div class="search-row"><input id="driverMobileSearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter driver mobile number" value="${esc(driverMobileSearch)}" oninput="filterDriversByMobile(this.value)"><button class="btn gray" onclick="clearDriverMobileSearch()">CLEAR</button></div><div id="driverSearchCount" class="search-count"></div></div>
-      <div id="driverApprovalList">${renderDriverApprovalList(driverStatusFilter)}</div>
-    </div>
     <div class="card" style="border-top:5px solid #7357e8">
       <h2>🆕 CREATE / ACTIVATE DRIVER ID</h2>
       <div class="notice">Mobile number ஏற்கனவே இருந்தால் duplicate உருவாகாது. அதே driver update செய்து உடனே ACTIVE ஆகும்.</div>
@@ -573,6 +571,10 @@ function renderDrivers(){
         <div class="field"><label>VEHICLE CATEGORY *</label><select id="manualDriverCategory"><option value="SEDAN">SEDAN</option><option value="SUV">SUV</option><option value="MINI">MINI</option><option value="OTHER">OTHER</option></select></div>
       </div>
       <div class="actions"><button class="btn primary" onclick="createOrActivateDriverByMobile()">🆕 CREATE / ACTIVATE DRIVER ID</button></div>
+    </div>
+    <div class="card"><h2>🔎 SEARCH DRIVER</h2>
+      <div class="driver-search"><label>SEARCH BY MOBILE NUMBER</label><div class="search-row"><input id="driverMobileSearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter driver mobile number" value="${esc(driverMobileSearch)}" oninput="filterDriversByMobile(this.value)"><button class="btn gray" onclick="clearDriverMobileSearch()">CLEAR</button></div><div id="driverSearchCount" class="search-count"></div></div>
+      <div id="driverApprovalList">${renderDriverApprovalList(driverStatusFilter)}</div>
     </div>
     <div class="card"><h2>📊 QUICK DRIVER HISTORY</h2>
       <div class="notice">Driver mobile number போட்டால் accepted, completed, cancelled, rejected, active duty, amount, penalty மற்றும் wallet history பார்க்கலாம்.</div>
@@ -893,8 +895,8 @@ function normalizeMobileNumber(v){
 window.openDriverActivityById=function(id){
   const d=drivers.find(x=>x.id===id);
   if(!d)return;
-  driverActivityQuery=normalizeMobileNumber(d.mobile||d.phone||d.driverMobile||"");
-  driverActivityCar="";
+  window.driverActivityQuery=normalizeMobileNumber(d.mobile||d.phone||d.driverMobile||"");
+  window.driverActivityCar="";
   showPage("driverActivity");
 };
 
@@ -902,11 +904,11 @@ window.openDriverActivityFromQuickSearch=function(){
   const value=String($("driverActivityQuickSearch")?.value||"").trim();
   if(!value){alert("Driver mobile number or car number enter pannunga.");return;}
   if(/\d{8,15}/.test(value.replace(/\D/g,""))){
-    driverActivityQuery=value;
-    driverActivityCar="";
+    window.driverActivityQuery=value;
+    window.driverActivityCar="";
   }else{
-    driverActivityQuery="";
-    driverActivityCar=value;
+    window.driverActivityQuery="";
+    window.driverActivityCar=value;
   }
   showPage("driverActivity");
 };
@@ -1456,7 +1458,23 @@ try{
       configurable:true,
       get:()=>driverStatusFilter,
       set:v=>{driverStatusFilter=v;}
-    }
+    },
+    driverActivityQuery:{
+      configurable:true,
+      get:()=>driverActivityQuery,
+      set:v=>{driverActivityQuery=String(v||"");}
+    },
+    driverActivityCar:{
+      configurable:true,
+      get:()=>driverActivityCar,
+      set:v=>{driverActivityCar=String(v||"");}
+    },
+    $:{configurable:true,value:$},
+    esc:{configurable:true,value:esc},
+    statusOf:{configurable:true,value:statusOf},
+    stampMillis:{configurable:true,value:stampMillis},
+    formatStamp:{configurable:true,value:formatStamp},
+    formatDutyTime:{configurable:true,value:formatDutyTime}
   });
 }catch(e){
   console.error("STATE BRIDGE FAILED",e);
@@ -1974,11 +1992,9 @@ window.createDutyFromOCR=async function(){
 </style>
 <script>
 /* ===== DRIVER ACTIVITY REPORT (standalone) ===== */
-let driverActivityQuery='';
-let driverActivityCar='';
 window.renderDriverActivity=function(){
-  const q=String(driverActivityQuery||'').replace(/\D/g,'');
-  const cq=String(driverActivityCar||'').trim().toLowerCase();
+  const q=String(window.driverActivityQuery||'').replace(/\D/g,'');
+  const cq=String(window.driverActivityCar||'').trim().toLowerCase();
   const matchingDrivers=drivers.filter(d=>{
     const mobile=String(d.mobile||d.phone||d.driverMobile||'').replace(/\D/g,'');
     const car=String(d.vehicleNumber||d.carNumber||d.vehicleNo||'').trim().toLowerCase();
@@ -2031,10 +2047,10 @@ window.renderDriverActivity=function(){
     <div class="card">
       <h2>🔎 DRIVER SEARCH</h2>
       <div class="grid">
-        <div class="field"><label>DRIVER MOBILE NUMBER</label><input id="driverActivitySearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter mobile number" value="${esc(driverActivityQuery)}" oninput="driverActivityQuery=this.value;renderDriverActivity()"></div>
-        <div class="field"><label>CAR / VEHICLE NUMBER</label><input id="driverActivityCar" type="text" placeholder="Enter car number" value="${esc(driverActivityCar)}" oninput="driverActivityCar=this.value;renderDriverActivity()"></div>
+        <div class="field"><label>DRIVER MOBILE NUMBER</label><input id="driverActivitySearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter mobile number" value="${esc(window.driverActivityQuery||'')}" oninput="window.driverActivityQuery=this.value;renderDriverActivity()"></div>
+        <div class="field"><label>CAR / VEHICLE NUMBER</label><input id="driverActivityCar" type="text" placeholder="Enter car number" value="${esc(window.driverActivityCar||'')}" oninput="window.driverActivityCar=this.value;renderDriverActivity()"></div>
       </div>
-      <div class="actions"><button class="btn gray" onclick="driverActivityQuery='';driverActivityCar='';renderDriverActivity()">CLEAR</button></div>
+      <div class="actions"><button class="btn gray" onclick="window.driverActivityQuery='';window.driverActivityCar='';renderDriverActivity()">CLEAR</button></div>
       <div class="search-count">${(!q&&!cq)?'Enter mobile or car number to view full history.':matchingDrivers.length===0?'No driver found.':matchingDrivers.length>1?'More than one driver matched; enter the full number.':'Driver: '+esc(driver.name||driver.driverName||'Driver')+' • '+esc(driver.mobile||driver.phone||'')+' • Car: '+esc(driver.vehicleNumber||driver.carNumber||'-')}</div>
     </div>
     ${driver?`
