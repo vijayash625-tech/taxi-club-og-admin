@@ -221,6 +221,7 @@ let unDuties=null;
 
 /* ===== DRIVER MOBILE SEARCH STATE ===== */
 let driverMobileSearch="";
+let editingDutyId=null;
 
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
@@ -295,17 +296,18 @@ function render(){
 
 function renderDashboard(){const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;const pending=drivers.filter(d=>driverStatus(d)==="PENDING").length;const open=duties.filter(d=>statusOf(d)==="OPEN").length;const accepted=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d))).length;$("app").innerHTML=`<div class="dashboardHero"><h2>🚕 TAXI CLUB OG</h2><p>Luxury Admin Dashboard • Manage duties, drivers and trip activity</p></div><div class="statgrid"><button class="stat clickable" onclick="showPage('drivers')"><b>${approved}</b><span>APPROVED DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="filterDriverStatus('PENDING')"><b>${pending}</b><span>PENDING DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('open')"><b>${open}</b><span>OPEN DUTIES • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('accepted')"><b>${accepted}</b><span>ACCEPTED • VIEW ALL</span></button></div><div class="card"><h2>⚡ QUICK MENU</h2><div class="quickGrid"><button class="quickBtn" onclick="showPage('duty')"><b>🚕</b>CREATE DUTY<small>Create a new driver duty</small></button><button class="quickBtn" onclick="showPage('open')"><b>🟢</b>OPEN DUTIES<small>View duties waiting for drivers</small></button><button class="quickBtn" onclick="showPage('accepted')"><b>✅</b>ACCEPTED<small>See driver assignments</small></button><button class="quickBtn" onclick="showPage('history')"><b>📋</b>HISTORY<small>Track all duty actions</small></button></div></div><div class="card"><h2>👨‍✈️ DRIVER PANEL</h2><div class="notice">Driver approval, ₹400 registration verification, documents and wallet controls are available inside Duty Management.</div><button class="btn primary" onclick="showPage('duty')">OPEN DRIVER MANAGEMENT →</button></div>`;}
 
-let editingDutyId=null;
-
 function renderDuty(){
   const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;
   const pending=drivers.filter(d=>driverStatus(d)==="PENDING").length;
   const open=duties.filter(d=>statusOf(d)==="OPEN").length;
   const accepted=duties.filter(d=>statusOf(d)==="ACCEPTED"||statusOf(d)==="STARTED").length;
 
+  const editing=editingDutyId ? duties.find(x=>x.id===editingDutyId) : null;
+  const isEdit=!!editing;
+
   $("app").innerHTML=`
-    <h1>🚕 Duty Management</h1>
-    <div class="sub">Create duty + driver approval/payment control</div>
+    <h1>${isEdit?"✏️ Edit Duty":"🚕 Duty Management"}</h1>
+    <div class="sub">${isEdit?"Edit the existing OPEN duty and update the same duty for drivers":"Create duty + driver approval/payment control"}</div>
 
     <div class="statgrid">
       <button class="stat clickable" onclick="showPage('drivers')"><b>${approved}</b><span>APPROVED DRIVERS • VIEW ALL</span></button>
@@ -315,54 +317,59 @@ function renderDuty(){
     </div>
 
     <div class="card">
-      <h2>➕ CREATE DUTY</h2>
+      <h2>${isEdit?"✏️ EDIT EXISTING DUTY":"➕ CREATE DUTY"}</h2>
+      ${isEdit?`<div class="notice">இந்த Duty-ஐ delete செய்து புதிய Duty உருவாக்கவில்லை. இதே Duty ID update ஆகும். Update செய்தவுடன் Driver App-ல் latest details வரும்.</div>`:""}
       <div class="grid">
         <div class="field"><label>DUTY CATEGORY</label>
           <select id="dutyType">
-            <option>AIRPORT PICKUP / DROP</option><option>ONE WAY</option><option>ROUND TRIP</option><option>LOCAL RENTAL</option><option>OUTSTATION</option>
+            <option ${editing?.dutyType==="AIRPORT PICKUP / DROP"?"selected":""}>AIRPORT PICKUP / DROP</option>
+            <option ${editing?.dutyType==="ONE WAY"?"selected":""}>ONE WAY</option>
+            <option ${editing?.dutyType==="ROUND TRIP"?"selected":""}>ROUND TRIP</option>
+            <option ${editing?.dutyType==="LOCAL RENTAL"?"selected":""}>LOCAL RENTAL</option>
+            <option ${editing?.dutyType==="OUTSTATION"?"selected":""}>OUTSTATION</option>
           </select>
         </div>
         <div class="field"><label>CAR</label>
-          <select id="vehicle"><option>MINI /SEDAN</option><option>SEDAN</option><option>SUV</option><option>INNOVA</option><option>INNOVA CRISTA</option></select>
+          <select id="vehicle">
+            <option ${editing?.vehicle==="MINI/SEDAN"?"selected":""}>MINI /SEDAN</option>
+            <option ${editing?.vehicle==="SEDAN"?"selected":""}>SEDAN</option>
+            <option ${editing?.vehicle==="SUV"?"selected":""}>SUV</option>
+            <option ${editing?.vehicle==="INNOVA"?"selected":""}>INNOVA</option>
+            <option ${editing?.vehicle==="INNOVA CRISTA"?"selected":""}>INNOVA CRISTA</option>
+          </select>
         </div>
-        <div class="field"><label>PICKUP</label><input id="pickup" placeholder="Pickup location"></div>
-        <div class="field"><label>DROP</label><input id="drop" placeholder="Drop location"></div>
-        <div class="field"><label>DATE</label><input id="date" type="text" inputmode="numeric" maxlength="10" placeholder="DD/MM/YYYY" oninput="formatDate(this)"></div>
-        <div class="field"><label>TIME</label><input id="time" type="time"></div>
-        <div class="field"><label>KM</label><input id="km" type="number" min="0" placeholder="KM"></div>
-        <div class="field"><label>AMOUNT ₹</label><input id="amount" type="number" min="0" placeholder="Amount"></div>
-        <div class="field"><label>LOCAL RENTAL HOURS</label><input id="rentalHours" type="number" min="1" placeholder="Only for Local Rental"></div>
-        <div class="field"><label>SPECIAL SERVICE / NOTE</label><input id="specialService" placeholder="Optional — shown to driver"></div>
+        <div class="field"><label>PICKUP</label><input id="pickup" placeholder="Pickup location" value="${esc(editing?.pickup||"")}"></div>
+        <div class="field"><label>DROP</label><input id="drop" placeholder="Drop location" value="${esc(editing?.drop||"")}"></div>
+        <div class="field"><label>DATE</label><input id="date" type="text" inputmode="numeric" maxlength="10" placeholder="DD/MM/YYYY" value="${esc(editing?.date||"")}" oninput="formatDate(this)"></div>
+        <div class="field"><label>TIME</label><input id="time" type="time" value="${esc(editing?.time||"")}"></div>
+        <div class="field"><label>KM</label><input id="km" type="number" min="0" placeholder="KM" value="${editing?.km??""}"></div>
+        <div class="field"><label>AMOUNT ₹</label><input id="amount" type="number" min="0" placeholder="Amount" value="${editing?.amount??""}"></div>
+        <div class="field"><label>LOCAL RENTAL HOURS</label><input id="rentalHours" type="number" min="1" placeholder="Only for Local Rental" value="${editing?.rentalHours||""}"></div>
+        <div class="field"><label>SPECIAL SERVICE / NOTE</label><input id="specialService" placeholder="Optional — shown to driver" value="${esc(editing?.specialService||editing?.note||"")}"></div>
       </div>
-      <div class="actions"><button class="btn primary" onclick="createDuty()">✅ CREATE DUTY</button><button class="btn gray" onclick="showPage('all')">📚 VIEW ALL DUTIES</button></div>
+      <div class="actions">
+        ${isEdit
+          ? `<button class="btn primary" onclick="updateDuty()">🔄 UPDATE DUTY</button><button class="btn gray" onclick="cancelDutyEdit()">✕ CANCEL EDIT</button>`
+          : `<button class="btn primary" onclick="createDuty()">✅ CREATE DUTY</button><button class="btn gray" onclick="showPage('all')">📚 VIEW ALL DUTIES</button>`}
+      </div>
     </div>
 
+    ${isEdit?`<div class="card"><h2>👨‍✈️ DRIVER APPROVAL</h2><div class="notice">Duty editing is limited to OPEN duties. Driver approval and wallet controls remain unchanged.</div></div>`:`
     <div class="card">
       <h2>👨‍✈️ DRIVER APPROVAL</h2>
       <div class="notice">Driver registers → ₹400 payment → Admin approves. Only APPROVED drivers can use the Driver App.</div>
 
-      <!-- ===== DRIVER MOBILE SEARCH ===== -->
       <div class="driver-search">
         <label>🔎 SEARCH DRIVER BY MOBILE NUMBER</label>
         <div class="search-row">
-          <input
-            id="driverMobileSearch"
-            type="tel"
-            inputmode="numeric"
-            maxlength="15"
-            placeholder="Enter driver mobile number"
-            value="${esc(driverMobileSearch)}"
-            oninput="filterDriversByMobile(this.value)"
-          >
+          <input id="driverMobileSearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter driver mobile number" value="${esc(driverMobileSearch)}" oninput="filterDriversByMobile(this.value)">
           <button class="btn gray" onclick="clearDriverMobileSearch()">CLEAR</button>
         </div>
         <div id="driverSearchCount" class="search-count"></div>
       </div>
 
-      <div id="driverApprovalList">
-        ${renderDriverApprovalList()}
-      </div>
-    </div>
+      <div id="driverApprovalList">${renderDriverApprovalList()}</div>
+    </div>`}
   `;
 }
 
@@ -451,7 +458,8 @@ function driverCard(d){
         <div class="name">👨‍✈️ ${esc(d.name||d.driverName||"Driver")}</div>
         <div class="muted">📱 ${esc(d.mobile||d.phone||"")}<br>
         🪪 ${esc(d.licenseNumber||"-")}<br>
-        🚕 ${esc(d.vehicleNumber||"-")} - ${esc(d.vehicleModel||d.vehicle||"-")}</div>
+        🚕 ${esc(d.vehicleNumber||"-")} - ${esc(d.vehicleModel||d.vehicle||"-")}<br>
+        🆔 Driver ID: <b>${esc(d.driverId||"-")}</b></div>
       </div>
       <span class="badge ${s==="APPROVED"?"approved":s==="BLOCKED"?"blocked":s==="REJECTED"?"rejected":"pending"}">${esc(s)}</span>
     </div>
@@ -467,6 +475,7 @@ function driverCard(d){
       ${s!=="REJECTED"?`<button class="btn orange" onclick="rejectDriver('${esc(d.id)}')">✕ REJECT</button>`:""}
       ${s!=="BLOCKED"?`<button class="btn red" onclick="blockDriver('${esc(d.id)}')">⛔ BLOCK</button>`:
       `<button class="btn green" onclick="unblockDriver('${esc(d.id)}')">UNBLOCK</button>`}
+      <button class="btn blue" onclick="createDriverId('${esc(d.id)}')">🆔 ${d.driverId?'EDIT DRIVER ID':'CREATE DRIVER ID'}</button>
       <button class="btn gray" onclick="deleteDriver('${esc(d.id)}')">🗑 DELETE</button>
     </div>
 
@@ -546,7 +555,6 @@ function renderOpen(){
     <h1>🟢 Open Duties</h1>
     <div class="sub">Only duties waiting for a driver</div>
     <div class="notice">Accepted / Cancelled / Completed / Deleted duties will NOT appear here.</div>
-    <div class="notice">✏️ EDIT DUTY updates the same Duty ID. Driver App live data will receive the changed details automatically.</div>
     <div class="card">
       <h2>🚕 OPEN DUTIES (${list.length})</h2>
       ${list.length?list.map(openDutyCard).join(""):`<div class="empty">No open duties.</div>`}
@@ -567,49 +575,6 @@ function openDutyCard(d){
     </div>
   </div>`;
 }
-
-window.editDuty=async function(id){
-  const d=duties.find(x=>x.id===id);
-  if(!d)return;
-  if(statusOf(d)!=="OPEN"){
-    alert("Only OPEN duties can be edited.");
-    return;
-  }
-
-  const pickup=prompt("Pickup location:",d.pickup||""); if(pickup===null)return;
-  const drop=prompt("Drop location:",d.drop||""); if(drop===null)return;
-  const date=prompt("Date (DD/MM/YYYY):",d.date||""); if(date===null)return;
-  const time=prompt("Time:",d.time||""); if(time===null)return;
-  const vehicle=prompt("Vehicle (MINI /SEDAN / SEDAN / SUV / INNOVA / INNOVA CRISTA):",d.vehicle||""); if(vehicle===null)return;
-  const km=Number(prompt("KM:",d.km||0)); if(!Number.isFinite(km)||km<0){alert("Invalid KM");return;}
-  const amount=Number(prompt("Amount ₹:",d.amount||0)); if(!Number.isFinite(amount)||amount<0){alert("Invalid amount");return;}
-  const specialService=prompt("Special Service / Note:",d.specialService||d.note||""); if(specialService===null)return;
-
-  if(!pickup.trim()||!date.trim()||!time.trim()||!km){alert("Pickup, Date, Time and KM are required.");return;}
-
-  try{
-    await updateDoc(doc(db,"duties",id),{
-      pickup:pickup.trim(),
-      drop:drop.trim(),
-      date:normalizeDate(date.trim()),
-      time:time.trim(),
-      vehicle:vehicle.trim(),
-      km,
-      amount,
-      specialService:specialService.trim(),
-      note:specialService.trim(),
-      updatedAt:serverTimestamp(),
-      dutyUpdatedAt:serverTimestamp(),
-      notificationType:"DUTY_UPDATED",
-      notificationAt:serverTimestamp(),
-      updateVersion:Date.now()
-    });
-    alert("Duty updated successfully. Same Duty ID updated; no duplicate duty created.");
-  }catch(e){
-    console.error(e);
-    alert("DUTY UPDATE FAILED:\n"+e.message);
-  }
-};
 
 function renderAccepted(){
   const list=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d))).sort((a,b)=>dutySortKey(a)-dutySortKey(b));
@@ -689,6 +654,100 @@ function historyCard(h){
     ${h.cancellationDeduction||h.walletDeduction?`<div class="notice">Wallet deduction: ₹${Number(h.cancellationDeduction||h.walletDeduction)}</div>`:""}
     <div class="muted">${formatStamp(h.historyCreatedAt||h.createdAt||h.completedAt||h.cancelledAt||h.rejectedAt||h.acceptedAt)}</div>
   </div>`;
+}
+
+window.editDuty=function(id){
+  const d=duties.find(x=>x.id===id);
+  if(!d)return;
+
+  if(statusOf(d)!=="OPEN"){
+    alert("இந்த Duty-ஐ edit செய்ய முடியாது. Driver accept செய்த Duty-க்கு இந்த Edit option இல்லை.");
+    return;
+  }
+
+  editingDutyId=id;
+  showPage("duty");
+};
+
+window.cancelDutyEdit=function(){
+  editingDutyId=null;
+  showPage("open");
+};
+
+async function updateDuty(){
+  if(!editingDutyId){
+    alert("No duty selected for editing.");
+    return;
+  }
+
+  const existing=duties.find(x=>x.id===editingDutyId);
+  if(!existing){
+    alert("Duty not found.");
+    editingDutyId=null;
+    showPage("open");
+    return;
+  }
+
+  if(statusOf(existing)!=="OPEN"){
+    alert("இந்த Duty ஏற்கனவே Driver எடுத்துவிட்டார். OPEN Duty மட்டும் edit செய்யலாம்.");
+    editingDutyId=null;
+    showPage("open");
+    return;
+  }
+
+  try{
+    const pickup=$("pickup").value.trim();
+    const drop=$("drop").value.trim();
+    const date=normalizeDate($("date").value.trim());
+    const time=$("time").value;
+    const vehicle=$("vehicle").value;
+    const dutyType=$("dutyType").value;
+    const km=Number($("km").value);
+    const amount=Number($("amount").value);
+    const rentalHours=Number($("rentalHours").value||0);
+    const specialService=$("specialService").value.trim();
+
+    if(!pickup||!date||!time||!km||amount<0 || (dutyType!=="LOCAL RENTAL"&&!drop)){
+      alert(dutyType==="LOCAL RENTAL"
+        ? "Pickup, Date, Time, KM and Amount enter pannunga."
+        : "Pickup, Drop, Date, Time, KM and Amount enter pannunga.");
+      return;
+    }
+
+    if(dutyType==="LOCAL RENTAL" && rentalHours<1){
+      alert("LOCAL RENTAL-ku hours enter pannunga.");
+      return;
+    }
+
+    await updateDoc(doc(db,"duties",editingDutyId),{
+      dutyType,
+      rentalHours:dutyType==="LOCAL RENTAL"?rentalHours:0,
+      pickup,
+      drop,
+      date,
+      time,
+      vehicle,
+      km,
+      amount,
+      specialService,
+      note:specialService,
+
+      // Keep the same duty document / same duty ID.
+      // Existing Driver App notification/listener flow can react to this update.
+      updatedAt:serverTimestamp(),
+      dutyUpdatedAt:serverTimestamp(),
+      notificationType:"DUTY_UPDATED",
+      notificationAt:serverTimestamp(),
+      updateVersion:Date.now()
+    });
+
+    editingDutyId=null;
+    alert("Duty updated successfully. Driver App will receive the updated duty.");
+    showPage("open");
+  }catch(e){
+    console.error(e);
+    alert("DUTY UPDATE FAILED: "+e.message);
+  }
 }
 
 async function createDuty(){
@@ -814,7 +873,25 @@ async function deleteDriver(id){
   }
 }
 
+async function createDriverId(id){
+  const d=drivers.find(x=>x.id===id);
+  if(!d)return;
+  const current=String(d.driverId||"");
+  const value=prompt("Enter Driver ID",current);
+  if(value===null)return;
+  const driverId=value.trim();
+  if(!driverId){alert("Driver ID enter pannunga.");return;}
+  try{
+    await updateDoc(doc(db,"drivers",id),{driverId,updatedAt:serverTimestamp()});
+    alert("Driver ID saved: "+driverId);
+  }catch(e){
+    console.error(e);
+    alert("Driver ID save failed: "+e.message);
+  }
+}
+
 async function addWallet(id){
+  const d=drivers.find(x=>x.id===id)||{};
   const input=$("wallet-"+id);
   const amount=Number(input?.value);
 
@@ -842,6 +919,10 @@ async function addWallet(id){
       });
     });
 
+    await addDoc(collection(db,"wallet_history"),{
+      driverId:id, driverMobile:d.mobile||d.phone||d.driverMobile||"", driverName:d.name||d.driverName||"",
+      type:"ADD", amount, reason:"ADMIN WALLET ADD", createdAt:serverTimestamp()
+    });
     input.value="";
     alert("Wallet added.");
   }catch(e){
@@ -851,6 +932,7 @@ async function addWallet(id){
 }
 
 async function deductWallet(id){
+  const d=drivers.find(x=>x.id===id)||{};
   const input=$("wallet-"+id);
   const amount=Number(input?.value);
 
@@ -881,6 +963,10 @@ async function deductWallet(id){
       });
     });
 
+    await addDoc(collection(db,"wallet_history"),{
+      driverId:id, driverMobile:d.mobile||d.phone||d.driverMobile||"", driverName:d.name||d.driverName||"",
+      type:"DEDUCT", amount, reason:"ADMIN WALLET DEDUCT", createdAt:serverTimestamp()
+    });
     input.value="";
     alert("Wallet deducted.");
   }catch(e){
@@ -1203,6 +1289,9 @@ function startListeners(){
 }
 
 window.createDuty=createDuty;
+window.editDuty=editDuty;
+window.updateDuty=updateDuty;
+window.cancelDutyEdit=cancelDutyEdit;
 window.approveDriver=approveDriver;
 window.rejectDriver=rejectDriver;
 window.blockDriver=blockDriver;
@@ -1362,11 +1451,10 @@ Upload a duty screenshot. OCR reads the useful duty details; check them and crea
 <div class="ocrField">
 <label>VEHICLE</label>
 <select id="ocrVehicle">
-<option>MINI /SEDAN</option>
 <option>SEDAN</option>
 <option>SUV</option>
-<option>INNOVA</option>
-<option>INNOVA CRISTA</option>
+<option>MINI</option>
+<option>INNOVA CRYSTA</option>
 </select>
 </div>
 
@@ -1817,62 +1905,174 @@ window.createDutyFromOCR=async function(){
   };
 
 
+  let walletHistory=[];
   let driverActivityQuery='';
+  onSnapshot(collection(db,"wallet_history"),snap=>{
+    walletHistory=snap.docs.map(x=>({id:x.id,...x.data()}));
+    if(page==='driverActivity') renderDriverActivity();
+  },err=>console.warn('wallet_history read failed:',err.message));
+
   window.renderDriverActivity=function(){
-    const q=String(driverActivityQuery||'').replace(/\D/g,'');
-    const matchingDrivers=q?drivers.filter(d=>String(d.mobile||d.phone||d.driverMobile||'').replace(/\D/g,'').includes(q)):[];
+    const q=String(driverActivityQuery||'').trim().toLowerCase();
+    const matchingDrivers=q?drivers.filter(d=>{
+      const mobile=String(d.mobile||d.phone||d.driverMobile||'').replace(/\D/g,'');
+      const car=String(d.vehicleNumber||d.carNumber||'').toLowerCase();
+      const queryDigits=q.replace(/\D/g,'');
+      return (queryDigits && mobile.includes(queryDigits)) || car.includes(q);
+    }):[];
     const driver=matchingDrivers.length===1?matchingDrivers[0]:null;
+
     const ids=new Set();
     const mobiles=new Set();
     const names=new Set();
+
     if(driver){
       [driver.id,driver.uid,driver.driverId].filter(Boolean).forEach(v=>ids.add(String(v)));
-      [driver.mobile,driver.phone,driver.driverMobile].filter(Boolean).forEach(v=>mobiles.add(String(v).replace(/\D/g,'')));
-      [driver.name,driver.driverName].filter(Boolean).forEach(v=>names.add(String(v).toLowerCase()));
+      [driver.mobile,driver.phone,driver.driverMobile].filter(Boolean)
+        .forEach(v=>mobiles.add(String(v).replace(/\D/g,'')));
+      [driver.name,driver.driverName].filter(Boolean)
+        .forEach(v=>names.add(String(v).toLowerCase()));
     }
+
     const belongs=(item)=>{
       const itemMob=String(item.driverMobile||item.mobile||item.phone||'').replace(/\D/g,'');
-      const itemIds=[item.acceptedByUid,item.acceptedDriverId,item.driverId,item.rejectedByUid,item.rejectedDriverId,item.uid].filter(Boolean).map(String);
-      const itemNames=[item.driverName,item.acceptedBy,item.rejectedBy,item.completedBy,item.cancelledBy].filter(Boolean).map(v=>String(v).toLowerCase());
-      return (itemMob&&mobiles.has(itemMob)) || itemIds.some(v=>ids.has(v)) || itemNames.some(v=>names.has(v));
+      const itemIds=[
+        item.acceptedByUid,item.acceptedDriverId,item.driverId,
+        item.rejectedByUid,item.rejectedDriverId,
+        item.cancelledByUid,item.cancelledDriverId,
+        item.completedByUid,item.uid
+      ].filter(Boolean).map(String);
+
+      const itemNames=[
+        item.driverName,item.acceptedBy,item.rejectedBy,
+        item.completedBy,item.cancelledBy
+      ].filter(Boolean).map(v=>String(v).toLowerCase());
+
+      return (itemMob&&mobiles.has(itemMob)) ||
+             itemIds.some(v=>ids.has(v)) ||
+             itemNames.some(v=>names.has(v));
     };
+
     const active=driver?duties.filter(d=>belongs(d)&&['OPEN','ACCEPTED','STARTED'].includes(statusOf(d))):[];
     const completed=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('COMPLETE')):[];
     const cancelled=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('CANCEL')):[];
     const rejected=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('REJECT')):[];
-    const all=[...active.map(d=>({...d,__activityStatus:statusOf(d)})),
+    const walletRows=driver?walletHistory.filter(w=>belongs(w)):[];
+
+    const all=[
+      ...active.map(d=>({...d,__activityStatus:statusOf(d)})),
       ...completed.map(h=>({...h,__activityStatus:'COMPLETED'})),
       ...cancelled.map(h=>({...h,__activityStatus:'CANCELLED'})),
-      ...rejected.map(h=>({...h,__activityStatus:'REJECTED'}))]
-      .sort((a,b)=>stampMillis(b.historyCreatedAt||b.completedAt||b.cancelledAt||b.rejectedAt||b.createdAt||b.acceptedAt)-stampMillis(a.historyCreatedAt||a.completedAt||a.cancelledAt||a.rejectedAt||a.createdAt||a.acceptedAt));
+      ...rejected.map(h=>({...h,__activityStatus:'REJECTED'}))
+    ].sort((a,b)=>
+      stampMillis(b.historyCreatedAt||b.completedAt||b.cancelledAt||b.rejectedAt||b.createdAt||b.acceptedAt) -
+      stampMillis(a.historyCreatedAt||a.completedAt||a.cancelledAt||a.rejectedAt||a.createdAt||a.acceptedAt)
+    );
+
+    // Per-duty penalty: cancellationDeduction / walletDeduction.
+    // If a future history record stores another penalty field, include it as well.
+    const penaltyOf=(x)=>Number(
+      x.cancellationDeduction ??
+      x.walletDeduction ??
+      x.penalty ??
+      x.penaltyAmount ??
+      0
+    );
+
+    const totalAmount=all.reduce((sum,x)=>sum+Number(x.amount||0),0);
+    const totalPenalty=all.reduce((sum,x)=>sum+penaltyOf(x),0);
+    const completedAmount=completed.reduce((sum,x)=>sum+Number(x.amount||0),0);
+    const completedPenalty=completed.reduce((sum,x)=>sum+penaltyOf(x),0);
+    const cancelledPenalty=cancelled.reduce((sum,x)=>sum+penaltyOf(x),0);
+    const rejectedPenalty=rejected.reduce((sum,x)=>sum+penaltyOf(x),0);
+
     $('app').innerHTML=`
-      <div class="pageIntro"><h1>📊 Driver Activity Report</h1><div class="sub">Search a registered driver by mobile number and view their duty activity.</div></div>
+      <div class="pageIntro">
+        <h1>📊 Driver Activity Report</h1>
+        <div class="sub">ஒரு mobile number போட்டால் அந்த driver எடுத்த/செய்த அனைத்து duty details, amount மற்றும் penalty பார்க்கலாம்.</div>
+      </div>
+
       <div class="card">
         <h2>🔎 SEARCH DRIVER</h2>
         <div class="driver-search">
-          <label>DRIVER MOBILE NUMBER</label>
+          <label>DRIVER MOBILE / CAR NUMBER</label>
           <div class="search-row">
-            <input id="driverActivitySearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter registered mobile number" value="${esc(driverActivityQuery)}" oninput="driverActivityQuery=this.value;renderDriverActivity()">
+            <input id="driverActivitySearch" type="text"
+              placeholder="Enter mobile number or car number"
+              value="${esc(driverActivityQuery)}"
+              oninput="driverActivityQuery=this.value;renderDriverActivity()">
             <button class="btn gray" onclick="driverActivityQuery='';renderDriverActivity()">CLEAR</button>
           </div>
-          <div class="search-count">${!q?'Enter a mobile number to view activity.':matchingDrivers.length===0?'No registered driver found.':matchingDrivers.length>1?'More than one matching driver; enter the full mobile number.':'Driver: '+esc(driver.name||driver.driverName||'Driver')+' • '+esc(driver.mobile||driver.phone||'')}</div>
+          <div class="search-count">
+            ${!q
+              ?'Enter driver mobile number or car number to view activity.'
+              :matchingDrivers.length===0
+                ?'No registered driver found.'
+                :matchingDrivers.length>1
+                  ?'More than one driver matched; enter the full mobile number.'
+                  :'Driver: '+esc(driver.name||driver.driverName||'Driver')+' • '+esc(driver.mobile||driver.phone||'')}
+          </div>
         </div>
+
         ${driver?`
           <div class="statgrid">
-            <div class="stat"><b>${active.length}</b><span>ACTIVE DUTIES</span></div>
+            <div class="stat"><b>${all.length}</b><span>TOTAL DUTIES</span></div>
+            <div class="stat"><b>₹${totalAmount}</b><span>TOTAL DUTY AMOUNT</span></div>
+            <div class="stat"><b>₹${totalPenalty}</b><span>TOTAL PENALTY</span></div>
             <div class="stat"><b>${completed.length}</b><span>COMPLETED</span></div>
+            <div class="stat"><b>${active.length}</b><span>ACTIVE</span></div>
             <div class="stat"><b>${cancelled.length}</b><span>CANCELLED</span></div>
             <div class="stat"><b>${rejected.length}</b><span>REJECTED</span></div>
+            <div class="stat"><b>₹${completedAmount}</b><span>COMPLETED AMOUNT</span></div>
           </div>
-          <div class="card"><h2>📋 DRIVER DUTY ACTIVITY (${all.length})</h2>
-            ${all.length?all.map(x=>`<div class="duty">
-              <div class="row"><b>${esc(x.__activityStatus)}</b><span class="badge ${x.__activityStatus==='COMPLETED'?'completed':x.__activityStatus==='CANCELLED'?'cancelled':x.__activityStatus==='REJECTED'?'rejected':x.__activityStatus==='OPEN'?'open':'accepted'}">${esc(x.__activityStatus)}</span></div>
-              <div class="route"><div>📍 ${esc(x.pickup||'-')}</div><div>🏁 ${esc(x.drop||'-')}</div></div>
-              <div class="muted">📅 ${esc(x.date||'-')} &nbsp; ⏰ ${esc(x.time||'-')}<br>🚘 ${esc(x.vehicle||'-')} &nbsp; 📏 ${Number(x.km||0)} KM</div>
-              <div class="money">₹${Number(x.amount||0)}</div>
-              <div class="muted">${formatStamp(x.historyCreatedAt||x.completedAt||x.cancelledAt||x.rejectedAt||x.createdAt||x.acceptedAt)}</div>
-            </div>`).join(''):'<div class="empty">No duty activity found for this driver.</div>'}
-          </div>`:''}
+
+          <div class="card">
+            <h2>💰 DRIVER SUMMARY</h2>
+            <div class="notice">
+              👨‍✈️ <b>${esc(driver.name||driver.driverName||'Driver')}</b><br>
+              📱 ${esc(driver.mobile||driver.phone||'-')}<br>
+              💵 Total Duty Amount: <b>₹${totalAmount}</b><br>
+              ⚠️ Total Penalty: <b>₹${totalPenalty}</b><br>
+              ✅ Completed Amount: <b>₹${completedAmount}</b><br>
+              ⚠️ Cancelled Penalty: <b>₹${cancelledPenalty}</b> &nbsp; | &nbsp;
+              Rejected Penalty: <b>₹${rejectedPenalty}</b>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>💳 WALLET ADD / DEDUCT HISTORY (${walletRows.length})</h2>
+            ${walletRows.length?walletRows.sort((a,b)=>stampMillis(b.createdAt)-stampMillis(a.createdAt)).map(w=>`<div class="duty">
+              <div class="row"><b>${w.type==='ADD'?'＋ WALLET ADD':'− WALLET DEDUCT'}</b><span class="badge ${w.type==='ADD'?'approved':'cancelled'}">${esc(w.type||'')}</span></div>
+              <div class="money">₹${Number(w.amount||0)}</div>
+              <div class="muted">${esc(w.reason||'')}<br>${formatStamp(w.createdAt)}</div>
+            </div>`).join(''):'<div class="empty">No wallet add/deduct history found.</div>'}
+          </div>
+
+          <div class="card">
+            <h2>📋 DUTY-WISE AMOUNT & PENALTY (${all.length})</h2>
+            ${all.length?all.map(x=>{
+              const p=penaltyOf(x);
+              const status=String(x.__activityStatus||'').toUpperCase();
+              return `<div class="duty">
+                <div class="row">
+                  <b>${esc(status)}</b>
+                  <span class="badge ${status==='COMPLETED'?'completed':status==='CANCELLED'?'cancelled':status==='REJECTED'?'rejected':status==='OPEN'?'open':'accepted'}">${esc(status)}</span>
+                </div>
+                <div class="route">
+                  <div>📍 ${esc(x.pickup||'-')}</div>
+                  <div>🏁 ${esc(x.drop||'-')}</div>
+                </div>
+                <div class="muted">
+                  📅 ${esc(x.date||'-')} &nbsp; ⏰ ${esc(x.time||'-')}<br>
+                  🚘 ${esc(x.vehicle||'-')} &nbsp; 📏 ${Number(x.km||0)} KM
+                </div>
+                <div class="money">💰 DUTY AMOUNT: ₹${Number(x.amount||0)}</div>
+                <div class="notice">⚠️ PENALTY: <b>₹${p}</b>${p>0 && x.cancellationDeduction ? ' • Cancellation deduction' : ''}</div>
+                <div class="muted">${formatStamp(x.historyCreatedAt||x.completedAt||x.cancelledAt||x.rejectedAt||x.createdAt||x.acceptedAt)}</div>
+              </div>`;
+            }).join(''):'<div class="empty">No duty activity found for this driver.</div>'}
+          </div>
+        `:''}
       </div>`;
   };
 
