@@ -209,7 +209,7 @@ window.adminLogin = function(){
 /* ===== EARLY JS ERROR REPORTING ===== */
 window.addEventListener("error",function(e){
   const el=document.getElementById("connection");
-  if(el){el.textContent="JS ERROR";el.style.background="#ffe8ed";el.style.color="#b4233d";}
+  if(el){el.textContent="JS ERROR";el.title=String(e.message||e.error||"JavaScript error");el.style.background="#ffe8ed";el.style.color="#b4233d";}
   console.error("GLOBAL ERROR",e.error||e.message||e);
 });
 window.addEventListener("unhandledrejection",function(e){
@@ -265,6 +265,7 @@ const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 
 window.showPage=function(p){page=p;["dashboard","duty","drivers","open","accepted","all","driverActivity","history"].forEach(x=>{const el=$("nav-"+x);if(el)el.classList.toggle("active",x===p);const mb=$("mb-"+x);if(mb)mb.classList.toggle("active",x===p);});render();window.scrollTo({top:0,behavior:"smooth"});};
+window.__adminSetPage=function(p){page=p;render();window.scrollTo({top:0,behavior:"smooth"});};
 window.toggleMenu=function(){$("sideMenu").classList.toggle("open");$("menuBackdrop").classList.toggle("open");};
 
 function setConnected(ok){
@@ -1976,14 +1977,16 @@ window.createDutyFromOCR=async function(){
 (function(){
   const baseShowPage=window.showPage;
   window.showPage=function(p){
-    page=p;
     const pages=['dashboard','duty','drivers','open','accepted','all','assignment','rejected','driverActivity','history'];
     pages.forEach(x=>{
       const el=document.getElementById('nav-'+x); if(el)el.classList.toggle('active',x===p);
       const mb=document.getElementById('mb-'+x); if(mb)mb.classList.toggle('active',x===p);
     });
-    render();
-    window.scrollTo({top:0,behavior:'smooth'});
+    if(typeof window.__adminSetPage==='function'){
+      window.__adminSetPage(p);
+    }else if(typeof baseShowPage==='function'){
+      baseShowPage(p);
+    }
   };
 
   function addNav(){
