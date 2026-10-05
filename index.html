@@ -632,8 +632,6 @@ function openDutyCard(d){
   </div>`;
 }
 
-let editingDutyId=null;
-
 window.editDuty=function(id){
   const d=duties.find(x=>x.id===id);
   if(!d)return;
