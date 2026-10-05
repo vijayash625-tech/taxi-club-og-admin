@@ -207,7 +207,7 @@ window.adminLogin = function(){
 
 <script type="module">
 import {initializeApp}
-from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js?v=20261005-2";
 
 import {
   getFirestore,
@@ -222,7 +222,7 @@ import {
   serverTimestamp,
   runTransaction
 }
-from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js?v=20261005-2";
 
 const firebaseConfig={
   apiKey:"AIzaSyCXOKF-5BEE_qqZWuO08A_Dks4F0b-3q8",
@@ -268,6 +268,27 @@ function normalizeDate(v){
 window.formatDate=function(input){
   input.value=normalizeDate(input.value);
 };
+
+// Always convert stored time values to the format required by <input type="time">.
+function normalizeTimeForInput(v){
+  let s=String(v||"").trim();
+  if(!s)return "";
+  let m=s.match(/^(\d{1,2}):(\d{2})(?:\s*([AaPp][Mm]))?$/);
+  if(!m)return s;
+  let hh=Number(m[1]), mm=m[2], ap=(m[3]||"").toUpperCase();
+  if(ap==="PM"&&hh<12)hh+=12;
+  if(ap==="AM"&&hh===12)hh=0;
+  return String(hh).padStart(2,"0")+":"+mm;
+}
+function formatDutyTime(v){
+  const t=normalizeTimeForInput(v);
+  if(!t)return "-";
+  const m=t.match(/^(\d{2}):(\d{2})$/);
+  if(!m)return t;
+  let h=Number(m[1]), ap=h>=12?"PM":"AM";
+  h=h%12||12;
+  return String(h).padStart(2,"0")+":"+m[2]+" "+ap;
+}
 
 function statusOf(d){return String(d.status||"OPEN").toUpperCase();}
 
@@ -574,7 +595,7 @@ function allDutyCard(d){
   return `<div class="duty allDutyCard ${cls}">
     <div class="row"><b>🚕 DUTY</b><span class="badge ${s==="OPEN"?"open":"accepted"}">${esc(s)}</span></div>
     <div class="route"><div>📍 ${esc(d.pickup||"-")}</div><div>🏁 ${esc(d.drop||"-")}</div></div>
-    <div class="muted">📅 ${esc(d.date||"-")} &nbsp; ⏰ ${esc(d.time||"-")}<br>🚘 ${esc(d.vehicle||"-")} &nbsp; 📏 ${Number(d.km||0)} KM<br>💰 Amount: ₹${Number(d.amount||0)}</div>
+    <div class="muted">📅 ${esc(d.date||"-")} &nbsp; ⏰ ${esc(formatDutyTime(d.time||d.dutyTime))}<br>🚘 ${esc(d.vehicle||"-")} &nbsp; 📏 ${Number(d.km||0)} KM<br>💰 Amount: ₹${Number(d.amount||0)}</div>
     ${s!=="OPEN"?`<div class="notice">👨‍✈️ <b>${esc(name)}</b><br>📱 ${esc(mobile)}<br>🆔 ${esc(d.acceptedDriverId||d.driverId||dr?.driverId||"-")}</div>`:`<div class="notice">🟢 Waiting for a driver to accept</div>`}
     ${(d.specialService||d.note)?`<div class="notice">⭐ ${esc(d.specialService||d.note)}</div>`:""}
     <div class="actions"><button class="btn ${s==="OPEN"?"orange":"red"}" onclick="${s==="OPEN"?`cancelDuty('${esc(d.id)}')`:`cancelAcceptedDuty('${esc(d.id)}')`}">✕ CANCEL</button>${s!=="OPEN"?`<button class="btn green" onclick="completeDuty('${esc(d.id)}')">✓ COMPLETE</button>`:""}</div>
@@ -600,7 +621,7 @@ function openDutyCard(d){
   return `<div class="duty">
     <div class="row"><b>DUTY</b><span class="badge open">OPEN</span></div>
     <div class="route"><div>📍 ${esc(d.pickup)}</div><div>🏁 ${esc(d.drop)}</div></div>
-    <div class="muted">📅 ${esc(d.date||"-")} &nbsp; ⏰ ${esc(d.time||"-")}<br>
+    <div class="muted">📅 ${esc(d.date||"-")} &nbsp; ⏰ ${esc(formatDutyTime(d.time||d.dutyTime))}<br>
     🚕 ${esc(d.vehicle||"-")} &nbsp; 📏 ${Number(d.km||0)} KM</div>
     <div class="money">₹${Number(d.amount||0)}</div>
     ${(d.specialService||d.note)?`<div class="notice">⭐ ${esc(d.specialService||d.note)}</div>`:""}
@@ -621,7 +642,7 @@ window.editDuty=function(id){
   $("editPickup").value=d.pickup||"";
   $("editDrop").value=d.drop||"";
   $("editDate").value=d.date||"";
-  $("editTime").value=d.time||"";
+  $("editTime").value=normalizeTimeForInput(d.time||d.dutyTime||"");
   $("editVehicle").value=d.vehicle||"MINI /SEDAN";
   $("editKm").value=Number(d.km||0);
   $("editAmount").value=Number(d.amount||0);
@@ -639,7 +660,7 @@ window.submitEditDuty=async function(){
   const pickup=$("editPickup").value.trim();
   const drop=$("editDrop").value.trim();
   const date=normalizeDate($("editDate").value.trim());
-  const time=$("editTime").value.trim();
+  const time=normalizeTimeForInput($("editTime").value.trim());
   const vehicle=$("editVehicle").value;
   const km=Number($("editKm").value);
   const amount=Number($("editAmount").value);
@@ -687,7 +708,7 @@ function acceptedCard(d){
   return `<div class="duty">
     <div class="row"><b>${esc(name)}</b><span class="badge accepted">${esc(statusOf(d))}</span></div>
     <div class="route"><div>📍 ${esc(d.pickup)}</div><div>🏁 ${esc(d.drop)}</div></div>
-    <div class="muted">📅 ${esc(d.date||"-")} &nbsp; ⏰ ${esc(d.time||"-")}<br>
+    <div class="muted">📅 ${esc(d.date||"-")} &nbsp; ⏰ ${esc(formatDutyTime(d.time||d.dutyTime))}<br>
     📱 ${esc(mobile)}<br>
     🚘 Vehicle: ${esc(vid)} - ${esc(vm)}<br>
     🆔 Driver ID: ${esc(d.acceptedDriverId||d.driverId||dr?.driverId||"-")}<br>
@@ -750,7 +771,7 @@ async function createDuty(){
     const pickup=$("pickup").value.trim();
     const drop=$("drop").value.trim();
     const date=normalizeDate($("date").value.trim());
-    const time=$("time").value;
+    const time=normalizeTimeForInput($("time").value);
     const vehicle=$("vehicle").value;
     const dutyType=$("dutyType").value;
     const km=Number($("km").value);
@@ -1828,7 +1849,7 @@ window.createDutyFromOCR=async function(){
     const pickup=$('ocrPickup').value.trim();
     const drop=$('ocrDrop').value.trim();
     const date=normalizeDate($('ocrDate').value.trim());
-    const time=$('ocrTime').value.trim();
+    const time=normalizeTimeForInput($('ocrTime').value.trim());
     const vehicle=$('ocrVehicle').value;
     const km=Number($('ocrKm').value);
     const amount=Number($('ocrAmount').value);
@@ -2079,7 +2100,7 @@ window.createDutyFromOCR=async function(){
           return `<div class="duty">
             <div class="row"><b>${esc(st)}</b><span class="badge ${st==='COMPLETED'?'completed':st==='CANCELLED'?'cancelled':st==='REJECTED'?'rejected':st==='ACCEPTED'?'accepted':st==='OPEN'?'open':'pending'}">${esc(st)}</span></div>
             <div class="route"><div>📍 ${esc(x.pickup||'-')}</div><div>🏁 ${esc(x.drop||'-')}</div></div>
-            <div class="muted">📅 ${esc(x.date||'-')} &nbsp; ⏰ ${esc(x.time||'-')}<br>🚘 ${esc(x.vehicle||'-')} &nbsp; 📏 ${Number(x.km||0)} KM<br>📱 ${esc(x.driverMobile||x.mobile||driver.mobile||'-')}</div>
+            <div class="muted">📅 ${esc(x.date||'-')} &nbsp; ⏰ ${esc(formatDutyTime(x.time||x.dutyTime))}<br>🚘 ${esc(x.vehicle||'-')} &nbsp; 📏 ${Number(x.km||0)} KM<br>📱 ${esc(x.driverMobile||x.mobile||driver.mobile||'-')}</div>
             <div class="money">₹${Number(x.amount||0)}</div>
             ${penalty?`<div class="notice">− ₹${penalty} PENALTY / DEDUCTION</div>`:''}
             ${x.walletAction?`<div class="notice">WALLET ${esc(x.walletAction)} ₹${Number(x.walletAmount||0)}</div>`:''}
