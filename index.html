@@ -148,7 +148,7 @@ body{background:radial-gradient(circle at 0% 0%,#e7f4ff 0,#f7f9ff 28%,transparen
 </header>
 
 <div class="menuBar"><button class="menuBtn" onclick="toggleMenu()" aria-label="Open menu">☰</button><div class="menuTitle">TAXI CLUB OG <span>ADMIN</span></div><div id="menuConnection" class="menuDot">●</div></div>
-<div id="sideMenu" class="sideMenu"><div class="sideHead"><div><b>🚕 TAXI CLUB OG</b><small>ADMIN MENU</small></div><button onclick="toggleMenu()">✕</button></div><button onclick="showPage('dashboard');toggleMenu()">🏠 <span>DASHBOARD</span></button><button onclick="showPage('duty');toggleMenu()">🚕 <span>DUTY MANAGEMENT</span></button><button onclick="showPage('drivers');toggleMenu()">👨‍✈️ <span>DRIVER LIST</span></button><button onclick="showPage('open');toggleMenu()">🟢 <span>OPEN DUTIES</span></button><button onclick="showPage('accepted');toggleMenu()">✅ <span>ACCEPTED DUTIES</span></button><button onclick="showPage('all');toggleMenu()">📚 <span>ALL DUTIES</span></button><button onclick="showPage('driverActivity');toggleMenu()">📊 <span>DRIVER ACTIVITY</span></button><button onclick="showPage('history');toggleMenu()">📋 <span>FULL HISTORY</span></button></div>
+<div id="sideMenu" class="sideMenu"><div class="sideHead"><div><b>🚕 TAXI CLUB OG</b><small>ADMIN MENU</small></div><button onclick="toggleMenu()">✕</button></div><button onclick="showPage('dashboard');toggleMenu()">🏠 <span>DASHBOARD</span></button><button onclick="showPage('duty');toggleMenu()">🚕 <span>DUTY MANAGEMENT</span></button><button onclick="showPage('drivers');toggleMenu()">👨‍✈️ <span>DRIVER LIST</span></button><button onclick="showPage('drivers');toggleMenu()">🆕 <span>CREATE / ACTIVATE DRIVER ID</span></button><button onclick="showPage('open');toggleMenu()">🟢 <span>OPEN DUTIES</span></button><button onclick="showPage('accepted');toggleMenu()">✅ <span>ACCEPTED DUTIES</span></button><button onclick="showPage('all');toggleMenu()">📚 <span>ALL DUTIES</span></button><button onclick="showPage('driverActivity');toggleMenu()">📊 <span>DRIVER ACTIVITY</span></button><button onclick="showPage('history');toggleMenu()">📋 <span>FULL HISTORY</span></button></div>
 <div id="menuBackdrop" class="menuBackdrop" onclick="toggleMenu()"></div>
 <nav class="desktopNav"><button id="nav-dashboard" onclick="showPage('dashboard')">🏠 DASHBOARD</button><button id="nav-duty" onclick="showPage('duty')">🚕 DUTY</button><button id="nav-drivers" onclick="showPage('drivers')">👨‍✈️ DRIVERS</button><button id="nav-open" onclick="showPage('open')">🟢 OPEN</button><button id="nav-accepted" onclick="showPage('accepted')">✅ ACCEPTED</button><button id="nav-all" onclick="showPage('all')">📚 ALL DUTIES</button><button id="nav-driverActivity" onclick="showPage('driverActivity')">📊 DRIVER ACTIVITY</button><button id="nav-history" onclick="showPage('history')">📋 HISTORY</button></nav><div class="mobileBottomNav"><button id="mb-dashboard" onclick="showPage('dashboard')"><b>🏠</b>HOME</button><button id="mb-duty" onclick="showPage('duty')"><b>🚕</b>DUTY</button><button id="mb-all" onclick="showPage('all')"><b>📚</b>ALL DUTIES</button><button id="mb-history" onclick="showPage('history')"><b>📋</b>HISTORY</button></div>
 
@@ -250,6 +250,18 @@ const firebaseConfig={
 
 const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
+
+// Expose live module state/functions to the standalone Driver Activity renderer.
+Object.defineProperties(window,{
+  __drivers:{get:()=>drivers},
+  __duties:{get:()=>duties},
+  __history:{get:()=>history},
+  __statusOf:{get:()=>statusOf},
+  __stampMillis:{get:()=>stampMillis},
+  __formatDutyTime:{get:()=>formatDutyTime},
+  __formatStamp:{get:()=>formatStamp},
+  __esc:{get:()=>esc}
+});
 
 let page="dashboard";
 let drivers=[];
@@ -359,7 +371,7 @@ function render(){
   if(page==="driverActivity" && typeof window.renderDriverActivity==="function")return window.renderDriverActivity();
 }
 
-function renderDashboard(){const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;const pending=drivers.filter(d=>driverStatus(d)==="PENDING").length;const open=duties.filter(d=>statusOf(d)==="OPEN").length;const accepted=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d))).length;$("app").innerHTML=`<div class="dashboardHero"><h2>🚕 TAXI CLUB OG</h2><p>Luxury Admin Dashboard • Manage duties, drivers and trip activity</p></div><div class="statgrid"><button class="stat clickable" onclick="showPage('drivers')"><b>${approved}</b><span>APPROVED DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="filterDriverStatus('PENDING')"><b>${pending}</b><span>PENDING DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('open')"><b>${open}</b><span>OPEN DUTIES • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('accepted')"><b>${accepted}</b><span>ACCEPTED • VIEW ALL</span></button></div><div class="card"><h2>⚡ QUICK MENU</h2><div class="quickGrid"><button class="quickBtn" onclick="showPage('duty')"><b>🚕</b>CREATE DUTY<small>Create a new driver duty</small></button><button class="quickBtn" onclick="showPage('open')"><b>🟢</b>OPEN DUTIES<small>View duties waiting for drivers</small></button><button class="quickBtn" onclick="showPage('accepted')"><b>✅</b>ACCEPTED<small>See driver assignments</small></button><button class="quickBtn" onclick="showPage('history')"><b>📋</b>HISTORY<small>Track all duty actions</small></button></div></div><div class="card"><h2>👨‍✈️ DRIVER PANEL</h2><div class="notice">Driver approval, ₹400 registration verification, documents and wallet controls are available inside Duty Management.</div><button class="btn primary" onclick="showPage('duty')">OPEN DRIVER MANAGEMENT →</button></div>`;}
+function renderDashboard(){const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;const pending=drivers.filter(d=>driverStatus(d)==="PENDING").length;const open=duties.filter(d=>statusOf(d)==="OPEN").length;const accepted=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d))).length;$("app").innerHTML=`<div class="dashboardHero"><h2>🚕 TAXI CLUB OG</h2><p>Luxury Admin Dashboard • Manage duties, drivers and trip activity</p></div><div class="statgrid"><button class="stat clickable" onclick="showPage('drivers')"><b>${approved}</b><span>APPROVED DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="filterDriverStatus('PENDING')"><b>${pending}</b><span>PENDING DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('open')"><b>${open}</b><span>OPEN DUTIES • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('accepted')"><b>${accepted}</b><span>ACCEPTED • VIEW ALL</span></button></div><div class="card"><h2>⚡ QUICK MENU</h2><div class="quickGrid"><button class="quickBtn" onclick="showPage('duty')"><b>🚕</b>CREATE DUTY<small>Create a new driver duty</small></button><button class="quickBtn" onclick="showPage('open')"><b>🟢</b>OPEN DUTIES<small>View duties waiting for drivers</small></button><button class="quickBtn" onclick="showPage('accepted')"><b>✅</b>ACCEPTED<small>See driver assignments</small></button><button class="quickBtn" onclick="showPage('history')"><b>📋</b>HISTORY<small>Track all duty actions</small></button></div></div><div class="card"><h2>🆕 DRIVER ID</h2><div class="notice">Create a new driver ID or activate an existing mobile number immediately.</div><button class="btn primary" onclick="showPage('drivers')">🆕 CREATE / ACTIVATE DRIVER ID →</button></div><div class="card"><h2>👨‍✈️ DRIVER PANEL</h2><div class="notice">Driver approval, ₹400 registration verification, documents and wallet controls are available inside Duty Management.</div><button class="btn primary" onclick="showPage('duty')">OPEN DRIVER MANAGEMENT →</button></div>`;}
 
 let editingDutyId=null;
 
@@ -1995,7 +2007,7 @@ window.createDutyFromOCR=async function(){
 window.renderDriverActivity=function(){
   const q=String(window.driverActivityQuery||'').replace(/\D/g,'');
   const cq=String(window.driverActivityCar||'').trim().toLowerCase();
-  const matchingDrivers=drivers.filter(d=>{
+  const matchingDrivers=window.__drivers.filter(d=>{
     const mobile=String(d.mobile||d.phone||d.driverMobile||'').replace(/\D/g,'');
     const car=String(d.vehicleNumber||d.carNumber||d.vehicleNo||'').trim().toLowerCase();
     return (q && mobile.includes(q)) || (cq && car.includes(cq));
@@ -2018,13 +2030,13 @@ window.renderDriverActivity=function(){
     return (itemMob&&mobiles.has(itemMob)) || (itemCar&&cars.has(itemCar)) || itemIds.some(v=>ids.has(v)) || itemNames.some(v=>names.has(v));
   };
 
-  const active=driver?duties.filter(d=>belongs(d)&&['OPEN','ACCEPTED','STARTED'].includes(statusOf(d))):[];
-  const completed=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('COMPLETE')):[];
-  const cancelled=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('CANCEL')):[];
-  const rejected=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('REJECT')):[];
-  const accepted=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('ACCEPT')):[];
-  const deleted=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('DELETE')):[];
-  const rawAll=[...active.map(d=>({...d,__activityStatus:statusOf(d)})),
+  const active=driver?window.__duties.filter(d=>belongs(d)&&['OPEN','ACCEPTED','STARTED'].includes(window.__statusOf(d))):[];
+  const completed=driver?window.__history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('COMPLETE')):[];
+  const cancelled=driver?window.__history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('CANCEL')):[];
+  const rejected=driver?window.__history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('REJECT')):[];
+  const accepted=driver?window.__history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('ACCEPT')):[];
+  const deleted=driver?window.__history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('DELETE')):[];
+  const rawAll=[...active.map(d=>({...d,__activityStatus:window.__statusOf(d)})),
     ...accepted.map(h=>({...h,__activityStatus:'ACCEPTED'})),
     ...completed.map(h=>({...h,__activityStatus:'COMPLETED'})),
     ...cancelled.map(h=>({...h,__activityStatus:'CANCELLED'})),
@@ -2035,7 +2047,7 @@ window.renderDriverActivity=function(){
     const key=String(x.__activityStatus||'')+'|'+String(x.dutyId||x.id||'');
     if(seen.has(key))return false;
     seen.add(key);return true;
-  }).sort((a,b)=>stampMillis(b.historyCreatedAt||b.completedAt||b.cancelledAt||b.rejectedAt||b.deletedAt||b.createdAt||b.acceptedAt)-stampMillis(a.historyCreatedAt||a.completedAt||a.cancelledAt||a.rejectedAt||a.deletedAt||a.createdAt||a.acceptedAt));
+  }).sort((a,b)=>window.__stampMillis(b.historyCreatedAt||b.completedAt||b.cancelledAt||b.rejectedAt||b.deletedAt||b.createdAt||b.acceptedAt)-window.__stampMillis(a.historyCreatedAt||a.completedAt||a.cancelledAt||a.rejectedAt||a.deletedAt||a.createdAt||a.acceptedAt));
 
   const totalAmount=all.reduce((n,x)=>n+Number(x.amount||0),0);
   const completedAmount=completed.reduce((n,x)=>n+Number(x.amount||0),0);
@@ -2047,11 +2059,11 @@ window.renderDriverActivity=function(){
     <div class="card">
       <h2>🔎 DRIVER SEARCH</h2>
       <div class="grid">
-        <div class="field"><label>DRIVER MOBILE NUMBER</label><input id="driverActivitySearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter mobile number" value="${esc(window.driverActivityQuery||'')}" oninput="window.driverActivityQuery=this.value;renderDriverActivity()"></div>
-        <div class="field"><label>CAR / VEHICLE NUMBER</label><input id="driverActivityCar" type="text" placeholder="Enter car number" value="${esc(window.driverActivityCar||'')}" oninput="window.driverActivityCar=this.value;renderDriverActivity()"></div>
+        <div class="field"><label>DRIVER MOBILE NUMBER</label><input id="driverActivitySearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter mobile number" value="${window.__esc(window.driverActivityQuery||'')}" oninput="window.driverActivityQuery=this.value;renderDriverActivity()"></div>
+        <div class="field"><label>CAR / VEHICLE NUMBER</label><input id="driverActivityCar" type="text" placeholder="Enter car number" value="${window.__esc(window.driverActivityCar||'')}" oninput="window.driverActivityCar=this.value;renderDriverActivity()"></div>
       </div>
       <div class="actions"><button class="btn gray" onclick="window.driverActivityQuery='';window.driverActivityCar='';renderDriverActivity()">CLEAR</button></div>
-      <div class="search-count">${(!q&&!cq)?'Enter mobile or car number to view full history.':matchingDrivers.length===0?'No driver found.':matchingDrivers.length>1?'More than one driver matched; enter the full number.':'Driver: '+esc(driver.name||driver.driverName||'Driver')+' • '+esc(driver.mobile||driver.phone||'')+' • Car: '+esc(driver.vehicleNumber||driver.carNumber||'-')}</div>
+      <div class="search-count">${(!q&&!cq)?'Enter mobile or car number to view full history.':matchingDrivers.length===0?'No driver found.':matchingDrivers.length>1?'More than one driver matched; enter the full number.':'Driver: '+window.__esc(driver.name||driver.driverName||'Driver')+' • '+window.__esc(driver.mobile||driver.phone||'')+' • Car: '+window.__esc(driver.vehicleNumber||driver.carNumber||'-')}</div>
     </div>
     ${driver?`
     <div class="statgrid">
@@ -2065,20 +2077,20 @@ window.renderDriverActivity=function(){
       <div class="stat"><b>₹${wallet}</b><span>CURRENT WALLET</span></div>
     </div>
     <div class="card"><h2>💳 WALLET ADD / DEDUCT HISTORY</h2>
-      ${history.filter(h=>String(h.type||'').startsWith('WALLET_')&&belongs(h)).length?history.filter(h=>String(h.type||'').startsWith('WALLET_')&&belongs(h)).sort((a,b)=>stampMillis(b.createdAt)-stampMillis(a.createdAt)).map(w=>`<div class="duty"><div class="row"><b>${String(w.type||'').includes('ADD')?'＋ WALLET ADD':'− WALLET DEDUCT'}</b><span class="badge ${String(w.type||'').includes('ADD')?'approved':'cancelled'}">${esc(String(w.type||'').replace('WALLET_',''))}</span></div><div class="money">₹${Number(w.amount||0)}</div><div class="muted">${formatStamp(w.createdAt)}</div></div>`).join(''):'<div class="empty">No wallet add/deduct history found.</div>'}
+      ${window.__history.filter(h=>String(h.type||'').startsWith('WALLET_')&&belongs(h)).length?window.__history.filter(h=>String(h.type||'').startsWith('WALLET_')&&belongs(h)).sort((a,b)=>window.__stampMillis(b.createdAt)-window.__stampMillis(a.createdAt)).map(w=>`<div class="duty"><div class="row"><b>${String(w.type||'').includes('ADD')?'＋ WALLET ADD':'− WALLET DEDUCT'}</b><span class="badge ${String(w.type||'').includes('ADD')?'approved':'cancelled'}">${window.__esc(String(w.type||'').replace('WALLET_',''))}</span></div><div class="money">₹${Number(w.amount||0)}</div><div class="muted">${window.__formatStamp(w.createdAt)}</div></div>`).join(''):'<div class="empty">No wallet add/deduct history found.</div>'}
     </div>
     <div class="card"><h2>📋 FULL DRIVER BOOKING / DUTY HISTORY (${all.length})</h2>
       ${all.length?all.map(x=>{
         const st=x.__activityStatus;
         const penalty=Number(x.cancellationDeduction||x.walletDeduction||x.penalty||x.penaltyAmount||0);
         return `<div class="duty">
-          <div class="row"><b>${esc(st)}</b><span class="badge ${st==='COMPLETED'?'completed':st==='CANCELLED'?'cancelled':st==='REJECTED'?'rejected':st==='ACCEPTED'?'accepted':st==='OPEN'?'open':'pending'}">${esc(st)}</span></div>
-          <div class="route"><div>📍 ${esc(x.pickup||'-')}</div><div>🏁 ${esc(x.drop||'-')}</div></div>
-          <div class="muted">📅 ${esc(x.date||'-')} &nbsp; ⏰ ${esc(formatDutyTime(x.time||x.dutyTime))}<br>🚘 ${esc(x.vehicle||'-')} &nbsp; 📏 ${Number(x.km||0)} KM<br>📱 ${esc(x.driverMobile||x.mobile||driver.mobile||'-')}</div>
+          <div class="row"><b>${window.__esc(st)}</b><span class="badge ${st==='COMPLETED'?'completed':st==='CANCELLED'?'cancelled':st==='REJECTED'?'rejected':st==='ACCEPTED'?'accepted':st==='OPEN'?'open':'pending'}">${window.__esc(st)}</span></div>
+          <div class="route"><div>📍 ${window.__esc(x.pickup||'-')}</div><div>🏁 ${window.__esc(x.drop||'-')}</div></div>
+          <div class="muted">📅 ${window.__esc(x.date||'-')} &nbsp; ⏰ ${window.__esc(window.__formatDutyTime(x.time||x.dutyTime))}<br>🚘 ${window.__esc(x.vehicle||'-')} &nbsp; 📏 ${Number(x.km||0)} KM<br>📱 ${window.__esc(x.driverMobile||x.mobile||driver.mobile||'-')}</div>
           <div class="money">₹${Number(x.amount||0)}</div>
           ${penalty?`<div class="notice">− ₹${penalty} PENALTY / DEDUCTION</div>`:''}
-          ${x.walletAction?`<div class="notice">WALLET ${esc(x.walletAction)} ₹${Number(x.walletAmount||0)}</div>`:''}
-          <div class="muted">${formatStamp(x.historyCreatedAt||x.completedAt||x.cancelledAt||x.rejectedAt||x.deletedAt||x.createdAt||x.acceptedAt)}</div>
+          ${x.walletAction?`<div class="notice">WALLET ${window.__esc(x.walletAction)} ₹${Number(x.walletAmount||0)}</div>`:''}
+          <div class="muted">${window.__formatStamp(x.historyCreatedAt||x.completedAt||x.cancelledAt||x.rejectedAt||x.deletedAt||x.createdAt||x.acceptedAt)}</div>
         </div>`;
       }).join(''):'<div class="empty">No history found for this driver.</div>'}
     </div>`:''}`;
