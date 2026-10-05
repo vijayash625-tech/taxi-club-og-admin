@@ -115,6 +115,25 @@ body{background:radial-gradient(circle at 0% 0%,#e7f4ff 0,#f7f9ff 28%,transparen
 #ocrFab{background:linear-gradient(135deg,#4b55df,#8c45db,#e34f9a)}#ocrOverlay{background:rgba(37,43,76,.48)}#ocrModal,#driverDocModal{background:linear-gradient(145deg,#fff,#f7f5ff)}.ocrScan{background:linear-gradient(135deg,#4d58df,#8c49dc)!important}.ocrCreate{background:linear-gradient(135deg,#00a878,#10c99a)!important}.docOpen{background:#eeeaff;color:#6047cb}.loginBox{background:linear-gradient(145deg,#fff,#f5f3ff);border-color:#e0e4f1}.loginLogo{background:linear-gradient(145deg,#4c58df,#8a48dd,#e34e9d)}.loginBtn{background:linear-gradient(135deg,#4b55df,#8d49df)}
 .dashboardHero{border-radius:26px;padding:22px;color:#fff;margin:14px 0;background:linear-gradient(135deg,#4354dc,#7549d8 52%,#d44f9e);box-shadow:0 18px 38px rgba(87,70,190,.22)}.dashboardHero h2{margin:0 0 5px;font-size:24px}.dashboardHero p{margin:0;opacity:.9;font-size:13px}.quickGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}.quickBtn{padding:18px;border-radius:18px;background:#fff;border:1px solid #e0e6f3;box-shadow:0 9px 22px rgba(55,72,120,.07);font-weight:950;color:#30405e;text-align:left}.quickBtn b{display:block;font-size:22px;margin-bottom:6px}.quickBtn small{color:#73819a}.stat.clickable{cursor:pointer;transition:.18s}.stat.clickable:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(59,76,129,.13)}.allDutyCard{border-left:5px solid #7357e8}.allDutyCard.openState{border-left-color:#00b894}.allDutyCard.acceptedState{border-left-color:#ec4899}.allDutyCard.doneState{border-left-color:#6446ca}.allDutyCard.cancelState{border-left-color:#f09a32}.allDutyCard.rejectedState{border-left-color:#e84d70}.mobileBottomNav{display:none}@media(max-width:650px){.mobileBottomNav{position:fixed;display:grid;grid-template-columns:repeat(4,1fr);left:10px;right:10px;bottom:10px;z-index:60;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border:1px solid #dfe5f4;border-radius:20px;box-shadow:0 12px 35px rgba(35,48,91,.18);padding:6px}.mobileBottomNav button{background:transparent;color:#56647a;padding:8px 3px;border-radius:14px;font-size:10px;font-weight:900}.mobileBottomNav button.active{background:linear-gradient(135deg,#5b4be7,#a34bd7);color:#fff}.mobileBottomNav button b{display:block;font-size:17px;margin-bottom:2px}}@media(max-width:650px){.desktopNav{display:none}.quickGrid{grid-template-columns:1fr 1fr}}@media(min-width:651px){.menuBar{display:none}}
 </style>
+<style>
+/* ===== COMPACT ADMIN UI ===== */
+body{font-size:14px}
+#app{max-width:980px!important;margin:0 auto!important}
+h1{font-size:24px!important;margin:10px 0 4px!important}
+h2{font-size:18px!important}
+.pageIntro{padding:8px 0!important}.pageIntro h1{font-size:22px!important}
+.card,.driver{padding:12px!important;margin:8px 0!important;border-radius:14px!important}
+.statgrid,.driverDashCards{gap:8px!important}.stat{padding:10px!important;min-height:70px!important}.stat b{font-size:22px!important}.stat span{font-size:11px!important}
+.btn{padding:9px 12px!important;font-size:13px!important;border-radius:10px!important}
+.actions{gap:7px!important}.actions .btn{min-height:40px!important}
+input,select,textarea{padding:10px!important;font-size:14px!important;border-radius:10px!important}
+.name{font-size:18px!important}.muted,.sub{font-size:12px!important}.money{font-size:18px!important}
+.quickDriverTools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.quickDriverTools .btn{width:100%}
+.mobileBottomNav{height:62px!important}.mobileBottomNav button{font-size:11px!important;padding:7px 4px!important}.mobileBottomNav b{font-size:17px!important}
+#ocrFab{right:12px!important;bottom:70px!important;padding:10px 13px!important;font-size:13px!important}
+#editDutyModal{width:min(560px,94vw)!important;padding:14px!important}
+@media(max-width:600px){h1{font-size:21px!important}.card{padding:10px!important}.stat b{font-size:20px!important}.quickDriverTools{grid-template-columns:1fr}.driver .actions{grid-template-columns:1fr 1fr!important}.driver .actions .btn{font-size:12px!important;padding:8px 6px!important}}
+</style>
 </head>
 <body>
 
@@ -144,6 +163,18 @@ body{background:radial-gradient(circle at 0% 0%,#e7f4ff 0,#f7f9ff 28%,transparen
 <div id="sideMenu" class="sideMenu"><div class="sideHead"><div><b>🚕 TAXI CLUB OG</b><small>ADMIN MENU</small></div><button onclick="toggleMenu()">✕</button></div><button onclick="showPage('dashboard');toggleMenu()">🏠 <span>DASHBOARD</span></button><button onclick="showPage('duty');toggleMenu()">🚕 <span>DUTY MANAGEMENT</span></button><button onclick="showPage('drivers');toggleMenu()">👨‍✈️ <span>DRIVER LIST</span></button><button onclick="showPage('open');toggleMenu()">🟢 <span>OPEN DUTIES</span></button><button onclick="showPage('accepted');toggleMenu()">✅ <span>ACCEPTED DUTIES</span></button><button onclick="showPage('all');toggleMenu()">📚 <span>ALL DUTIES</span></button><button onclick="showPage('history');toggleMenu()">📋 <span>FULL HISTORY</span></button></div>
 <div id="menuBackdrop" class="menuBackdrop" onclick="toggleMenu()"></div>
 <nav class="desktopNav"><button id="nav-dashboard" onclick="showPage('dashboard')">🏠 DASHBOARD</button><button id="nav-duty" onclick="showPage('duty')">🚕 DUTY</button><button id="nav-drivers" onclick="showPage('drivers')">👨‍✈️ DRIVERS</button><button id="nav-open" onclick="showPage('open')">🟢 OPEN</button><button id="nav-accepted" onclick="showPage('accepted')">✅ ACCEPTED</button><button id="nav-all" onclick="showPage('all')">📚 ALL DUTIES</button><button id="nav-history" onclick="showPage('history')">📋 HISTORY</button></nav><div class="mobileBottomNav"><button id="mb-dashboard" onclick="showPage('dashboard')"><b>🏠</b>HOME</button><button id="mb-duty" onclick="showPage('duty')"><b>🚕</b>DUTY</button><button id="mb-all" onclick="showPage('all')"><b>📚</b>ALL DUTIES</button><button id="mb-history" onclick="showPage('history')"><b>📋</b>HISTORY</button></div>
+
+<div id="createActivateOverlay" style="display:none;position:fixed;inset:0;background:#0008;z-index:300;align-items:center;justify-content:center;padding:12px">
+  <div id="createActivateModal" style="width:min(520px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:18px;box-shadow:0 20px 60px #0006">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="margin:0">➕ CREATE / ACTIVATE DRIVER</h2><button class="btn gray" onclick="closeCreateActivateDriver()">✕</button></div>
+    <div class="muted" style="margin:6px 0 12px">Mobile number already exists என்றால் அதே driver update ஆகும். புதிய mobile என்றால் புதிய Driver ID உருவாகும்.</div>
+    <label>MOBILE NUMBER</label><input id="caMobile" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter mobile number">
+    <label>DRIVER NAME</label><input id="caName" type="text" placeholder="Driver name">
+    <label>CAR / VEHICLE NUMBER</label><input id="caCar" type="text" placeholder="TN01AB1234">
+    <label>VEHICLE CATEGORY</label><select id="caCategory"><option value="SEDAN">SEDAN</option><option value="SUV">SUV</option><option value="MINI">MINI</option><option value="OTHER">OTHER</option></select>
+    <div class="actions" style="margin-top:12px"><button class="btn green" onclick="submitCreateActivateDriver()">✅ CREATE / ACTIVATE</button><button class="btn gray" onclick="closeCreateActivateDriver()">CANCEL</button></div>
+  </div>
+</div>
 
 <main id="app" class="hidden"><div class="loading">Loading...</div></main>
 
@@ -182,7 +213,7 @@ window.adminLogin = function(){
 
 <script type="module">
 import {initializeApp}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 
 import {
   getFirestore,
@@ -197,7 +228,7 @@ import {
   serverTimestamp,
   runTransaction
 }
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
 const firebaseConfig={
   apiKey:"AIzaSyCXOKF-5BEE_qqZWuO08A_Dks4F0b-3q8",
@@ -209,18 +240,8 @@ const firebaseConfig={
   measurementId:"G-FY2SEGK4WG"
 };
 
-let app, db;
-try{
-  app=initializeApp(firebaseConfig);
-  db=getFirestore(app);
-}catch(e){
-  console.error("Firebase initialization failed:",e);
-  const el=document.getElementById("connection");
-  if(el){el.textContent="FIREBASE ERROR";el.style.background="#ffe8ed";el.style.color="#b4233d";}
-  const a=document.getElementById("app");
-  if(a)a.innerHTML='<div class="card"><h2>⚠️ FIREBASE CONNECTION ERROR</h2><div class="notice">Firebase could not start. Please refresh once. If it continues, the Firebase configuration or browser connection needs checking.</div></div>';
-  throw e;
-}
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
 
 let page="dashboard";
 let drivers=[];
@@ -485,7 +506,6 @@ function driverCard(d){
       ${s!=="REJECTED"?`<button class="btn orange" onclick="rejectDriver('${esc(d.id)}')">✕ REJECT</button>`:""}
       ${s!=="BLOCKED"?`<button class="btn red" onclick="blockDriver('${esc(d.id)}')">⛔ BLOCK</button>`:
       `<button class="btn green" onclick="unblockDriver('${esc(d.id)}')">UNBLOCK</button>`}
-      <button class="btn blue" onclick="createDriverId('${esc(d.id)}')">🆔 ${d.driverId?'EDIT DRIVER ID':'CREATE DRIVER ID'}</button>
       <button class="btn gray" onclick="deleteDriver('${esc(d.id)}')">🗑 DELETE</button>
     </div>
 
@@ -883,21 +903,10 @@ async function deleteDriver(id){
   }
 }
 
-async function createDriverId(id){
+async async function createDriverId(id){
   const d=drivers.find(x=>x.id===id);
   if(!d)return;
-  const current=String(d.driverId||"");
-  const value=prompt("Enter Driver ID",current);
-  if(value===null)return;
-  const driverId=value.trim();
-  if(!driverId){alert("Driver ID enter pannunga.");return;}
-  try{
-    await updateDoc(doc(db,"drivers",id),{driverId,updatedAt:serverTimestamp()});
-    alert("Driver ID saved: "+driverId);
-  }catch(e){
-    console.error(e);
-    alert("Driver ID save failed: "+e.message);
-  }
+  alert("Use CREATE / ACTIVATE DRIVER from the Drivers page.");
 }
 
 async function addWallet(id){
@@ -1314,17 +1323,63 @@ window.cancelDuty=cancelDuty;
 window.cancelAcceptedDuty=cancelAcceptedDuty;
 window.completeDuty=completeDuty;
 
-try{
-  startListeners();
-  render();
-  showPage(page);
-}catch(e){
-  console.error("Admin startup failed:",e);
-  const el=document.getElementById("connection");
-  if(el){el.textContent="FIREBASE ERROR";el.style.background="#ffe8ed";el.style.color="#b4233d";}
-  const a=document.getElementById("app");
-  if(a)a.innerHTML='<div class="card"><h2>⚠️ ADMIN STARTUP ERROR</h2><div class="notice">Firebase connection could not be started. Please refresh once.</div></div>';
-}
+window.openCreateActivateDriver=function(){
+  const o=$("createActivateOverlay");
+  if(o)o.style.display="flex";
+  setTimeout(()=>$("caMobile")?.focus(),50);
+};
+window.closeCreateActivateDriver=function(){
+  const o=$("createActivateOverlay");
+  if(o)o.style.display="none";
+};
+window.submitCreateActivateDriver=async function(){
+  const mobile=String($("caMobile")?.value||"").replace(/\D/g,"");
+  const name=String($("caName")?.value||"").trim();
+  const car=String($("caCar")?.value||"").trim().toUpperCase();
+  const category=String($("caCategory")?.value||"SEDAN").trim().toUpperCase();
+  if(mobile.length<10){alert("Valid mobile number enter pannunga.");return;}
+  if(!name){alert("Driver name enter pannunga.");return;}
+  if(!car){alert("Car number enter pannunga.");return;}
+  try{
+    const matches=drivers.filter(d=>String(d.mobile||d.phone||d.driverMobile||"").replace(/\D/g,"")===mobile);
+    let ref,driverId;
+    if(matches.length){
+      const d=matches[0];
+      ref=doc(db,"drivers",d.id);
+      driverId=String(d.driverId||("driver_"+mobile));
+      await setDoc(ref,{
+        mobile,phone:mobile,driverMobile:mobile,
+        name,driverName:name,
+        vehicleNumber:car,carNumber:car,
+        vehicleCategory:category,vehicleModel:category,vehicle:category,
+        driverId,status:"APPROVED",approved:true,blocked:false,
+        paymentStatus:d.paymentStatus||"APPROVED",paymentVerified:d.paymentVerified!==false,
+        registrationFee:Number(d.registrationFee||400),updatedAt:serverTimestamp(),activatedAt:serverTimestamp()
+      },{merge:true});
+      alert("Driver ACTIVATED / UPDATED successfully.\nDriver ID: "+driverId);
+    }else{
+      driverId="driver_"+mobile;
+      ref=doc(db,"drivers",driverId);
+      await setDoc(ref,{
+        mobile,phone:mobile,driverMobile:mobile,
+        name,driverName:name,
+        vehicleNumber:car,carNumber:car,
+        vehicleCategory:category,vehicleModel:category,vehicle:category,
+        driverId,status:"APPROVED",approved:true,blocked:false,
+        paymentStatus:"APPROVED",paymentVerified:true,registrationFee:400,
+        walletBalance:0,wallet:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),activatedAt:serverTimestamp()
+      },{merge:true});
+      alert("New Driver ID CREATED successfully.\nDriver ID: "+driverId);
+    }
+    $("caMobile").value="";$("caName").value="";$("caCar").value="";
+    closeCreateActivateDriver();
+    renderDrivers();
+  }catch(e){console.error(e);alert("Driver create / activate failed: "+e.message);}
+};
+
+startListeners();
+render();
+showPage(page);
 
 
 /* ===== DUTY SCREENSHOT OCR ===== */
@@ -1899,6 +1954,10 @@ window.createDutyFromOCR=async function(){
     const selected=driverStatusFilter==='ALL'?drivers:drivers.filter(d=>driverStatus(d)===driverStatusFilter);
     $('app').innerHTML=`
       <div class="pageIntro"><h1>👨‍✈️ Driver Dashboard</h1><div class="sub">Search a registered driver and Approve / Reject / Block</div></div>
+      <div class="quickDriverTools">
+        <button class="btn green" onclick="openCreateActivateDriver()">➕ CREATE / ACTIVATE DRIVER ID</button>
+        <button class="btn blue" onclick="showPage('driverActivity')">📊 FULL DRIVER HISTORY</button>
+      </div>
       <div class="driverDashCards">
         <button class="driverDashCard active" onclick="driverStatusFilter='APPROVED';renderDrivers()"><b>${approved}</b><span>ACTIVE / APPROVED</span></button>
         <button class="driverDashCard pending" onclick="driverStatusFilter='PENDING';renderDrivers()"><b>${pending}</b><span>PENDING</span></button>
