@@ -114,13 +114,6 @@ body{background:radial-gradient(circle at 0% 0%,#e7f4ff 0,#f7f9ff 28%,transparen
 .field input,.field select,.field textarea{border:1px solid #d7dfed;background:#fbfcff;color:#17294d}.primary{background:linear-gradient(135deg,#5b4be7,#8b4ee8,#d34fa5)}.green{background:linear-gradient(135deg,#00a878,#10c99a)}.red{background:linear-gradient(135deg,#e84d70,#f06aa0)}.orange{background:linear-gradient(135deg,#f09a32,#ef6e68)}.notice{background:linear-gradient(135deg,#edf7ff,#f3efff);color:#405a86;border:1px solid #dce5f4}.badge.open{background:#e7f7ff;color:#087ab2}.badge.accepted{background:#e7fbf4;color:#087e62}.badge.completed{background:#eeeaff;color:#6446ca}.badge.cancelled{background:#fff0e6;color:#aa6418}.historyFilters button{background:#eef2fa;color:#4d5b76;border:1px solid #dde4f0}.historyFilters button.active{background:linear-gradient(135deg,#6049df,#a34bd7);color:#fff;border:0}
 #ocrFab{background:linear-gradient(135deg,#4b55df,#8c45db,#e34f9a)}#ocrOverlay{background:rgba(37,43,76,.48)}#ocrModal,#driverDocModal{background:linear-gradient(145deg,#fff,#f7f5ff)}.ocrScan{background:linear-gradient(135deg,#4d58df,#8c49dc)!important}.ocrCreate{background:linear-gradient(135deg,#00a878,#10c99a)!important}.docOpen{background:#eeeaff;color:#6047cb}.loginBox{background:linear-gradient(145deg,#fff,#f5f3ff);border-color:#e0e4f1}.loginLogo{background:linear-gradient(145deg,#4c58df,#8a48dd,#e34e9d)}.loginBtn{background:linear-gradient(135deg,#4b55df,#8d49df)}
 .dashboardHero{border-radius:26px;padding:22px;color:#fff;margin:14px 0;background:linear-gradient(135deg,#4354dc,#7549d8 52%,#d44f9e);box-shadow:0 18px 38px rgba(87,70,190,.22)}.dashboardHero h2{margin:0 0 5px;font-size:24px}.dashboardHero p{margin:0;opacity:.9;font-size:13px}.quickGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}.quickBtn{padding:18px;border-radius:18px;background:#fff;border:1px solid #e0e6f3;box-shadow:0 9px 22px rgba(55,72,120,.07);font-weight:950;color:#30405e;text-align:left}.quickBtn b{display:block;font-size:22px;margin-bottom:6px}.quickBtn small{color:#73819a}.stat.clickable{cursor:pointer;transition:.18s}.stat.clickable:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(59,76,129,.13)}.allDutyCard{border-left:5px solid #7357e8}.allDutyCard.openState{border-left-color:#00b894}.allDutyCard.acceptedState{border-left-color:#ec4899}.allDutyCard.doneState{border-left-color:#6446ca}.allDutyCard.cancelState{border-left-color:#f09a32}.allDutyCard.rejectedState{border-left-color:#e84d70}.mobileBottomNav{display:none}@media(max-width:650px){.mobileBottomNav{position:fixed;display:grid;grid-template-columns:repeat(4,1fr);left:10px;right:10px;bottom:10px;z-index:60;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border:1px solid #dfe5f4;border-radius:20px;box-shadow:0 12px 35px rgba(35,48,91,.18);padding:6px}.mobileBottomNav button{background:transparent;color:#56647a;padding:8px 3px;border-radius:14px;font-size:10px;font-weight:900}.mobileBottomNav button.active{background:linear-gradient(135deg,#5b4be7,#a34bd7);color:#fff}.mobileBottomNav button b{display:block;font-size:17px;margin-bottom:2px}}@media(max-width:650px){.desktopNav{display:none}.quickGrid{grid-template-columns:1fr 1fr}}@media(min-width:651px){.menuBar{display:none}}
-
-/* ===== REQUESTED DUTY EDIT MODAL ===== */
-#editDutyOverlay{position:fixed;inset:0;background:#10182aaa;z-index:500;display:none;align-items:center;justify-content:center;padding:12px}
-#editDutyModal{width:min(760px,100%);max-height:94vh;overflow:auto;background:#fff;border-radius:24px;padding:18px;box-shadow:0 25px 80px #0006}
-#editDutyModal h2{margin:0 0 5px}.editDutySub{color:#66758b;font-size:12px;margin-bottom:14px}
-.editDutyActions{display:flex;gap:9px;margin-top:14px}.editDutyActions button{flex:1}
-
 </style>
 </head>
 <body>
@@ -148,29 +141,11 @@ body{background:radial-gradient(circle at 0% 0%,#e7f4ff 0,#f7f9ff 28%,transparen
 </header>
 
 <div class="menuBar"><button class="menuBtn" onclick="toggleMenu()" aria-label="Open menu">☰</button><div class="menuTitle">TAXI CLUB OG <span>ADMIN</span></div><div id="menuConnection" class="menuDot">●</div></div>
-<div id="sideMenu" class="sideMenu"><div class="sideHead"><div><b>🚕 TAXI CLUB OG</b><small>ADMIN MENU</small></div><button onclick="toggleMenu()">✕</button></div><button onclick="showPage('dashboard');toggleMenu()">🏠 <span>DASHBOARD</span></button><button onclick="showPage('duty');toggleMenu()">🚕 <span>DUTY MANAGEMENT</span></button><button onclick="showPage('drivers');toggleMenu()">👨‍✈️ <span>DRIVER LIST</span></button><button onclick="showPage('open');toggleMenu()">🟢 <span>OPEN DUTIES</span></button><button onclick="showPage('accepted');toggleMenu()">✅ <span>ACCEPTED DUTIES</span></button><button onclick="showPage('all');toggleMenu()">📚 <span>ALL DUTIES</span></button><button onclick="showPage('driverActivity');toggleMenu()">📊 <span>DRIVER ACTIVITY</span></button><button onclick="showPage('history');toggleMenu()">📋 <span>FULL HISTORY</span></button></div>
+<div id="sideMenu" class="sideMenu"><div class="sideHead"><div><b>🚕 TAXI CLUB OG</b><small>ADMIN MENU</small></div><button onclick="toggleMenu()">✕</button></div><button onclick="showPage('dashboard');toggleMenu()">🏠 <span>DASHBOARD</span></button><button onclick="showPage('duty');toggleMenu()">🚕 <span>DUTY MANAGEMENT</span></button><button onclick="showPage('drivers');toggleMenu()">👨‍✈️ <span>DRIVER LIST</span></button><button onclick="showPage('open');toggleMenu()">🟢 <span>OPEN DUTIES</span></button><button onclick="showPage('accepted');toggleMenu()">✅ <span>ACCEPTED DUTIES</span></button><button onclick="showPage('all');toggleMenu()">📚 <span>ALL DUTIES</span></button><button onclick="showPage('history');toggleMenu()">📋 <span>FULL HISTORY</span></button></div>
 <div id="menuBackdrop" class="menuBackdrop" onclick="toggleMenu()"></div>
-<nav class="desktopNav"><button id="nav-dashboard" onclick="showPage('dashboard')">🏠 DASHBOARD</button><button id="nav-duty" onclick="showPage('duty')">🚕 DUTY</button><button id="nav-drivers" onclick="showPage('drivers')">👨‍✈️ DRIVERS</button><button id="nav-open" onclick="showPage('open')">🟢 OPEN</button><button id="nav-accepted" onclick="showPage('accepted')">✅ ACCEPTED</button><button id="nav-all" onclick="showPage('all')">📚 ALL DUTIES</button><button id="nav-driverActivity" onclick="showPage('driverActivity')">📊 DRIVER ACTIVITY</button><button id="nav-history" onclick="showPage('history')">📋 HISTORY</button></nav><div class="mobileBottomNav"><button id="mb-dashboard" onclick="showPage('dashboard')"><b>🏠</b>HOME</button><button id="mb-duty" onclick="showPage('duty')"><b>🚕</b>DUTY</button><button id="mb-all" onclick="showPage('all')"><b>📚</b>ALL DUTIES</button><button id="mb-history" onclick="showPage('history')"><b>📋</b>HISTORY</button></div>
+<nav class="desktopNav"><button id="nav-dashboard" onclick="showPage('dashboard')">🏠 DASHBOARD</button><button id="nav-duty" onclick="showPage('duty')">🚕 DUTY</button><button id="nav-drivers" onclick="showPage('drivers')">👨‍✈️ DRIVERS</button><button id="nav-open" onclick="showPage('open')">🟢 OPEN</button><button id="nav-accepted" onclick="showPage('accepted')">✅ ACCEPTED</button><button id="nav-all" onclick="showPage('all')">📚 ALL DUTIES</button><button id="nav-history" onclick="showPage('history')">📋 HISTORY</button></nav><div class="mobileBottomNav"><button id="mb-dashboard" onclick="showPage('dashboard')"><b>🏠</b>HOME</button><button id="mb-duty" onclick="showPage('duty')"><b>🚕</b>DUTY</button><button id="mb-all" onclick="showPage('all')"><b>📚</b>ALL DUTIES</button><button id="mb-history" onclick="showPage('history')"><b>📋</b>HISTORY</button></div>
 
 <main id="app" class="hidden"><div class="loading">Loading...</div></main>
-
-<div id="editDutyOverlay">
-  <div id="editDutyModal">
-    <div class="row"><div><h2>✏️ EDIT DUTY</h2><div class="editDutySub">Edit all duty details in one page. Same Duty ID will be updated.</div></div><button class="btn gray" onclick="closeEditDuty()">✕</button></div>
-    <div class="grid">
-      <div class="field"><label>PICKUP</label><input id="editPickup"></div>
-      <div class="field"><label>DROP</label><input id="editDrop"></div>
-      <div class="field"><label>DATE</label><input id="editDate" type="text" inputmode="numeric" maxlength="10" placeholder="DD/MM/YYYY"></div>
-      <div class="field"><label>TIME</label><input id="editTime" type="time"></div>
-      <div class="field"><label>VEHICLE</label><select id="editVehicle"><option>MINI /SEDAN</option><option>SEDAN</option><option>SUV</option><option>INNOVA</option><option>INNOVA CRISTA</option></select></div>
-      <div class="field"><label>KM</label><input id="editKm" type="number" min="0"></div>
-      <div class="field"><label>AMOUNT ₹</label><input id="editAmount" type="number" min="0"></div>
-      <div class="field"><label>SPECIAL SERVICE / NOTE</label><input id="editSpecialService"></div>
-    </div>
-    <div class="editDutyActions"><button class="btn gray" onclick="closeEditDuty()">CANCEL</button><button class="btn primary" onclick="submitEditDuty()">✅ SAVE / SUBMIT</button></div>
-  </div>
-</div>
-
 
 
 <script>
@@ -207,7 +182,7 @@ window.adminLogin = function(){
 
 <script type="module">
 import {initializeApp}
-from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
 import {
   getFirestore,
@@ -222,7 +197,7 @@ import {
   serverTimestamp,
   runTransaction
 }
-from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const firebaseConfig={
   apiKey:"AIzaSyCXOKF-5BEE_qqZWuO08A_Dks4F0b-3q8",
@@ -234,8 +209,18 @@ const firebaseConfig={
   measurementId:"G-FY2SEGK4WG"
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
+let app, db;
+try{
+  app=initializeApp(firebaseConfig);
+  db=getFirestore(app);
+}catch(e){
+  console.error("Firebase initialization failed:",e);
+  const el=document.getElementById("connection");
+  if(el){el.textContent="FIREBASE ERROR";el.style.background="#ffe8ed";el.style.color="#b4233d";}
+  const a=document.getElementById("app");
+  if(a)a.innerHTML='<div class="card"><h2>⚠️ FIREBASE CONNECTION ERROR</h2><div class="notice">Firebase could not start. Please refresh once. If it continues, the Firebase configuration or browser connection needs checking.</div></div>';
+  throw e;
+}
 
 let page="dashboard";
 let drivers=[];
@@ -246,11 +231,12 @@ let unDuties=null;
 
 /* ===== DRIVER MOBILE SEARCH STATE ===== */
 let driverMobileSearch="";
+let editingDutyId=null;
 
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 
-window.showPage=function(p){page=p;["dashboard","duty","drivers","open","accepted","all","driverActivity","history"].forEach(x=>{const el=$("nav-"+x);if(el)el.classList.toggle("active",x===p);const mb=$("mb-"+x);if(mb)mb.classList.toggle("active",x===p);});render();window.scrollTo({top:0,behavior:"smooth"});};
+window.showPage=function(p){page=p;["dashboard","duty","drivers","open","accepted","all","history"].forEach(x=>{const el=$("nav-"+x);if(el)el.classList.toggle("active",x===p);const mb=$("mb-"+x);if(mb)mb.classList.toggle("active",x===p);});render();window.scrollTo({top:0,behavior:"smooth"});};
 window.toggleMenu=function(){$("sideMenu").classList.toggle("open");$("menuBackdrop").classList.toggle("open");};
 
 function setConnected(ok){
@@ -320,17 +306,18 @@ function render(){
 
 function renderDashboard(){const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;const pending=drivers.filter(d=>driverStatus(d)==="PENDING").length;const open=duties.filter(d=>statusOf(d)==="OPEN").length;const accepted=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d))).length;$("app").innerHTML=`<div class="dashboardHero"><h2>🚕 TAXI CLUB OG</h2><p>Luxury Admin Dashboard • Manage duties, drivers and trip activity</p></div><div class="statgrid"><button class="stat clickable" onclick="showPage('drivers')"><b>${approved}</b><span>APPROVED DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="filterDriverStatus('PENDING')"><b>${pending}</b><span>PENDING DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('open')"><b>${open}</b><span>OPEN DUTIES • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('accepted')"><b>${accepted}</b><span>ACCEPTED • VIEW ALL</span></button></div><div class="card"><h2>⚡ QUICK MENU</h2><div class="quickGrid"><button class="quickBtn" onclick="showPage('duty')"><b>🚕</b>CREATE DUTY<small>Create a new driver duty</small></button><button class="quickBtn" onclick="showPage('open')"><b>🟢</b>OPEN DUTIES<small>View duties waiting for drivers</small></button><button class="quickBtn" onclick="showPage('accepted')"><b>✅</b>ACCEPTED<small>See driver assignments</small></button><button class="quickBtn" onclick="showPage('history')"><b>📋</b>HISTORY<small>Track all duty actions</small></button></div></div><div class="card"><h2>👨‍✈️ DRIVER PANEL</h2><div class="notice">Driver approval, ₹400 registration verification, documents and wallet controls are available inside Duty Management.</div><button class="btn primary" onclick="showPage('duty')">OPEN DRIVER MANAGEMENT →</button></div>`;}
 
-let editingDutyId=null;
-
 function renderDuty(){
   const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;
   const pending=drivers.filter(d=>driverStatus(d)==="PENDING").length;
   const open=duties.filter(d=>statusOf(d)==="OPEN").length;
   const accepted=duties.filter(d=>statusOf(d)==="ACCEPTED"||statusOf(d)==="STARTED").length;
 
+  const editing=editingDutyId ? duties.find(x=>x.id===editingDutyId) : null;
+  const isEdit=!!editing;
+
   $("app").innerHTML=`
-    <h1>🚕 Duty Management</h1>
-    <div class="sub">Create duty + driver approval/payment control</div>
+    <h1>${isEdit?"✏️ Edit Duty":"🚕 Duty Management"}</h1>
+    <div class="sub">${isEdit?"Edit the existing OPEN duty and update the same duty for drivers":"Create duty + driver approval/payment control"}</div>
 
     <div class="statgrid">
       <button class="stat clickable" onclick="showPage('drivers')"><b>${approved}</b><span>APPROVED DRIVERS • VIEW ALL</span></button>
@@ -340,54 +327,59 @@ function renderDuty(){
     </div>
 
     <div class="card">
-      <h2>➕ CREATE DUTY</h2>
+      <h2>${isEdit?"✏️ EDIT EXISTING DUTY":"➕ CREATE DUTY"}</h2>
+      ${isEdit?`<div class="notice">இந்த Duty-ஐ delete செய்து புதிய Duty உருவாக்கவில்லை. இதே Duty ID update ஆகும். Update செய்தவுடன் Driver App-ல் latest details வரும்.</div>`:""}
       <div class="grid">
         <div class="field"><label>DUTY CATEGORY</label>
           <select id="dutyType">
-            <option>AIRPORT PICKUP / DROP</option><option>ONE WAY</option><option>ROUND TRIP</option><option>LOCAL RENTAL</option><option>OUTSTATION</option>
+            <option ${editing?.dutyType==="AIRPORT PICKUP / DROP"?"selected":""}>AIRPORT PICKUP / DROP</option>
+            <option ${editing?.dutyType==="ONE WAY"?"selected":""}>ONE WAY</option>
+            <option ${editing?.dutyType==="ROUND TRIP"?"selected":""}>ROUND TRIP</option>
+            <option ${editing?.dutyType==="LOCAL RENTAL"?"selected":""}>LOCAL RENTAL</option>
+            <option ${editing?.dutyType==="OUTSTATION"?"selected":""}>OUTSTATION</option>
           </select>
         </div>
         <div class="field"><label>CAR</label>
-          <select id="vehicle"><option>MINI /SEDAN</option><option>SEDAN</option><option>SUV</option><option>INNOVA</option><option>INNOVA CRISTA</option></select>
+          <select id="vehicle">
+            <option ${editing?.vehicle==="MINI/SEDAN"?"selected":""}>MINI /SEDAN</option>
+            <option ${editing?.vehicle==="SEDAN"?"selected":""}>SEDAN</option>
+            <option ${editing?.vehicle==="SUV"?"selected":""}>SUV</option>
+            <option ${editing?.vehicle==="INNOVA"?"selected":""}>INNOVA</option>
+            <option ${editing?.vehicle==="INNOVA CRISTA"?"selected":""}>INNOVA CRISTA</option>
+          </select>
         </div>
-        <div class="field"><label>PICKUP</label><input id="pickup" placeholder="Pickup location"></div>
-        <div class="field"><label>DROP</label><input id="drop" placeholder="Drop location"></div>
-        <div class="field"><label>DATE</label><input id="date" type="text" inputmode="numeric" maxlength="10" placeholder="DD/MM/YYYY" oninput="formatDate(this)"></div>
-        <div class="field"><label>TIME</label><input id="time" type="time"></div>
-        <div class="field"><label>KM</label><input id="km" type="number" min="0" placeholder="KM"></div>
-        <div class="field"><label>AMOUNT ₹</label><input id="amount" type="number" min="0" placeholder="Amount"></div>
-        <div class="field"><label>LOCAL RENTAL HOURS</label><input id="rentalHours" type="number" min="1" placeholder="Only for Local Rental"></div>
-        <div class="field"><label>SPECIAL SERVICE / NOTE</label><input id="specialService" placeholder="Optional — shown to driver"></div>
+        <div class="field"><label>PICKUP</label><input id="pickup" placeholder="Pickup location" value="${esc(editing?.pickup||"")}"></div>
+        <div class="field"><label>DROP</label><input id="drop" placeholder="Drop location" value="${esc(editing?.drop||"")}"></div>
+        <div class="field"><label>DATE</label><input id="date" type="text" inputmode="numeric" maxlength="10" placeholder="DD/MM/YYYY" value="${esc(editing?.date||"")}" oninput="formatDate(this)"></div>
+        <div class="field"><label>TIME</label><input id="time" type="time" value="${esc(editing?.time||"")}"></div>
+        <div class="field"><label>KM</label><input id="km" type="number" min="0" placeholder="KM" value="${editing?.km??""}"></div>
+        <div class="field"><label>AMOUNT ₹</label><input id="amount" type="number" min="0" placeholder="Amount" value="${editing?.amount??""}"></div>
+        <div class="field"><label>LOCAL RENTAL HOURS</label><input id="rentalHours" type="number" min="1" placeholder="Only for Local Rental" value="${editing?.rentalHours||""}"></div>
+        <div class="field"><label>SPECIAL SERVICE / NOTE</label><input id="specialService" placeholder="Optional — shown to driver" value="${esc(editing?.specialService||editing?.note||"")}"></div>
       </div>
-      <div class="actions"><button class="btn primary" onclick="createDuty()">✅ CREATE DUTY</button><button class="btn gray" onclick="showPage('all')">📚 VIEW ALL DUTIES</button></div>
+      <div class="actions">
+        ${isEdit
+          ? `<button class="btn primary" onclick="updateDuty()">🔄 UPDATE DUTY</button><button class="btn gray" onclick="cancelDutyEdit()">✕ CANCEL EDIT</button>`
+          : `<button class="btn primary" onclick="createDuty()">✅ CREATE DUTY</button><button class="btn gray" onclick="showPage('all')">📚 VIEW ALL DUTIES</button>`}
+      </div>
     </div>
 
+    ${isEdit?`<div class="card"><h2>👨‍✈️ DRIVER APPROVAL</h2><div class="notice">Duty editing is limited to OPEN duties. Driver approval and wallet controls remain unchanged.</div></div>`:`
     <div class="card">
       <h2>👨‍✈️ DRIVER APPROVAL</h2>
       <div class="notice">Driver registers → ₹400 payment → Admin approves. Only APPROVED drivers can use the Driver App.</div>
 
-      <!-- ===== DRIVER MOBILE SEARCH ===== -->
       <div class="driver-search">
         <label>🔎 SEARCH DRIVER BY MOBILE NUMBER</label>
         <div class="search-row">
-          <input
-            id="driverMobileSearch"
-            type="tel"
-            inputmode="numeric"
-            maxlength="15"
-            placeholder="Enter driver mobile number"
-            value="${esc(driverMobileSearch)}"
-            oninput="filterDriversByMobile(this.value)"
-          >
+          <input id="driverMobileSearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter driver mobile number" value="${esc(driverMobileSearch)}" oninput="filterDriversByMobile(this.value)">
           <button class="btn gray" onclick="clearDriverMobileSearch()">CLEAR</button>
         </div>
         <div id="driverSearchCount" class="search-count"></div>
       </div>
 
-      <div id="driverApprovalList">
-        ${renderDriverApprovalList()}
-      </div>
-    </div>
+      <div id="driverApprovalList">${renderDriverApprovalList()}</div>
+    </div>`}
   `;
 }
 
@@ -476,7 +468,8 @@ function driverCard(d){
         <div class="name">👨‍✈️ ${esc(d.name||d.driverName||"Driver")}</div>
         <div class="muted">📱 ${esc(d.mobile||d.phone||"")}<br>
         🪪 ${esc(d.licenseNumber||"-")}<br>
-        🚕 ${esc(d.vehicleNumber||"-")} - ${esc(d.vehicleModel||d.vehicle||"-")}</div>
+        🚕 ${esc(d.vehicleNumber||"-")} - ${esc(d.vehicleModel||d.vehicle||"-")}<br>
+        🆔 Driver ID: <b>${esc(d.driverId||"-")}</b></div>
       </div>
       <span class="badge ${s==="APPROVED"?"approved":s==="BLOCKED"?"blocked":s==="REJECTED"?"rejected":"pending"}">${esc(s)}</span>
     </div>
@@ -492,7 +485,7 @@ function driverCard(d){
       ${s!=="REJECTED"?`<button class="btn orange" onclick="rejectDriver('${esc(d.id)}')">✕ REJECT</button>`:""}
       ${s!=="BLOCKED"?`<button class="btn red" onclick="blockDriver('${esc(d.id)}')">⛔ BLOCK</button>`:
       `<button class="btn green" onclick="unblockDriver('${esc(d.id)}')">UNBLOCK</button>`}
-      <button class="btn primary" onclick="openDriverActivityById('${esc(d.id)}')">📊 FULL HISTORY</button>
+      <button class="btn blue" onclick="createDriverId('${esc(d.id)}')">🆔 ${d.driverId?'EDIT DRIVER ID':'CREATE DRIVER ID'}</button>
       <button class="btn gray" onclick="deleteDriver('${esc(d.id)}')">🗑 DELETE</button>
     </div>
 
@@ -523,29 +516,6 @@ function renderDrivers(){
     <div class="card"><h2>🔎 SEARCH DRIVER</h2>
       <div class="driver-search"><label>SEARCH BY MOBILE NUMBER</label><div class="search-row"><input id="driverMobileSearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter driver mobile number" value="${esc(driverMobileSearch)}" oninput="filterDriversByMobile(this.value)"><button class="btn gray" onclick="clearDriverMobileSearch()">CLEAR</button></div><div id="driverSearchCount" class="search-count"></div></div>
       <div id="driverApprovalList">${renderDriverApprovalList(driverStatusFilter)}</div>
-    </div>
-    <div class="card" style="border-top:5px solid #7357e8">
-      <h2>🆕 CREATE / ACTIVATE DRIVER</h2>
-      <div class="notice">Mobile number + Driver Name + Car Number + Vehicle Category கொடுத்து ADMIN-ஆக activate பண்ணலாம். OK கொடுத்தவுடன் Driver ID ACTIVE ஆகும்; duplicate driver உருவாகாது.</div>
-      <div class="grid">
-        <div class="field"><label>DRIVER MOBILE NUMBER *</label><input id="manualDriverMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="Enter 10-digit mobile number"></div>
-        <div class="field"><label>DRIVER NAME *</label><input id="manualDriverName" type="text" placeholder="Enter driver name"></div>
-        <div class="field"><label>CAR NUMBER *</label><input id="manualDriverCarNumber" type="text" placeholder="Example: TN01AB1234" oninput="this.value=this.value.toUpperCase()"></div>
-        <div class="field"><label>VEHICLE CATEGORY *</label>
-          <select id="manualDriverVehicleCategory">
-            <option value="MINI">MINI</option>
-            <option value="SEDAN">SEDAN</option>
-            <option value="SUV">SUV</option>
-          </select>
-        </div>
-      </div>
-      <div class="actions"><button class="btn primary" onclick="createOrActivateDriverByMobile()">✅ OK — CREATE / ACTIVATE DRIVER</button></div>
-    </div>
-    <div class="card"><h2>📊 QUICK DRIVER HISTORY</h2>
-      <div class="notice">Driver mobile number போட்டால் accepted, completed, cancelled, rejected, active duty, amount, penalty மற்றும் wallet history பார்க்கலாம்.</div>
-      <div class="driver-search"><label>DRIVER MOBILE / CAR NUMBER</label>
-        <div class="search-row"><input id="driverActivityQuickSearch" type="text" placeholder="Enter mobile number or car number"><button class="btn primary" onclick="openDriverActivityFromQuickSearch()">📊 VIEW FULL HISTORY</button></div>
-      </div>
     </div>
     <div class="card"><h2>🔓 UNBLOCK DRIVER BY MOBILE</h2>
       <div class="driver-search"><label>BLOCKED DRIVER MOBILE NUMBER</label>
@@ -595,7 +565,6 @@ function renderOpen(){
     <h1>🟢 Open Duties</h1>
     <div class="sub">Only duties waiting for a driver</div>
     <div class="notice">Accepted / Cancelled / Completed / Deleted duties will NOT appear here.</div>
-    <div class="notice">✏️ EDIT DUTY updates the same Duty ID. Driver App live data will receive the changed details automatically.</div>
     <div class="card">
       <h2>🚕 OPEN DUTIES (${list.length})</h2>
       ${list.length?list.map(openDutyCard).join(""):`<div class="empty">No open duties.</div>`}
@@ -616,60 +585,6 @@ function openDutyCard(d){
     </div>
   </div>`;
 }
-
-let editingDutyId=null;
-
-window.editDuty=function(id){
-  const d=duties.find(x=>x.id===id);
-  if(!d)return;
-  if(statusOf(d)!=="OPEN"){alert("Only OPEN duties can be edited.");return;}
-  editingDutyId=id;
-  $("editPickup").value=d.pickup||"";
-  $("editDrop").value=d.drop||"";
-  $("editDate").value=d.date||"";
-  $("editTime").value=d.time||"";
-  $("editVehicle").value=d.vehicle||"MINI /SEDAN";
-  $("editKm").value=Number(d.km||0);
-  $("editAmount").value=Number(d.amount||0);
-  $("editSpecialService").value=d.specialService||d.note||"";
-  $("editDutyOverlay").style.display="flex";
-};
-
-window.closeEditDuty=function(){
-  editingDutyId=null;
-  $("editDutyOverlay").style.display="none";
-};
-
-window.submitEditDuty=async function(){
-  if(!editingDutyId)return;
-  const pickup=$("editPickup").value.trim();
-  const drop=$("editDrop").value.trim();
-  const date=normalizeDate($("editDate").value.trim());
-  const time=$("editTime").value.trim();
-  const vehicle=$("editVehicle").value;
-  const km=Number($("editKm").value);
-  const amount=Number($("editAmount").value);
-  const specialService=$("editSpecialService").value.trim();
-
-  if(!pickup||!date||!time||!Number.isFinite(km)||km<0||!Number.isFinite(amount)||amount<0){
-    alert("Pickup, Date, Time, KM and Amount are required.");
-    return;
-  }
-  try{
-    await updateDoc(doc(db,"duties",editingDutyId),{
-      pickup,drop,date,time,vehicle,km,amount,
-      specialService,note:specialService,
-      updatedAt:serverTimestamp(),
-      dutyUpdatedAt:serverTimestamp(),
-      updateVersion:Date.now()
-    });
-    closeEditDuty();
-    alert("Duty updated successfully.");
-  }catch(e){
-    console.error(e);
-    alert("DUTY UPDATE FAILED:\n"+e.message);
-  }
-};
 
 function renderAccepted(){
   const list=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d))).sort((a,b)=>dutySortKey(a)-dutySortKey(b));
@@ -749,6 +664,100 @@ function historyCard(h){
     ${h.cancellationDeduction||h.walletDeduction?`<div class="notice">Wallet deduction: ₹${Number(h.cancellationDeduction||h.walletDeduction)}</div>`:""}
     <div class="muted">${formatStamp(h.historyCreatedAt||h.createdAt||h.completedAt||h.cancelledAt||h.rejectedAt||h.acceptedAt)}</div>
   </div>`;
+}
+
+window.editDuty=function(id){
+  const d=duties.find(x=>x.id===id);
+  if(!d)return;
+
+  if(statusOf(d)!=="OPEN"){
+    alert("இந்த Duty-ஐ edit செய்ய முடியாது. Driver accept செய்த Duty-க்கு இந்த Edit option இல்லை.");
+    return;
+  }
+
+  editingDutyId=id;
+  showPage("duty");
+};
+
+window.cancelDutyEdit=function(){
+  editingDutyId=null;
+  showPage("open");
+};
+
+async function updateDuty(){
+  if(!editingDutyId){
+    alert("No duty selected for editing.");
+    return;
+  }
+
+  const existing=duties.find(x=>x.id===editingDutyId);
+  if(!existing){
+    alert("Duty not found.");
+    editingDutyId=null;
+    showPage("open");
+    return;
+  }
+
+  if(statusOf(existing)!=="OPEN"){
+    alert("இந்த Duty ஏற்கனவே Driver எடுத்துவிட்டார். OPEN Duty மட்டும் edit செய்யலாம்.");
+    editingDutyId=null;
+    showPage("open");
+    return;
+  }
+
+  try{
+    const pickup=$("pickup").value.trim();
+    const drop=$("drop").value.trim();
+    const date=normalizeDate($("date").value.trim());
+    const time=$("time").value;
+    const vehicle=$("vehicle").value;
+    const dutyType=$("dutyType").value;
+    const km=Number($("km").value);
+    const amount=Number($("amount").value);
+    const rentalHours=Number($("rentalHours").value||0);
+    const specialService=$("specialService").value.trim();
+
+    if(!pickup||!date||!time||!km||amount<0 || (dutyType!=="LOCAL RENTAL"&&!drop)){
+      alert(dutyType==="LOCAL RENTAL"
+        ? "Pickup, Date, Time, KM and Amount enter pannunga."
+        : "Pickup, Drop, Date, Time, KM and Amount enter pannunga.");
+      return;
+    }
+
+    if(dutyType==="LOCAL RENTAL" && rentalHours<1){
+      alert("LOCAL RENTAL-ku hours enter pannunga.");
+      return;
+    }
+
+    await updateDoc(doc(db,"duties",editingDutyId),{
+      dutyType,
+      rentalHours:dutyType==="LOCAL RENTAL"?rentalHours:0,
+      pickup,
+      drop,
+      date,
+      time,
+      vehicle,
+      km,
+      amount,
+      specialService,
+      note:specialService,
+
+      // Keep the same duty document / same duty ID.
+      // Existing Driver App notification/listener flow can react to this update.
+      updatedAt:serverTimestamp(),
+      dutyUpdatedAt:serverTimestamp(),
+      notificationType:"DUTY_UPDATED",
+      notificationAt:serverTimestamp(),
+      updateVersion:Date.now()
+    });
+
+    editingDutyId=null;
+    alert("Duty updated successfully. Driver App will receive the updated duty.");
+    showPage("open");
+  }catch(e){
+    console.error(e);
+    alert("DUTY UPDATE FAILED: "+e.message);
+  }
 }
 
 async function createDuty(){
@@ -855,115 +864,6 @@ window.unblockDriverByMobile=async function(){
   await unblockDriver(driver.id);
 };
 
-function normalizeMobileNumber(v){
-  return String(v||"").replace(/\D/g,"").slice(-10);
-}
-
-window.openDriverActivityById=function(id){
-  const d=drivers.find(x=>x.id===id);
-  if(!d)return;
-  driverActivityQuery=normalizeMobileNumber(d.mobile||d.phone||d.driverMobile||"");
-  driverActivityCar="";
-  showPage("driverActivity");
-};
-
-window.openDriverActivityFromQuickSearch=function(){
-  const value=String($("driverActivityQuickSearch")?.value||"").trim();
-  if(!value){alert("Driver mobile number or car number enter pannunga.");return;}
-  if(/\d{8,15}/.test(value.replace(/\D/g,""))){
-    driverActivityQuery=value;
-    driverActivityCar="";
-  }else{
-    driverActivityQuery="";
-    driverActivityCar=value;
-  }
-  showPage("driverActivity");
-};
-
-window.createOrActivateDriverByMobile=async function(){
-  const mobile=normalizeMobileNumber($("manualDriverMobile")?.value);
-  const name=String($("manualDriverName")?.value||"").trim();
-  const carNumber=String($("manualDriverCarNumber")?.value||"").trim().toUpperCase();
-  const vehicleCategory=String($("manualDriverVehicleCategory")?.value||"").trim().toUpperCase();
-
-  if(mobile.length!==10){alert("Valid 10-digit driver mobile number enter pannunga.");return;}
-  if(!name){alert("Driver Name enter pannunga.");return;}
-  if(!carNumber){alert("Car Number enter pannunga.");return;}
-  if(!["MINI","SEDAN","SUV"].includes(vehicleCategory)){alert("Vehicle Category select pannunga.");return;}
-
-  const matches=drivers.filter(d=>normalizeMobileNumber(d.mobile||d.phone||d.driverMobile||"")===mobile);
-  const driverId="driver_"+mobile;
-
-  try{
-    if(matches.length){
-      const d=matches[0];
-      await updateDoc(doc(db,"drivers",d.id),{
-        name,
-        driverName:name,
-        mobile,
-        driverMobile:mobile,
-        phone:mobile,
-        driverId,
-        vehicleNumber:carNumber,
-        carNumber,
-        vehicleNo:carNumber,
-        vehicleCategory,
-        vehicleType:vehicleCategory,
-        carType:vehicleCategory,
-        status:"APPROVED",
-        approved:true,
-        blocked:false,
-        paymentStatus:"APPROVED",
-        paymentVerified:true,
-        registrationFee:Number(d.registrationFee||400),
-        activatedByAdmin:true,
-        activatedAt:serverTimestamp(),
-        updatedAt:serverTimestamp()
-      });
-      alert("Driver activated successfully.\n\nName: "+name+"\nCar: "+carNumber+"\nCategory: "+vehicleCategory+"\nDriver ID: "+driverId);
-    }else{
-      const ref=doc(collection(db,"drivers"));
-      await setDoc(ref,{
-        name,
-        driverName:name,
-        mobile,
-        driverMobile:mobile,
-        phone:mobile,
-        driverId,
-        vehicleNumber:carNumber,
-        carNumber,
-        vehicleNo:carNumber,
-        vehicleCategory,
-        vehicleType:vehicleCategory,
-        carType:vehicleCategory,
-        status:"APPROVED",
-        approved:true,
-        blocked:false,
-        paymentStatus:"APPROVED",
-        paymentVerified:true,
-        registrationFee:400,
-        manualAdminDriver:true,
-        activatedByAdmin:true,
-        createdAt:serverTimestamp(),
-        activatedAt:serverTimestamp(),
-        updatedAt:serverTimestamp(),
-        walletBalance:0,
-        wallet:0
-      });
-      alert("New Driver created and activated successfully.\n\nName: "+name+"\nCar: "+carNumber+"\nCategory: "+vehicleCategory+"\nDriver ID: "+driverId);
-    }
-
-    const m=$("manualDriverMobile"); if(m)m.value="";
-    const n=$("manualDriverName"); if(n)n.value="";
-    const c=$("manualDriverCarNumber"); if(c)c.value="";
-    const v=$("manualDriverVehicleCategory"); if(v)v.value="MINI";
-    showPage("drivers");
-  }catch(e){
-    console.error(e);
-    alert("CREATE / ACTIVATE DRIVER FAILED:\n"+e.message);
-  }
-};
-
 async function deleteDriver(id){
   const d=drivers.find(x=>x.id===id);
   if(!d)return;
@@ -983,7 +883,25 @@ async function deleteDriver(id){
   }
 }
 
+async function createDriverId(id){
+  const d=drivers.find(x=>x.id===id);
+  if(!d)return;
+  const current=String(d.driverId||"");
+  const value=prompt("Enter Driver ID",current);
+  if(value===null)return;
+  const driverId=value.trim();
+  if(!driverId){alert("Driver ID enter pannunga.");return;}
+  try{
+    await updateDoc(doc(db,"drivers",id),{driverId,updatedAt:serverTimestamp()});
+    alert("Driver ID saved: "+driverId);
+  }catch(e){
+    console.error(e);
+    alert("Driver ID save failed: "+e.message);
+  }
+}
+
 async function addWallet(id){
+  const d=drivers.find(x=>x.id===id)||{};
   const input=$("wallet-"+id);
   const amount=Number(input?.value);
 
@@ -1011,11 +929,10 @@ async function addWallet(id){
       });
     });
 
-    try{await addDoc(collection(db,"driver_wallet_history"),{
-      driverId:id,driverMobile:(drivers.find(x=>x.id===id)?.mobile||drivers.find(x=>x.id===id)?.phone||""),
-      driverName:(drivers.find(x=>x.id===id)?.name||drivers.find(x=>x.id===id)?.driverName||"Driver"),
-      action:"ADD",amount,createdAt:serverTimestamp()
-    });}catch(e){console.error("Wallet history ADD failed:",e);}
+    await addDoc(collection(db,"wallet_history"),{
+      driverId:id, driverMobile:d.mobile||d.phone||d.driverMobile||"", driverName:d.name||d.driverName||"",
+      type:"ADD", amount, reason:"ADMIN WALLET ADD", createdAt:serverTimestamp()
+    });
     input.value="";
     alert("Wallet added.");
   }catch(e){
@@ -1025,6 +942,7 @@ async function addWallet(id){
 }
 
 async function deductWallet(id){
+  const d=drivers.find(x=>x.id===id)||{};
   const input=$("wallet-"+id);
   const amount=Number(input?.value);
 
@@ -1055,11 +973,10 @@ async function deductWallet(id){
       });
     });
 
-    try{await addDoc(collection(db,"driver_wallet_history"),{
-      driverId:id,driverMobile:(drivers.find(x=>x.id===id)?.mobile||drivers.find(x=>x.id===id)?.phone||""),
-      driverName:(drivers.find(x=>x.id===id)?.name||drivers.find(x=>x.id===id)?.driverName||"Driver"),
-      action:"DEDUCT",amount,createdAt:serverTimestamp()
-    });}catch(e){console.error("Wallet history DEDUCT failed:",e);}
+    await addDoc(collection(db,"wallet_history"),{
+      driverId:id, driverMobile:d.mobile||d.phone||d.driverMobile||"", driverName:d.name||d.driverName||"",
+      type:"DEDUCT", amount, reason:"ADMIN WALLET DEDUCT", createdAt:serverTimestamp()
+    });
     input.value="";
     alert("Wallet deducted.");
   }catch(e){
@@ -1379,21 +1296,12 @@ function startListeners(){
     history=snap.docs.map(x=>({id:x.id,...x.data()}));
     render();
   },err=>console.error("History:",err));
-
-  onSnapshot(collection(db,"trips"),snap=>{
-    const tripRows=snap.docs.map(x=>({id:x.id,...x.data(),_tripRecord:true}));
-    history=[...history.filter(x=>!x._tripRecord),...tripRows];
-    render();
-  },err=>console.error("Trips history:",err));
-
-  onSnapshot(collection(db,"driver_wallet_history"),snap=>{
-    const walletRows=snap.docs.map(x=>({id:x.id,...x.data(),type:"WALLET_"+String(x.data().action||"").toUpperCase()}));
-    history=[...history.filter(x=>!String(x.type||"").startsWith("WALLET_")),...walletRows];
-    render();
-  },err=>console.error("Wallet history:",err));
 }
 
 window.createDuty=createDuty;
+window.editDuty=editDuty;
+window.updateDuty=updateDuty;
+window.cancelDutyEdit=cancelDutyEdit;
 window.approveDriver=approveDriver;
 window.rejectDriver=rejectDriver;
 window.blockDriver=blockDriver;
@@ -1406,9 +1314,17 @@ window.cancelDuty=cancelDuty;
 window.cancelAcceptedDuty=cancelAcceptedDuty;
 window.completeDuty=completeDuty;
 
-startListeners();
-render();
-showPage(page);
+try{
+  startListeners();
+  render();
+  showPage(page);
+}catch(e){
+  console.error("Admin startup failed:",e);
+  const el=document.getElementById("connection");
+  if(el){el.textContent="FIREBASE ERROR";el.style.background="#ffe8ed";el.style.color="#b4233d";}
+  const a=document.getElementById("app");
+  if(a)a.innerHTML='<div class="card"><h2>⚠️ ADMIN STARTUP ERROR</h2><div class="notice">Firebase connection could not be started. Please refresh once.</div></div>';
+}
 
 
 /* ===== DUTY SCREENSHOT OCR ===== */
@@ -1553,11 +1469,10 @@ Upload a duty screenshot. OCR reads the useful duty details; check them and crea
 <div class="ocrField">
 <label>VEHICLE</label>
 <select id="ocrVehicle">
-<option>MINI /SEDAN</option>
 <option>SEDAN</option>
 <option>SUV</option>
-<option>INNOVA</option>
-<option>INNOVA CRISTA</option>
+<option>MINI</option>
+<option>INNOVA CRYSTA</option>
 </select>
 </div>
 
@@ -2008,98 +1923,175 @@ window.createDutyFromOCR=async function(){
   };
 
 
+  let walletHistory=[];
   let driverActivityQuery='';
-  let driverActivityCar='';
+  onSnapshot(collection(db,"wallet_history"),snap=>{
+    walletHistory=snap.docs.map(x=>({id:x.id,...x.data()}));
+    if(page==='driverActivity') renderDriverActivity();
+  },err=>console.warn('wallet_history read failed:',err.message));
+
   window.renderDriverActivity=function(){
-    const q=String(driverActivityQuery||'').replace(/\D/g,'');
-    const cq=String(driverActivityCar||'').trim().toLowerCase();
-    const matchingDrivers=drivers.filter(d=>{
+    const q=String(driverActivityQuery||'').trim().toLowerCase();
+    const matchingDrivers=q?drivers.filter(d=>{
       const mobile=String(d.mobile||d.phone||d.driverMobile||'').replace(/\D/g,'');
-      const car=String(d.vehicleNumber||d.carNumber||d.vehicleNo||'').trim().toLowerCase();
-      return (q && mobile.includes(q)) || (cq && car.includes(cq));
-    });
+      const car=String(d.vehicleNumber||d.carNumber||'').toLowerCase();
+      const queryDigits=q.replace(/\D/g,'');
+      return (queryDigits && mobile.includes(queryDigits)) || car.includes(q);
+    }):[];
     const driver=matchingDrivers.length===1?matchingDrivers[0]:null;
 
-    const ids=new Set(), mobiles=new Set(), names=new Set(), cars=new Set();
+    const ids=new Set();
+    const mobiles=new Set();
+    const names=new Set();
+
     if(driver){
       [driver.id,driver.uid,driver.driverId].filter(Boolean).forEach(v=>ids.add(String(v)));
-      [driver.mobile,driver.phone,driver.driverMobile].filter(Boolean).forEach(v=>mobiles.add(String(v).replace(/\D/g,'')));
-      [driver.name,driver.driverName].filter(Boolean).forEach(v=>names.add(String(v).toLowerCase()));
-      [driver.vehicleNumber,driver.carNumber,driver.vehicleNo].filter(Boolean).forEach(v=>cars.add(String(v).trim().toLowerCase()));
+      [driver.mobile,driver.phone,driver.driverMobile].filter(Boolean)
+        .forEach(v=>mobiles.add(String(v).replace(/\D/g,'')));
+      [driver.name,driver.driverName].filter(Boolean)
+        .forEach(v=>names.add(String(v).toLowerCase()));
     }
 
     const belongs=(item)=>{
       const itemMob=String(item.driverMobile||item.mobile||item.phone||'').replace(/\D/g,'');
-      const itemCar=String(item.vehicleNumber||item.carNumber||item.vehicleNo||'').trim().toLowerCase();
-      const itemIds=[item.acceptedByUid,item.acceptedDriverId,item.driverId,item.rejectedByUid,item.rejectedDriverId,item.uid].filter(Boolean).map(String);
-      const itemNames=[item.driverName,item.acceptedBy,item.rejectedBy,item.completedBy,item.cancelledBy].filter(Boolean).map(v=>String(v).toLowerCase());
-      return (itemMob&&mobiles.has(itemMob)) || (itemCar&&cars.has(itemCar)) || itemIds.some(v=>ids.has(v)) || itemNames.some(v=>names.has(v));
+      const itemIds=[
+        item.acceptedByUid,item.acceptedDriverId,item.driverId,
+        item.rejectedByUid,item.rejectedDriverId,
+        item.cancelledByUid,item.cancelledDriverId,
+        item.completedByUid,item.uid
+      ].filter(Boolean).map(String);
+
+      const itemNames=[
+        item.driverName,item.acceptedBy,item.rejectedBy,
+        item.completedBy,item.cancelledBy
+      ].filter(Boolean).map(v=>String(v).toLowerCase());
+
+      return (itemMob&&mobiles.has(itemMob)) ||
+             itemIds.some(v=>ids.has(v)) ||
+             itemNames.some(v=>names.has(v));
     };
 
     const active=driver?duties.filter(d=>belongs(d)&&['OPEN','ACCEPTED','STARTED'].includes(statusOf(d))):[];
     const completed=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('COMPLETE')):[];
     const cancelled=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('CANCEL')):[];
     const rejected=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('REJECT')):[];
-    const accepted=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('ACCEPT')):[];
-    const deleted=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('DELETE')):[];
-    const rawAll=[...active.map(d=>({...d,__activityStatus:statusOf(d)})),
-      ...accepted.map(h=>({...h,__activityStatus:'ACCEPTED'})),
+    const walletRows=driver?walletHistory.filter(w=>belongs(w)):[];
+
+    const all=[
+      ...active.map(d=>({...d,__activityStatus:statusOf(d)})),
       ...completed.map(h=>({...h,__activityStatus:'COMPLETED'})),
       ...cancelled.map(h=>({...h,__activityStatus:'CANCELLED'})),
-      ...rejected.map(h=>({...h,__activityStatus:'REJECTED'})),
-      ...deleted.map(h=>({...h,__activityStatus:'DELETED'}))];
-    const seen=new Set();
-    const all=rawAll.filter(x=>{
-      const key=String(x.__activityStatus||'')+'|'+String(x.dutyId||x.id||'');
-      if(seen.has(key))return false;
-      seen.add(key);return true;
-    }).sort((a,b)=>stampMillis(b.historyCreatedAt||b.completedAt||b.cancelledAt||b.rejectedAt||b.deletedAt||b.createdAt||b.acceptedAt)-stampMillis(a.historyCreatedAt||a.completedAt||a.cancelledAt||a.rejectedAt||a.deletedAt||a.createdAt||a.acceptedAt));
+      ...rejected.map(h=>({...h,__activityStatus:'REJECTED'}))
+    ].sort((a,b)=>
+      stampMillis(b.historyCreatedAt||b.completedAt||b.cancelledAt||b.rejectedAt||b.createdAt||b.acceptedAt) -
+      stampMillis(a.historyCreatedAt||a.completedAt||a.cancelledAt||a.rejectedAt||a.createdAt||a.acceptedAt)
+    );
 
-    const totalAmount=all.reduce((n,x)=>n+Number(x.amount||0),0);
-    const completedAmount=completed.reduce((n,x)=>n+Number(x.amount||0),0);
-    const deductions=all.reduce((n,x)=>n+Number(x.cancellationDeduction||x.walletDeduction||x.penalty||x.penaltyAmount||0),0);
-    const wallet=Number(driver?.walletBalance??driver?.wallet??0);
+    // Per-duty penalty: cancellationDeduction / walletDeduction.
+    // If a future history record stores another penalty field, include it as well.
+    const penaltyOf=(x)=>Number(
+      x.cancellationDeduction ??
+      x.walletDeduction ??
+      x.penalty ??
+      x.penaltyAmount ??
+      0
+    );
+
+    const totalAmount=all.reduce((sum,x)=>sum+Number(x.amount||0),0);
+    const totalPenalty=all.reduce((sum,x)=>sum+penaltyOf(x),0);
+    const completedAmount=completed.reduce((sum,x)=>sum+Number(x.amount||0),0);
+    const completedPenalty=completed.reduce((sum,x)=>sum+penaltyOf(x),0);
+    const cancelledPenalty=cancelled.reduce((sum,x)=>sum+penaltyOf(x),0);
+    const rejectedPenalty=rejected.reduce((sum,x)=>sum+penaltyOf(x),0);
 
     $('app').innerHTML=`
-      <div class="pageIntro"><h1>📊 Driver Activity Report</h1><div class="sub">Search by driver mobile number or car number and view the full history.</div></div>
+      <div class="pageIntro">
+        <h1>📊 Driver Activity Report</h1>
+        <div class="sub">ஒரு mobile number போட்டால் அந்த driver எடுத்த/செய்த அனைத்து duty details, amount மற்றும் penalty பார்க்கலாம்.</div>
+      </div>
+
       <div class="card">
-        <h2>🔎 DRIVER SEARCH</h2>
-        <div class="grid">
-          <div class="field"><label>DRIVER MOBILE NUMBER</label><input id="driverActivitySearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter mobile number" value="${esc(driverActivityQuery)}" oninput="driverActivityQuery=this.value;renderDriverActivity()"></div>
-          <div class="field"><label>CAR / VEHICLE NUMBER</label><input id="driverActivityCar" type="text" placeholder="Enter car number" value="${esc(driverActivityCar)}" oninput="driverActivityCar=this.value;renderDriverActivity()"></div>
+        <h2>🔎 SEARCH DRIVER</h2>
+        <div class="driver-search">
+          <label>DRIVER MOBILE / CAR NUMBER</label>
+          <div class="search-row">
+            <input id="driverActivitySearch" type="text"
+              placeholder="Enter mobile number or car number"
+              value="${esc(driverActivityQuery)}"
+              oninput="driverActivityQuery=this.value;renderDriverActivity()">
+            <button class="btn gray" onclick="driverActivityQuery='';renderDriverActivity()">CLEAR</button>
+          </div>
+          <div class="search-count">
+            ${!q
+              ?'Enter driver mobile number or car number to view activity.'
+              :matchingDrivers.length===0
+                ?'No registered driver found.'
+                :matchingDrivers.length>1
+                  ?'More than one driver matched; enter the full mobile number.'
+                  :'Driver: '+esc(driver.name||driver.driverName||'Driver')+' • '+esc(driver.mobile||driver.phone||'')}
+          </div>
         </div>
-        <div class="actions"><button class="btn gray" onclick="driverActivityQuery='';driverActivityCar='';renderDriverActivity()">CLEAR</button></div>
-        <div class="search-count">${(!q&&!cq)?'Enter mobile or car number to view full history.':matchingDrivers.length===0?'No driver found.':matchingDrivers.length>1?'More than one driver matched; enter the full number.':'Driver: '+esc(driver.name||driver.driverName||'Driver')+' • '+esc(driver.mobile||driver.phone||'')+' • Car: '+esc(driver.vehicleNumber||driver.carNumber||'-')}</div>
-      </div>
-      ${driver?`
-      <div class="statgrid">
-        <div class="stat"><b>${all.length}</b><span>TOTAL DUTY HISTORY</span></div>
-        <div class="stat"><b>${accepted.length}</b><span>ACCEPTED</span></div>
-        <div class="stat"><b>${completed.length}</b><span>COMPLETED</span></div>
-        <div class="stat"><b>${cancelled.length}</b><span>CANCELLED</span></div>
-        <div class="stat"><b>${rejected.length}</b><span>REJECTED</span></div>
-        <div class="stat"><b>₹${completedAmount}</b><span>COMPLETED AMOUNT</span></div>
-        <div class="stat"><b>₹${deductions}</b><span>TOTAL PENALTY / DEDUCTION</span></div>
-        <div class="stat"><b>₹${wallet}</b><span>CURRENT WALLET</span></div>
-      </div>
-      <div class="card"><h2>💳 WALLET ADD / DEDUCT HISTORY</h2>
-        ${history.filter(h=>String(h.type||'').startsWith('WALLET_')&&belongs(h)).length?history.filter(h=>String(h.type||'').startsWith('WALLET_')&&belongs(h)).sort((a,b)=>stampMillis(b.createdAt)-stampMillis(a.createdAt)).map(w=>`<div class="duty"><div class="row"><b>${String(w.type||'').includes('ADD')?'＋ WALLET ADD':'− WALLET DEDUCT'}</b><span class="badge ${String(w.type||'').includes('ADD')?'approved':'cancelled'}">${esc(String(w.type||'').replace('WALLET_',''))}</span></div><div class="money">₹${Number(w.amount||0)}</div><div class="muted">${formatStamp(w.createdAt)}</div></div>`).join(''):'<div class="empty">No wallet add/deduct history found.</div>'}
-      </div>
-      <div class="card"><h2>📋 FULL DRIVER BOOKING / DUTY HISTORY (${all.length})</h2>
-        ${all.length?all.map(x=>{
-          const st=x.__activityStatus;
-          const penalty=Number(x.cancellationDeduction||x.walletDeduction||x.penalty||x.penaltyAmount||0);
-          return `<div class="duty">
-            <div class="row"><b>${esc(st)}</b><span class="badge ${st==='COMPLETED'?'completed':st==='CANCELLED'?'cancelled':st==='REJECTED'?'rejected':st==='ACCEPTED'?'accepted':st==='OPEN'?'open':'pending'}">${esc(st)}</span></div>
-            <div class="route"><div>📍 ${esc(x.pickup||'-')}</div><div>🏁 ${esc(x.drop||'-')}</div></div>
-            <div class="muted">📅 ${esc(x.date||'-')} &nbsp; ⏰ ${esc(x.time||'-')}<br>🚘 ${esc(x.vehicle||'-')} &nbsp; 📏 ${Number(x.km||0)} KM<br>📱 ${esc(x.driverMobile||x.mobile||driver.mobile||'-')}</div>
-            <div class="money">₹${Number(x.amount||0)}</div>
-            ${penalty?`<div class="notice">− ₹${penalty} PENALTY / DEDUCTION</div>`:''}
-            ${x.walletAction?`<div class="notice">WALLET ${esc(x.walletAction)} ₹${Number(x.walletAmount||0)}</div>`:''}
-            <div class="muted">${formatStamp(x.historyCreatedAt||x.completedAt||x.cancelledAt||x.rejectedAt||x.deletedAt||x.createdAt||x.acceptedAt)}</div>
-          </div>`;
-        }).join(''):'<div class="empty">No history found for this driver.</div>'}
-      </div>`:''}`;
+
+        ${driver?`
+          <div class="statgrid">
+            <div class="stat"><b>${all.length}</b><span>TOTAL DUTIES</span></div>
+            <div class="stat"><b>₹${totalAmount}</b><span>TOTAL DUTY AMOUNT</span></div>
+            <div class="stat"><b>₹${totalPenalty}</b><span>TOTAL PENALTY</span></div>
+            <div class="stat"><b>${completed.length}</b><span>COMPLETED</span></div>
+            <div class="stat"><b>${active.length}</b><span>ACTIVE</span></div>
+            <div class="stat"><b>${cancelled.length}</b><span>CANCELLED</span></div>
+            <div class="stat"><b>${rejected.length}</b><span>REJECTED</span></div>
+            <div class="stat"><b>₹${completedAmount}</b><span>COMPLETED AMOUNT</span></div>
+          </div>
+
+          <div class="card">
+            <h2>💰 DRIVER SUMMARY</h2>
+            <div class="notice">
+              👨‍✈️ <b>${esc(driver.name||driver.driverName||'Driver')}</b><br>
+              📱 ${esc(driver.mobile||driver.phone||'-')}<br>
+              💵 Total Duty Amount: <b>₹${totalAmount}</b><br>
+              ⚠️ Total Penalty: <b>₹${totalPenalty}</b><br>
+              ✅ Completed Amount: <b>₹${completedAmount}</b><br>
+              ⚠️ Cancelled Penalty: <b>₹${cancelledPenalty}</b> &nbsp; | &nbsp;
+              Rejected Penalty: <b>₹${rejectedPenalty}</b>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>💳 WALLET ADD / DEDUCT HISTORY (${walletRows.length})</h2>
+            ${walletRows.length?walletRows.sort((a,b)=>stampMillis(b.createdAt)-stampMillis(a.createdAt)).map(w=>`<div class="duty">
+              <div class="row"><b>${w.type==='ADD'?'＋ WALLET ADD':'− WALLET DEDUCT'}</b><span class="badge ${w.type==='ADD'?'approved':'cancelled'}">${esc(w.type||'')}</span></div>
+              <div class="money">₹${Number(w.amount||0)}</div>
+              <div class="muted">${esc(w.reason||'')}<br>${formatStamp(w.createdAt)}</div>
+            </div>`).join(''):'<div class="empty">No wallet add/deduct history found.</div>'}
+          </div>
+
+          <div class="card">
+            <h2>📋 DUTY-WISE AMOUNT & PENALTY (${all.length})</h2>
+            ${all.length?all.map(x=>{
+              const p=penaltyOf(x);
+              const status=String(x.__activityStatus||'').toUpperCase();
+              return `<div class="duty">
+                <div class="row">
+                  <b>${esc(status)}</b>
+                  <span class="badge ${status==='COMPLETED'?'completed':status==='CANCELLED'?'cancelled':status==='REJECTED'?'rejected':status==='OPEN'?'open':'accepted'}">${esc(status)}</span>
+                </div>
+                <div class="route">
+                  <div>📍 ${esc(x.pickup||'-')}</div>
+                  <div>🏁 ${esc(x.drop||'-')}</div>
+                </div>
+                <div class="muted">
+                  📅 ${esc(x.date||'-')} &nbsp; ⏰ ${esc(x.time||'-')}<br>
+                  🚘 ${esc(x.vehicle||'-')} &nbsp; 📏 ${Number(x.km||0)} KM
+                </div>
+                <div class="money">💰 DUTY AMOUNT: ₹${Number(x.amount||0)}</div>
+                <div class="notice">⚠️ PENALTY: <b>₹${p}</b>${p>0 && x.cancellationDeduction ? ' • Cancellation deduction' : ''}</div>
+                <div class="muted">${formatStamp(x.historyCreatedAt||x.completedAt||x.cancelledAt||x.rejectedAt||x.createdAt||x.acceptedAt)}</div>
+              </div>`;
+            }).join(''):'<div class="empty">No duty activity found for this driver.</div>'}
+          </div>
+        `:''}
+      </div>`;
   };
 
   const oldRender=window.render;
