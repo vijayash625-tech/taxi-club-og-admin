@@ -1973,207 +1973,101 @@ window.createDutyFromOCR=async function(){
 @media(max-width:650px){.adminSectionGrid{grid-template-columns:1fr 1fr}.driverDashCards{grid-template-columns:1fr 1fr}.adminAction{min-height:100px;padding:14px}.adminAction b{font-size:16px}}
 </style>
 <script>
-/* ===== FINAL STRUCTURE: keep existing features, expose each job separately ===== */
-(function(){
-  const baseShowPage=window.showPage;
-  window.showPage=function(p){
-    const pages=['dashboard','duty','drivers','open','accepted','all','assignment','rejected','driverActivity','history'];
-    pages.forEach(x=>{
-      const el=document.getElementById('nav-'+x); if(el)el.classList.toggle('active',x===p);
-      const mb=document.getElementById('mb-'+x); if(mb)mb.classList.toggle('active',x===p);
-    });
-    if(typeof window.__adminSetPage==='function'){
-      window.__adminSetPage(p);
-    }else if(typeof baseShowPage==='function'){
-      baseShowPage(p);
-    }
-  };
+/* ===== DRIVER ACTIVITY REPORT (standalone) ===== */
+let driverActivityQuery='';
+let driverActivityCar='';
+window.renderDriverActivity=function(){
+  const q=String(driverActivityQuery||'').replace(/\D/g,'');
+  const cq=String(driverActivityCar||'').trim().toLowerCase();
+  const matchingDrivers=drivers.filter(d=>{
+    const mobile=String(d.mobile||d.phone||d.driverMobile||'').replace(/\D/g,'');
+    const car=String(d.vehicleNumber||d.carNumber||d.vehicleNo||'').trim().toLowerCase();
+    return (q && mobile.includes(q)) || (cq && car.includes(cq));
+  });
+  const driver=matchingDrivers.length===1?matchingDrivers[0]:null;
 
-  function addNav(){
-    const side=document.getElementById('sideMenu');
-    if(side && !document.getElementById('side-new-duty')){
-      const html=`
-      <button id="side-new-duty" onclick="showPage('duty');toggleMenu()">🆕 <span>NEW DUTY</span></button>
-      <button onclick="showPage('assignment');toggleMenu()">📋 <span>ASSIGNMENT / TRIP</span></button>
-      <button onclick="showPage('accepted');toggleMenu()">✅ <span>ACCEPTED</span></button>
-      <button onclick="showPage('rejected');toggleMenu()">❌ <span>REJECTED</span></button>
-      <button onclick="showPage('driverActivity');toggleMenu()">📊 <span>DRIVER ACTIVITY</span></button>`;
-      side.insertAdjacentHTML('beforeend',html);
-    }
-    const nav=document.querySelector('.desktopNav');
-    if(nav && !document.getElementById('nav-assignment')){
-      nav.insertAdjacentHTML('beforeend',`<button id="nav-new-duty" onclick="showPage('duty')">🆕 NEW DUTY</button><button id="nav-assignment" onclick="showPage('assignment')">📋 ASSIGNMENT</button><button id="nav-rejected" onclick="showPage('rejected')">❌ REJECTED</button><button id="nav-driverActivity" onclick="showPage('driverActivity')">📊 DRIVER ACTIVITY</button>`);
-    }
+  const ids=new Set(), mobiles=new Set(), names=new Set(), cars=new Set();
+  if(driver){
+    [driver.id,driver.uid,driver.driverId].filter(Boolean).forEach(v=>ids.add(String(v)));
+    [driver.mobile,driver.phone,driver.driverMobile].filter(Boolean).forEach(v=>mobiles.add(String(v).replace(/\D/g,'')));
+    [driver.name,driver.driverName].filter(Boolean).forEach(v=>names.add(String(v).toLowerCase()));
+    [driver.vehicleNumber,driver.carNumber,driver.vehicleNo].filter(Boolean).forEach(v=>cars.add(String(v).trim().toLowerCase()));
   }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addNav); else addNav();
 
-  window.renderDashboard=function(){
-    const approved=drivers.filter(d=>driverStatus(d)==='APPROVED').length;
-    const pending=drivers.filter(d=>driverStatus(d)==='PENDING').length;
-    const blocked=drivers.filter(d=>driverStatus(d)==='BLOCKED').length;
-    const open=duties.filter(d=>statusOf(d)==='OPEN').length;
-    const accepted=duties.filter(d=>['ACCEPTED','STARTED'].includes(statusOf(d))).length;
-    const rejected=history.filter(h=>String(h.type||h.status||'').toUpperCase().includes('REJECT')).length;
-    $('app').innerHTML=`
-      <div class="dashboardHero"><h2>🚕 TAXI CLUB OG</h2><p>ADMIN DASHBOARD • Drivers, new duties, assignments & trip history</p></div>
-      <div class="card"><h2>👨‍✈️ DRIVER DASHBOARD</h2>
-        <div class="driverDashCards">
-          <button class="driverDashCard active" onclick="showPage('drivers');driverStatusFilter='APPROVED';renderDrivers()"><b>${approved}</b><span>ACTIVE / APPROVED DRIVERS • VIEW LIST</span></button>
-          <button class="driverDashCard pending" onclick="showPage('drivers');driverStatusFilter='PENDING';renderDrivers()"><b>${pending}</b><span>PENDING DRIVERS • VIEW LIST</span></button>
-        </div>
-        <div class="actions" style="margin-top:12px"><button class="btn primary" onclick="showPage('drivers')">🔎 SEARCH / MANAGE DRIVER</button><button class="btn red" onclick="showPage('drivers');driverStatusFilter='BLOCKED';renderDrivers()">🚫 BLOCKED (${blocked})</button></div>
+  const belongs=(item)=>{
+    const itemMob=String(item.driverMobile||item.mobile||item.phone||'').replace(/\D/g,'');
+    const itemCar=String(item.vehicleNumber||item.carNumber||item.vehicleNo||'').trim().toLowerCase();
+    const itemIds=[item.acceptedByUid,item.acceptedDriverId,item.driverId,item.rejectedByUid,item.rejectedDriverId,item.uid].filter(Boolean).map(String);
+    const itemNames=[item.driverName,item.acceptedBy,item.rejectedBy,item.completedBy,item.cancelledBy].filter(Boolean).map(v=>String(v).toLowerCase());
+    return (itemMob&&mobiles.has(itemMob)) || (itemCar&&cars.has(itemCar)) || itemIds.some(v=>ids.has(v)) || itemNames.some(v=>names.has(v));
+  };
+
+  const active=driver?duties.filter(d=>belongs(d)&&['OPEN','ACCEPTED','STARTED'].includes(statusOf(d))):[];
+  const completed=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('COMPLETE')):[];
+  const cancelled=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('CANCEL')):[];
+  const rejected=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('REJECT')):[];
+  const accepted=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('ACCEPT')):[];
+  const deleted=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('DELETE')):[];
+  const rawAll=[...active.map(d=>({...d,__activityStatus:statusOf(d)})),
+    ...accepted.map(h=>({...h,__activityStatus:'ACCEPTED'})),
+    ...completed.map(h=>({...h,__activityStatus:'COMPLETED'})),
+    ...cancelled.map(h=>({...h,__activityStatus:'CANCELLED'})),
+    ...rejected.map(h=>({...h,__activityStatus:'REJECTED'})),
+    ...deleted.map(h=>({...h,__activityStatus:'DELETED'}))];
+  const seen=new Set();
+  const all=rawAll.filter(x=>{
+    const key=String(x.__activityStatus||'')+'|'+String(x.dutyId||x.id||'');
+    if(seen.has(key))return false;
+    seen.add(key);return true;
+  }).sort((a,b)=>stampMillis(b.historyCreatedAt||b.completedAt||b.cancelledAt||b.rejectedAt||b.deletedAt||b.createdAt||b.acceptedAt)-stampMillis(a.historyCreatedAt||a.completedAt||a.cancelledAt||a.rejectedAt||a.deletedAt||a.createdAt||a.acceptedAt));
+
+  const totalAmount=all.reduce((n,x)=>n+Number(x.amount||0),0);
+  const completedAmount=completed.reduce((n,x)=>n+Number(x.amount||0),0);
+  const deductions=all.reduce((n,x)=>n+Number(x.cancellationDeduction||x.walletDeduction||x.penalty||x.penaltyAmount||0),0);
+  const wallet=Number(driver?.walletBalance??driver?.wallet??0);
+
+  $('app').innerHTML=`
+    <div class="pageIntro"><h1>📊 Driver Activity Report</h1><div class="sub">Search by driver mobile number or car number and view the full history.</div></div>
+    <div class="card">
+      <h2>🔎 DRIVER SEARCH</h2>
+      <div class="grid">
+        <div class="field"><label>DRIVER MOBILE NUMBER</label><input id="driverActivitySearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter mobile number" value="${esc(driverActivityQuery)}" oninput="driverActivityQuery=this.value;renderDriverActivity()"></div>
+        <div class="field"><label>CAR / VEHICLE NUMBER</label><input id="driverActivityCar" type="text" placeholder="Enter car number" value="${esc(driverActivityCar)}" oninput="driverActivityCar=this.value;renderDriverActivity()"></div>
       </div>
-      <div class="card"><h2>🚕 DUTY PANEL</h2>
-        <div class="adminSectionGrid">
-          <button class="adminAction blue" onclick="showPage('duty')"><b>🆕 NEW DUTY</b><small>Create a fresh duty manually or use screenshot OCR.</small></button>
-          <button class="adminAction purple" onclick="showPage('assignment')"><b>📋 ASSIGNMENT / TRIP</b><small>See every current duty and who has taken it.</small></button>
-          <button class="adminAction green" onclick="showPage('accepted')"><b>✅ ACCEPTED</b><small>See accepted/started duties with driver details.</small></button>
-          <button class="adminAction red" onclick="showPage('rejected')"><b>❌ REJECTED</b><small>See driver-rejected duty activity separately.</small></button>
-          <button class="adminAction orange" onclick="showPage('open')"><b>🟢 OPEN DUTIES (${open})</b><small>Duties waiting for a driver.</small></button>
-          <button class="adminAction pink" onclick="showPage('history')"><b>📚 FULL HISTORY (${history.length})</b><small>Accepted, rejected, cancelled, completed and deleted.</small></button>
-          <button class="adminAction blue" onclick="showPage('driverActivity')"><b>📊 DRIVER ACTIVITY</b><small>Search a driver by mobile and view active, completed, cancelled and rejected duties.</small></button>
-        </div>
-      </div>`;
-  };
+      <div class="actions"><button class="btn gray" onclick="driverActivityQuery='';driverActivityCar='';renderDriverActivity()">CLEAR</button></div>
+      <div class="search-count">${(!q&&!cq)?'Enter mobile or car number to view full history.':matchingDrivers.length===0?'No driver found.':matchingDrivers.length>1?'More than one driver matched; enter the full number.':'Driver: '+esc(driver.name||driver.driverName||'Driver')+' • '+esc(driver.mobile||driver.phone||'')+' • Car: '+esc(driver.vehicleNumber||driver.carNumber||'-')}</div>
+    </div>
+    ${driver?`
+    <div class="statgrid">
+      <div class="stat"><b>${all.length}</b><span>TOTAL DUTY HISTORY</span></div>
+      <div class="stat"><b>${accepted.length}</b><span>ACCEPTED</span></div>
+      <div class="stat"><b>${completed.length}</b><span>COMPLETED</span></div>
+      <div class="stat"><b>${cancelled.length}</b><span>CANCELLED</span></div>
+      <div class="stat"><b>${rejected.length}</b><span>REJECTED</span></div>
+      <div class="stat"><b>₹${completedAmount}</b><span>COMPLETED AMOUNT</span></div>
+      <div class="stat"><b>₹${deductions}</b><span>TOTAL PENALTY / DEDUCTION</span></div>
+      <div class="stat"><b>₹${wallet}</b><span>CURRENT WALLET</span></div>
+    </div>
+    <div class="card"><h2>💳 WALLET ADD / DEDUCT HISTORY</h2>
+      ${history.filter(h=>String(h.type||'').startsWith('WALLET_')&&belongs(h)).length?history.filter(h=>String(h.type||'').startsWith('WALLET_')&&belongs(h)).sort((a,b)=>stampMillis(b.createdAt)-stampMillis(a.createdAt)).map(w=>`<div class="duty"><div class="row"><b>${String(w.type||'').includes('ADD')?'＋ WALLET ADD':'− WALLET DEDUCT'}</b><span class="badge ${String(w.type||'').includes('ADD')?'approved':'cancelled'}">${esc(String(w.type||'').replace('WALLET_',''))}</span></div><div class="money">₹${Number(w.amount||0)}</div><div class="muted">${formatStamp(w.createdAt)}</div></div>`).join(''):'<div class="empty">No wallet add/deduct history found.</div>'}
+    </div>
+    <div class="card"><h2>📋 FULL DRIVER BOOKING / DUTY HISTORY (${all.length})</h2>
+      ${all.length?all.map(x=>{
+        const st=x.__activityStatus;
+        const penalty=Number(x.cancellationDeduction||x.walletDeduction||x.penalty||x.penaltyAmount||0);
+        return `<div class="duty">
+          <div class="row"><b>${esc(st)}</b><span class="badge ${st==='COMPLETED'?'completed':st==='CANCELLED'?'cancelled':st==='REJECTED'?'rejected':st==='ACCEPTED'?'accepted':st==='OPEN'?'open':'pending'}">${esc(st)}</span></div>
+          <div class="route"><div>📍 ${esc(x.pickup||'-')}</div><div>🏁 ${esc(x.drop||'-')}</div></div>
+          <div class="muted">📅 ${esc(x.date||'-')} &nbsp; ⏰ ${esc(formatDutyTime(x.time||x.dutyTime))}<br>🚘 ${esc(x.vehicle||'-')} &nbsp; 📏 ${Number(x.km||0)} KM<br>📱 ${esc(x.driverMobile||x.mobile||driver.mobile||'-')}</div>
+          <div class="money">₹${Number(x.amount||0)}</div>
+          ${penalty?`<div class="notice">− ₹${penalty} PENALTY / DEDUCTION</div>`:''}
+          ${x.walletAction?`<div class="notice">WALLET ${esc(x.walletAction)} ₹${Number(x.walletAmount||0)}</div>`:''}
+          <div class="muted">${formatStamp(x.historyCreatedAt||x.completedAt||x.cancelledAt||x.rejectedAt||x.deletedAt||x.createdAt||x.acceptedAt)}</div>
+        </div>`;
+      }).join(''):'<div class="empty">No history found for this driver.</div>'}
+    </div>`:''}`;
+};
 
-  window.renderDrivers=function(){
-    const approved=drivers.filter(d=>driverStatus(d)==='APPROVED').length;
-    const pending=drivers.filter(d=>driverStatus(d)==='PENDING').length;
-    const blocked=drivers.filter(d=>driverStatus(d)==='BLOCKED').length;
-    const rejected=drivers.filter(d=>driverStatus(d)==='REJECTED').length;
-    const activeList=drivers.filter(d=>driverStatus(d)==='APPROVED');
-    const pendingList=drivers.filter(d=>driverStatus(d)==='PENDING');
-    const selected=driverStatusFilter==='ALL'?drivers:drivers.filter(d=>driverStatus(d)===driverStatusFilter);
-    $('app').innerHTML=`
-      <div class="pageIntro"><h1>👨‍✈️ Driver Dashboard</h1><div class="sub">Search a registered driver and Approve / Reject / Block</div></div>
-      <div class="driverDashCards">
-        <button class="driverDashCard active" onclick="driverStatusFilter='APPROVED';renderDrivers()"><b>${approved}</b><span>ACTIVE / APPROVED</span></button>
-        <button class="driverDashCard pending" onclick="driverStatusFilter='PENDING';renderDrivers()"><b>${pending}</b><span>PENDING</span></button>
-      </div>
-      <div class="statgrid" style="margin-top:12px"><button class="stat clickable" onclick="driverStatusFilter='BLOCKED';renderDrivers()"><b>${blocked}</b><span>BLOCKED</span></button><button class="stat clickable" onclick="driverStatusFilter='REJECTED';renderDrivers()"><b>${rejected}</b><span>REJECTED</span></button></div>
-      <div class="card"><h2>🔎 SEARCH DRIVER</h2>
-        <div class="driver-search"><label>REGISTERED DRIVER MOBILE NUMBER</label><div class="search-row"><input id="driverMobileSearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter driver mobile number" value="${esc(driverMobileSearch)}" oninput="filterDriversByMobile(this.value)"><button class="btn gray" onclick="clearDriverMobileSearch()">CLEAR</button></div><div id="driverSearchCount" class="search-count"></div></div>
-        <div id="driverApprovalList">${selected.length?selected.map(driverCard).join(''):'<div class="empty">No drivers in this list.</div>'}</div>
-      </div>`;
-  };
-
-  window.renderAssignment=function(){
-    const list=[...duties].sort((a,b)=>stampMillis(b.createdAt)-stampMillis(a.createdAt));
-    $('app').innerHTML=`<div class="pageIntro"><h1>📋 Assignment / Trip</h1><div class="sub">Every current duty — OPEN and driver-assigned</div></div>
-      <div class="statgrid"><button class="stat clickable" onclick="showPage('open')"><b>${list.filter(d=>statusOf(d)==='OPEN').length}</b><span>OPEN</span></button><button class="stat clickable" onclick="showPage('accepted')"><b>${list.filter(d=>['ACCEPTED','STARTED'].includes(statusOf(d))).length}</b><span>ASSIGNED / ACCEPTED</span></button><button class="stat clickable" onclick="showPage('rejected')"><b>${history.filter(h=>String(h.type||h.status||'').toUpperCase().includes('REJECT')).length}</b><span>REJECTED</span></button><button class="stat clickable" onclick="showPage('history')"><b>${history.length}</b><span>FULL HISTORY</span></button></div>
-      <div class="card"><h2>📋 CURRENT ASSIGNMENTS (${list.length})</h2>${list.length?list.map(allDutyCard).join(''):'<div class="empty">No current duties.</div>'}</div>`;
-  };
-
-  window.renderRejected=function(){
-    const rows=[...history].filter(h=>String(h.type||h.status||'').toUpperCase().includes('REJECT')).sort((a,b)=>stampMillis(b.historyCreatedAt||b.rejectedAt||b.createdAt)-stampMillis(a.historyCreatedAt||a.rejectedAt||a.createdAt));
-    $('app').innerHTML=`<div class="pageIntro"><h1>❌ Rejected Duties</h1><div class="sub">Drivers who rejected duties</div></div><div class="card"><h2>❌ REJECTED (${rows.length})</h2>${rows.length?rows.map(historyCard).join(''):'<div class="empty">No rejected duty history found.</div>'}</div>`;
-  };
-
-
-  let driverActivityQuery='';
-  let driverActivityCar='';
-  window.renderDriverActivity=function(){
-    const q=String(driverActivityQuery||'').replace(/\D/g,'');
-    const cq=String(driverActivityCar||'').trim().toLowerCase();
-    const matchingDrivers=drivers.filter(d=>{
-      const mobile=String(d.mobile||d.phone||d.driverMobile||'').replace(/\D/g,'');
-      const car=String(d.vehicleNumber||d.carNumber||d.vehicleNo||'').trim().toLowerCase();
-      return (q && mobile.includes(q)) || (cq && car.includes(cq));
-    });
-    const driver=matchingDrivers.length===1?matchingDrivers[0]:null;
-
-    const ids=new Set(), mobiles=new Set(), names=new Set(), cars=new Set();
-    if(driver){
-      [driver.id,driver.uid,driver.driverId].filter(Boolean).forEach(v=>ids.add(String(v)));
-      [driver.mobile,driver.phone,driver.driverMobile].filter(Boolean).forEach(v=>mobiles.add(String(v).replace(/\D/g,'')));
-      [driver.name,driver.driverName].filter(Boolean).forEach(v=>names.add(String(v).toLowerCase()));
-      [driver.vehicleNumber,driver.carNumber,driver.vehicleNo].filter(Boolean).forEach(v=>cars.add(String(v).trim().toLowerCase()));
-    }
-
-    const belongs=(item)=>{
-      const itemMob=String(item.driverMobile||item.mobile||item.phone||'').replace(/\D/g,'');
-      const itemCar=String(item.vehicleNumber||item.carNumber||item.vehicleNo||'').trim().toLowerCase();
-      const itemIds=[item.acceptedByUid,item.acceptedDriverId,item.driverId,item.rejectedByUid,item.rejectedDriverId,item.uid].filter(Boolean).map(String);
-      const itemNames=[item.driverName,item.acceptedBy,item.rejectedBy,item.completedBy,item.cancelledBy].filter(Boolean).map(v=>String(v).toLowerCase());
-      return (itemMob&&mobiles.has(itemMob)) || (itemCar&&cars.has(itemCar)) || itemIds.some(v=>ids.has(v)) || itemNames.some(v=>names.has(v));
-    };
-
-    const active=driver?duties.filter(d=>belongs(d)&&['OPEN','ACCEPTED','STARTED'].includes(statusOf(d))):[];
-    const completed=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('COMPLETE')):[];
-    const cancelled=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('CANCEL')):[];
-    const rejected=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('REJECT')):[];
-    const accepted=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('ACCEPT')):[];
-    const deleted=driver?history.filter(h=>belongs(h)&&String(h.type||h.status||'').toUpperCase().includes('DELETE')):[];
-    const rawAll=[...active.map(d=>({...d,__activityStatus:statusOf(d)})),
-      ...accepted.map(h=>({...h,__activityStatus:'ACCEPTED'})),
-      ...completed.map(h=>({...h,__activityStatus:'COMPLETED'})),
-      ...cancelled.map(h=>({...h,__activityStatus:'CANCELLED'})),
-      ...rejected.map(h=>({...h,__activityStatus:'REJECTED'})),
-      ...deleted.map(h=>({...h,__activityStatus:'DELETED'}))];
-    const seen=new Set();
-    const all=rawAll.filter(x=>{
-      const key=String(x.__activityStatus||'')+'|'+String(x.dutyId||x.id||'');
-      if(seen.has(key))return false;
-      seen.add(key);return true;
-    }).sort((a,b)=>stampMillis(b.historyCreatedAt||b.completedAt||b.cancelledAt||b.rejectedAt||b.deletedAt||b.createdAt||b.acceptedAt)-stampMillis(a.historyCreatedAt||a.completedAt||a.cancelledAt||a.rejectedAt||a.deletedAt||a.createdAt||a.acceptedAt));
-
-    const totalAmount=all.reduce((n,x)=>n+Number(x.amount||0),0);
-    const completedAmount=completed.reduce((n,x)=>n+Number(x.amount||0),0);
-    const deductions=all.reduce((n,x)=>n+Number(x.cancellationDeduction||x.walletDeduction||x.penalty||x.penaltyAmount||0),0);
-    const wallet=Number(driver?.walletBalance??driver?.wallet??0);
-
-    $('app').innerHTML=`
-      <div class="pageIntro"><h1>📊 Driver Activity Report</h1><div class="sub">Search by driver mobile number or car number and view the full history.</div></div>
-      <div class="card">
-        <h2>🔎 DRIVER SEARCH</h2>
-        <div class="grid">
-          <div class="field"><label>DRIVER MOBILE NUMBER</label><input id="driverActivitySearch" type="tel" inputmode="numeric" maxlength="15" placeholder="Enter mobile number" value="${esc(driverActivityQuery)}" oninput="driverActivityQuery=this.value;renderDriverActivity()"></div>
-          <div class="field"><label>CAR / VEHICLE NUMBER</label><input id="driverActivityCar" type="text" placeholder="Enter car number" value="${esc(driverActivityCar)}" oninput="driverActivityCar=this.value;renderDriverActivity()"></div>
-        </div>
-        <div class="actions"><button class="btn gray" onclick="driverActivityQuery='';driverActivityCar='';renderDriverActivity()">CLEAR</button></div>
-        <div class="search-count">${(!q&&!cq)?'Enter mobile or car number to view full history.':matchingDrivers.length===0?'No driver found.':matchingDrivers.length>1?'More than one driver matched; enter the full number.':'Driver: '+esc(driver.name||driver.driverName||'Driver')+' • '+esc(driver.mobile||driver.phone||'')+' • Car: '+esc(driver.vehicleNumber||driver.carNumber||'-')}</div>
-      </div>
-      ${driver?`
-      <div class="statgrid">
-        <div class="stat"><b>${all.length}</b><span>TOTAL DUTY HISTORY</span></div>
-        <div class="stat"><b>${accepted.length}</b><span>ACCEPTED</span></div>
-        <div class="stat"><b>${completed.length}</b><span>COMPLETED</span></div>
-        <div class="stat"><b>${cancelled.length}</b><span>CANCELLED</span></div>
-        <div class="stat"><b>${rejected.length}</b><span>REJECTED</span></div>
-        <div class="stat"><b>₹${completedAmount}</b><span>COMPLETED AMOUNT</span></div>
-        <div class="stat"><b>₹${deductions}</b><span>TOTAL PENALTY / DEDUCTION</span></div>
-        <div class="stat"><b>₹${wallet}</b><span>CURRENT WALLET</span></div>
-      </div>
-      <div class="card"><h2>💳 WALLET ADD / DEDUCT HISTORY</h2>
-        ${history.filter(h=>String(h.type||'').startsWith('WALLET_')&&belongs(h)).length?history.filter(h=>String(h.type||'').startsWith('WALLET_')&&belongs(h)).sort((a,b)=>stampMillis(b.createdAt)-stampMillis(a.createdAt)).map(w=>`<div class="duty"><div class="row"><b>${String(w.type||'').includes('ADD')?'＋ WALLET ADD':'− WALLET DEDUCT'}</b><span class="badge ${String(w.type||'').includes('ADD')?'approved':'cancelled'}">${esc(String(w.type||'').replace('WALLET_',''))}</span></div><div class="money">₹${Number(w.amount||0)}</div><div class="muted">${formatStamp(w.createdAt)}</div></div>`).join(''):'<div class="empty">No wallet add/deduct history found.</div>'}
-      </div>
-      <div class="card"><h2>📋 FULL DRIVER BOOKING / DUTY HISTORY (${all.length})</h2>
-        ${all.length?all.map(x=>{
-          const st=x.__activityStatus;
-          const penalty=Number(x.cancellationDeduction||x.walletDeduction||x.penalty||x.penaltyAmount||0);
-          return `<div class="duty">
-            <div class="row"><b>${esc(st)}</b><span class="badge ${st==='COMPLETED'?'completed':st==='CANCELLED'?'cancelled':st==='REJECTED'?'rejected':st==='ACCEPTED'?'accepted':st==='OPEN'?'open':'pending'}">${esc(st)}</span></div>
-            <div class="route"><div>📍 ${esc(x.pickup||'-')}</div><div>🏁 ${esc(x.drop||'-')}</div></div>
-            <div class="muted">📅 ${esc(x.date||'-')} &nbsp; ⏰ ${esc(formatDutyTime(x.time||x.dutyTime))}<br>🚘 ${esc(x.vehicle||'-')} &nbsp; 📏 ${Number(x.km||0)} KM<br>📱 ${esc(x.driverMobile||x.mobile||driver.mobile||'-')}</div>
-            <div class="money">₹${Number(x.amount||0)}</div>
-            ${penalty?`<div class="notice">− ₹${penalty} PENALTY / DEDUCTION</div>`:''}
-            ${x.walletAction?`<div class="notice">WALLET ${esc(x.walletAction)} ₹${Number(x.walletAmount||0)}</div>`:''}
-            <div class="muted">${formatStamp(x.historyCreatedAt||x.completedAt||x.cancelledAt||x.rejectedAt||x.deletedAt||x.createdAt||x.acceptedAt)}</div>
-          </div>`;
-        }).join(''):'<div class="empty">No history found for this driver.</div>'}
-      </div>`:''}`;
-  };
-
-  const oldRender=window.render;
-  window.render=function(){
-    if(page==='dashboard')return renderDashboard();
-    if(page==='drivers')return renderDrivers();
-    if(page==='assignment')return renderAssignment();
-    if(page==='rejected')return renderRejected();
-    if(page==='driverActivity')return renderDriverActivity();
-    return typeof oldRender==="function"?oldRender():undefined;
-  };
-})();
 </script>
 </body>
 </html>
