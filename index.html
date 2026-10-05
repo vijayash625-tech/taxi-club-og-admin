@@ -205,9 +205,23 @@ window.adminLogin = function(){
 };
 </script>
 
+<script>
+/* ===== EARLY JS ERROR REPORTING ===== */
+window.addEventListener("error",function(e){
+  const el=document.getElementById("connection");
+  if(el){el.textContent="JS ERROR";el.style.background="#ffe8ed";el.style.color="#b4233d";}
+  console.error("GLOBAL ERROR",e.error||e.message||e);
+});
+window.addEventListener("unhandledrejection",function(e){
+  const el=document.getElementById("connection");
+  if(el){el.textContent="JS ERROR";el.style.background="#ffe8ed";el.style.color="#b4233d";}
+  console.error("UNHANDLED PROMISE",e.reason||e);
+});
+</script>
+
 <script type="module">
 import {initializeApp}
-from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js?v=20261005-2";
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 
 import {
   getFirestore,
@@ -222,7 +236,7 @@ import {
   serverTimestamp,
   runTransaction
 }
-from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js?v=20261005-2";
+from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
 const firebaseConfig={
   apiKey:"AIzaSyCXOKF-5BEE_qqZWuO08A_Dks4F0b-3q8",
@@ -330,13 +344,16 @@ function driverStatus(d){
 }
 
 function render(){
-  if(page==="dashboard")renderDashboard();
-  if(page==="duty")renderDuty();
-  if(page==="drivers")renderDrivers();
-  if(page==="open")renderOpen();
-  if(page==="accepted")renderAccepted();
-  if(page==="all")renderAllDuties();
-  if(page==="history")renderHistory();
+  if(page==="dashboard")return renderDashboard();
+  if(page==="duty")return renderDuty();
+  if(page==="drivers")return renderDrivers();
+  if(page==="open")return renderOpen();
+  if(page==="accepted")return renderAccepted();
+  if(page==="all")return renderAllDuties();
+  if(page==="history")return renderHistory();
+  if(page==="assignment" && typeof window.renderAssignment==="function")return window.renderAssignment();
+  if(page==="rejected" && typeof window.renderRejected==="function")return window.renderRejected();
+  if(page==="driverActivity" && typeof window.renderDriverActivity==="function")return window.renderDriverActivity();
 }
 
 function renderDashboard(){const approved=drivers.filter(d=>driverStatus(d)==="APPROVED").length;const pending=drivers.filter(d=>driverStatus(d)==="PENDING").length;const open=duties.filter(d=>statusOf(d)==="OPEN").length;const accepted=duties.filter(d=>["ACCEPTED","STARTED"].includes(statusOf(d))).length;$("app").innerHTML=`<div class="dashboardHero"><h2>🚕 TAXI CLUB OG</h2><p>Luxury Admin Dashboard • Manage duties, drivers and trip activity</p></div><div class="statgrid"><button class="stat clickable" onclick="showPage('drivers')"><b>${approved}</b><span>APPROVED DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="filterDriverStatus('PENDING')"><b>${pending}</b><span>PENDING DRIVERS • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('open')"><b>${open}</b><span>OPEN DUTIES • VIEW ALL</span></button><button class="stat clickable" onclick="showPage('accepted')"><b>${accepted}</b><span>ACCEPTED • VIEW ALL</span></button></div><div class="card"><h2>⚡ QUICK MENU</h2><div class="quickGrid"><button class="quickBtn" onclick="showPage('duty')"><b>🚕</b>CREATE DUTY<small>Create a new driver duty</small></button><button class="quickBtn" onclick="showPage('open')"><b>🟢</b>OPEN DUTIES<small>View duties waiting for drivers</small></button><button class="quickBtn" onclick="showPage('accepted')"><b>✅</b>ACCEPTED<small>See driver assignments</small></button><button class="quickBtn" onclick="showPage('history')"><b>📋</b>HISTORY<small>Track all duty actions</small></button></div></div><div class="card"><h2>👨‍✈️ DRIVER PANEL</h2><div class="notice">Driver approval, ₹400 registration verification, documents and wallet controls are available inside Duty Management.</div><button class="btn primary" onclick="showPage('duty')">OPEN DRIVER MANAGEMENT →</button></div>`;}
@@ -1412,9 +1429,45 @@ window.cancelDuty=cancelDuty;
 window.cancelAcceptedDuty=cancelAcceptedDuty;
 window.completeDuty=completeDuty;
 
+/* ===== BRIDGE MODULE STATE TO THE CLASSIC ADMIN NAV =====
+   The later classic script needs access to module-scoped state.
+   Expose read/write bridges without changing Firestore data. */
+try{
+  Object.defineProperties(window,{
+    page:{
+      configurable:true,
+      get:()=>page,
+      set:v=>{page=v;}
+    },
+    drivers:{
+      configurable:true,
+      get:()=>drivers
+    },
+    duties:{
+      configurable:true,
+      get:()=>duties
+    },
+    history:{
+      configurable:true,
+      get:()=>history
+    },
+    driverStatusFilter:{
+      configurable:true,
+      get:()=>driverStatusFilter,
+      set:v=>{driverStatusFilter=v;}
+    }
+  });
+}catch(e){
+  console.error("STATE BRIDGE FAILED",e);
+}
+
+/* Keep one safe global render entry point for the classic navigation layer. */
+window.render=function(){
+  return render();
+};
+
 startListeners();
 render();
-showPage(page);
 
 
 /* ===== DUTY SCREENSHOT OCR ===== */
@@ -2115,7 +2168,7 @@ window.createDutyFromOCR=async function(){
     if(page==='assignment')return renderAssignment();
     if(page==='rejected')return renderRejected();
     if(page==='driverActivity')return renderDriverActivity();
-    return oldRender();
+    return typeof oldRender==="function"?oldRender():undefined;
   };
 })();
 </script>
